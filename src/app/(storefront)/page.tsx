@@ -121,7 +121,7 @@ export default async function HomePage() {
       <Header />
 
       <main className="flex-1 space-y-12 sm:space-y-20 pb-16">
-        {/* Section 1: Hero Banner */}
+        {/* Section 1: Hero Banner (CLEAN: No price text in buttons) */}
         <section className="relative bg-surface-container-low border-b border-outline-variant/60 overflow-hidden py-10 sm:py-16 lg:py-24">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gold/15 via-spa-blue/20 to-transparent pointer-events-none" />
           <div className="container mx-auto px-4 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -134,14 +134,14 @@ export default async function HomePage() {
                 Serene Opulence in Hair Styling & Salon Excellence
               </h1>
               <p className="text-sm sm:text-lg text-on-surface-variant font-light leading-relaxed max-w-2xl">
-                Elevate your personal styling routine or beauty parlour floor with Ikonic titanium straighteners, high-velocity blow dryers, luxury chairs (NPR 30k-40k), and manicure-pedicure spa stations.
+                Elevate your personal styling routine or beauty parlour floor with Ikonic titanium straighteners, high-velocity blow dryers, luxury chairs, and manicure-pedicure spa stations.
               </p>
               <div className="pt-2 flex flex-wrap gap-3 sm:gap-4 items-center">
                 <Link
                   href="/c/luxury-salon-chairs"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm shadow-gold transition-all flex items-center space-x-2"
                 >
-                  <span>Explore Luxury Chairs (NPR 35,000)</span>
+                  <span>Explore Luxury Chairs</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -169,7 +169,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase (UPDATED: 1st image luxury chair priced NPR 35,000 with Real Emerald Green Photo) */}
+            {/* Hero Image Showcase (Product price shown cleanly on product badge) */}
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest group">
                 <img
@@ -180,7 +180,7 @@ export default async function HomePage() {
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Luxury Chair Collection (NPR 30k–40k)</span>
+                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Luxury Chair Collection</span>
                       <h4 className="font-serif font-bold text-xs sm:text-base">Ikonic Felix Luxury Salon Chair</h4>
                       <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Emerald Green</span>
                     </div>
@@ -234,7 +234,7 @@ export default async function HomePage() {
                 <Armchair className="w-6 h-6 text-gold" />
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Luxury Salon Chairs</h3>
-              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">NPR 30,000 - 40,000 Range</p>
+              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">Hydraulic Reclining Chairs</p>
             </Link>
 
             <Link href="/c/manicure-pedicure-equipment" className="group p-4 sm:p-6 rounded-2xl bg-spa-blue/40 hover:bg-spa-blue/70 border border-secondary-container transition-all">
@@ -317,7 +317,7 @@ export default async function HomePage() {
                 Luxury Salon Chairs & Manicure-Pedicure Spa Stations
               </h2>
               <p className="text-xs sm:text-sm text-neutral-300 mt-2 sm:mt-3 font-light leading-relaxed">
-                Empower your beauty parlour or barber shop with heavy-duty hydraulic chairs (NPR 30k-40k range) and electric pedicure spa stations.
+                Empower your beauty parlour or barber shop with heavy-duty hydraulic chairs and electric pedicure spa stations.
               </p>
             </div>
 

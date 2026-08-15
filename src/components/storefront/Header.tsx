@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Glass Header */}
+        {/* Main Glass Header (CLEAN: No price badges on menu items) */}
         <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
           <div className="container mx-auto flex items-center justify-between gap-3">
             {/* Logo */}
@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </Link>
 
-            {/* Desktop Navigation Links (EXACT USER REQUEST MATCH) */}
+            {/* Desktop Navigation Links (CLEAN: Prices belong on product cards only) */}
             <div className="hidden lg:flex items-center space-x-6 text-sm font-medium text-on-surface-variant">
               <Link href="/" className="hover:text-gold transition-colors">
                 {isNp ? "गृहपृष्ठ" : "Home"}
@@ -98,14 +98,11 @@ export const Header: React.FC<HeaderProps> = ({
               <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
                 {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
               </Link>
-              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
+              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface">
                 {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
               </Link>
-              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
+              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface">
                 {isNp ? "पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
-                <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-spa-blue text-secondary-on-container rounded font-bold uppercase">
-                  {isNp ? "थोक B2B" : "B2B Bulk"}
-                </span>
               </Link>
               <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
@@ -194,7 +191,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
               >
-                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs (NPR 30k–40k)"}
+                {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
               </Link>
               <Link
                 href="/c/manicure-pedicure-equipment"
