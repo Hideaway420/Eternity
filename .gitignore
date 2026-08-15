@@ -9,9 +9,10 @@
 /*.xlsx
 /*.pptx
 
-# ignore root markdown files except CLAUDE.md
+# ignore root markdown files except CLAUDE.md and GEMINI.md
 /*.md
 !/CLAUDE.md
+!/GEMINI.md
 
 # internal tooling
 /.gstack/
