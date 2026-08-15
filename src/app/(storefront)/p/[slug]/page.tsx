@@ -8,6 +8,7 @@ import { products, categories, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { ProductColorSelector } from "@/components/storefront/ProductColorSelector";
 import { ChevronRight } from "lucide-react";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
 
@@ -48,7 +49,7 @@ const CATALOG_DICTIONARY: Record<
     priceRange: "NPR 115,000 - NPR 130,000",
     isSpaCategory: true,
     description:
-      "Transform your salon into a sanctuary of relaxation with the Classic Eternity Spa Chair. Designed with both the technician's convenience and the client's ultimate comfort in mind, this chair features plush, ergonomic cushioning wrapped in premium, spill-resistant upholstery. Its sleek silhouette effortlessly elevates your salon’s aesthetic, promising every guest a serene, five-star pampering experience from the moment they sit down.",
+      "Transform your salon into a sanctuary of relaxation with the Classic Eternity Spa Chair. Designed with both the technician's convenience and the client's ultimate comfort in mind, this chair features plush, ergonomic cushioning wrapped in premium, spill-resistant upholstery.",
   },
   "eternity-elegance-pedicure-station": {
     id: "prod-etp-spa-02",
@@ -64,7 +65,7 @@ const CATALOG_DICTIONARY: Record<
     offerExpiry: "August 31st",
     isSpaCategory: true,
     description:
-      "Offer your clients the gold standard of foot care with the Eternity Elegance Pedicure Station. This unit combines whisper-quiet massage mechanics with a deep, luxurious soaking basin, creating an immersive oasis for tired feet. The elegantly contoured backrest provides full lumbar support, ensuring that your clients drift into total tranquility while you perform your artistry.",
+      "Offer your clients the gold standard of foot care with the Eternity Elegance Pedicure Station. This unit combines whisper-quiet massage mechanics with a deep, luxurious soaking basin, creating an immersive oasis for tired feet.",
   },
   "eternity-luxe-spa-recliner": {
     id: "prod-etp-spa-03",
@@ -80,7 +81,7 @@ const CATALOG_DICTIONARY: Record<
     offerExpiry: "September 3rd",
     isSpaCategory: true,
     description:
-      "Step into the future of luxury wellness with the Eternity Luxe Spa Recliner. Engineered for high-end spas and VIP salon suites, this recliner envelopes your clients in cloud-like softness. With meticulously crafted armrests and a modern, minimalist base, it acts as a striking centerpiece for your space while delivering an unparalleled, restorative spa experience.",
+      "Step into the future of luxury wellness with the Eternity Luxe Spa Recliner. Engineered for high-end spas and VIP salon suites, this recliner envelopes your clients in cloud-like softness.",
   },
   "eternity-signature-series-limited-edition": {
     id: "prod-etp-spa-04",
@@ -95,10 +96,8 @@ const CATALOG_DICTIONARY: Record<
     isLimitedEdition: true,
     isSpaCategory: true,
     description:
-      "The absolute pinnacle of salon luxury. The Eternity Signature Series is a masterclass in design, exclusively crafted for establishments that refuse to compromise on quality. Featuring hand-stitched detailing, ultra-premium memory foam, and state-of-the-art spa technology, this chair doesn't just offer a service—it offers an unforgettable escape. Due to the meticulous craftsmanship required, production is strictly limited.",
+      "The absolute pinnacle of salon luxury. The Eternity Signature Series is a masterclass in design, exclusively crafted for establishments that refuse to compromise on quality.",
   },
-
-  // --- LUXURY SALON CHAIRS & OTHER PRODUCTS ---
   "eternity-emerald-royal-luxury-salon-chair": {
     id: "prod-etp-chair-01",
     sku: "ETP-LSC-01",
@@ -109,37 +108,35 @@ const CATALOG_DICTIONARY: Record<
     line: "profit",
     imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
-  "ikonic-barber-chair-felix": {
-    id: "prod-etp-005",
-    sku: "ETP-005",
-    slug: "ikonic-barber-chair-felix",
-    name: "Eternity Emerald Royal Luxury Salon Chair",
-    price_npr: 3500000,
-    compare_at_npr: 3685000,
-    line: "profit",
-    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-  },
-  "ikonic-professional-pro-titanium-shine-3-0-hair-straightener": {
-    id: "prod-etp-066",
-    sku: "ETP-066",
-    slug: "ikonic-professional-pro-titanium-shine-3-0-hair-straightener",
-    name: "Ikonic Professional Pro Titanium Shine 3.0 Hair Straightener",
-    price_npr: 1292000,
-    compare_at_npr: 1450000,
-    line: "traffic",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
-  },
-  "ikonic-professional-pro-2500-advanced-hair-dryer": {
-    id: "prod-etp-095",
-    sku: "ETP-095",
-    slug: "ikonic-professional-pro-2500-advanced-hair-dryer",
-    name: "Ikonic Professional Pro 2500+ Advanced Hair Dryer",
-    price_npr: 1000000,
-    compare_at_npr: 1120000,
-    line: "traffic",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-  },
 };
+
+// Generate Dynamic SEO Metadata for Product Page
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
+  const matched = CATALOG_DICTIONARY[slug];
+  
+  const title = matched ? matched.name : slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  const description = matched?.description || `Buy ${title} from Eternity Products Nepal. Official warranty, VAT invoice, and Cash on Delivery across Nepal.`;
+  const image = matched?.imageUrl ? `https://eternityproducts.online${matched.imageUrl}` : "https://eternityproducts.online/logo.png";
+
+  return {
+    title: `${title} | Price in Nepal`,
+    description,
+    openGraph: {
+      title: `${title} | Eternity Products Nepal`,
+      description,
+      url: `https://eternityproducts.online/p/${slug}`,
+      images: [{ url: image, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Eternity Products Nepal`,
+      description,
+      images: [image],
+    },
+  };
+}
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   await initTables();
@@ -173,18 +170,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       if (matched) {
         product = { ...product, ...matched };
       }
-      if (product.id) {
-        const prodRecord = await db.select().from(products).where(eq(products.slug, slug)).get();
-        if (prodRecord && prodRecord.category_id) {
-          category = await db.select().from(categories).where(eq(categories.id, prodRecord.category_id)).get();
-        }
-      }
     }
   } catch (err) {
     console.warn("⚠️ PDP DB query fallback active:", err);
   }
 
-  // Fallback to specific catalog item if found, else build a clean item
   if (!product) {
     const matched = CATALOG_DICTIONARY[slug];
     if (matched) {
@@ -205,8 +195,70 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     }
   }
 
+  const priceNprNum = product.price_npr / 100;
+
+  // JSON-LD Product & Offer Schema for Google Rich Snippets
+  const productJsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.name,
+    image: `https://eternityproducts.online${product.imageUrl}`,
+    description: (product as { description?: string }).description || `Official ${product.name} from Eternity Products Nepal. Genuine seal, 1-year replacement warranty, and Cash on Delivery.`,
+    sku: product.sku,
+    brand: {
+      "@type": "Brand",
+      name: product.slug.includes("ikonic") ? "Ikonic Professional" : "Eternity Products",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://eternityproducts.online/p/${product.slug}`,
+      priceCurrency: "NPR",
+      price: priceNprNum,
+      itemCondition: "https://schema.org/NewCondition",
+      availability: "https://schema.org/InStock",
+      seller: {
+        "@type": "Organization",
+        name: "Eternity Products Nepal",
+      },
+    },
+  };
+
+  // JSON-LD Breadcrumb Schema
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://eternityproducts.online",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: (category as { name?: string } | null)?.name || "Equipment & Products",
+        item: "https://eternityproducts.online/c/spa",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.name,
+        item: `https://eternityproducts.online/p/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
 
       <main className="flex-1 py-10 container mx-auto px-4 lg:px-8 space-y-12">
@@ -214,13 +266,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <div className="text-xs text-outline flex items-center space-x-2">
           <Link href="/" className="hover:underline">Home</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
-          <Link href="/c/spa" className="hover:underline capitalize">{category?.name || "SPA"}</Link>
+          <Link href="/c/spa" className="hover:underline capitalize">{(category as any)?.name || "SPA"}</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
           <span className="text-on-surface font-semibold truncate max-w-xs">{product.name}</span>
         </div>
 
         {/* Product Color Selection & Interactive Showcase */}
-        <ProductColorSelector product={product} categoryName={category?.name || "SPA"} />
+        <ProductColorSelector product={product} categoryName={(category as any)?.name || "SPA"} />
 
         {/* Live Interactive B2B ROI Calculator Section (Featured right above footer on product pages) */}
         <div className="pt-8 border-t border-outline-variant/60">
