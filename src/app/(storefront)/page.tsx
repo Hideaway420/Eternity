@@ -3,11 +3,13 @@ import Link from "next/link";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { MobileBottomBar } from "@/components/storefront/MobileBottomBar";
+import { TopLoadingBar } from "@/components/storefront/TopLoadingBar";
+import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
 import { db, initTables } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Calculator, Flame, Palette, Check } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Palette, Check } from "lucide-react";
 
 export const revalidate = 0; // Dynamic rendering
 
@@ -114,6 +116,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface pb-16 md:pb-0">
+      <TopLoadingBar />
       <Header />
 
       <main className="flex-1 space-y-12 sm:space-y-20 pb-16">
@@ -167,11 +170,11 @@ export default async function HomePage() {
 
             {/* Hero Image Showcase */}
             <div className="lg:col-span-5 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest">
+              <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest group">
                 <img
                   src="https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg"
                   alt="Ikonic Barber Chair Felix Official Edition"
-                  className="w-full h-[280px] sm:h-[420px] object-cover hover:scale-105 transition-transform duration-500"
+                  className="w-full h-[280px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60">
                   <div className="flex justify-between items-center">
@@ -279,7 +282,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 4: D2C Traffic Line Best Sellers (COMPACT 2-COLUMN MOBILE GRID MATCHING DARAZ APP) */}
+        {/* Section 4: D2C Traffic Line Best Sellers (2-COLUMN MOBILE GRID MATCHING DARAZ APP) */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -302,7 +305,7 @@ export default async function HomePage() {
                         alt={p.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <span className="absolute top-1.5 left-1.5 bg-surface-lowest/95 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
+                      <span className="absolute top-1.5 left-1.5 bg-surface-lowest/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
                         Genuine Ikonic
                       </span>
                     </div>
@@ -338,62 +341,9 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 5: B2B Profit Line Salon Fit-Out Suite */}
-        <section className="bg-inverse-surface text-inverse-on-surface py-12 sm:py-16">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="max-w-3xl mb-8 sm:mb-12">
-              <span className="text-xs uppercase tracking-widest text-gold font-bold flex items-center">
-                <Building2 className="w-4 h-4 mr-1.5" /> High-Margin Salon Fit-Outs
-              </span>
-              <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight mt-2">
-                Professional Barber Chairs & Shampoo Basins
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-300 mt-2 sm:mt-3 font-light leading-relaxed">
-                Empower your beauty parlour or barber shop with heavy-duty hydraulic chairs and electric facial beds. One 6-chair fit-out delivers NPR ~563,000 gross margin.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-              {profitProducts.map((p) => (
-                <div key={p.id} className="trade-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-gold/50 transition-all">
-                  <div>
-                    <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-neutral-900">
-                      <img
-                        src={p.imageUrl || "/products/ikonic_barber_chair_1786231855404.jpg"}
-                        alt={p.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="text-xs font-mono text-gold uppercase">B2B Trade Line</span>
-                        <h3 className="font-serif font-bold text-lg sm:text-xl text-white mt-1">{p.name}</h3>
-                      </div>
-                      <span className="text-base sm:text-xl font-bold text-gold font-sans">{formatNpr(p.price_npr)}</span>
-                    </div>
-
-                    <div className="mt-4 p-3 rounded-xl bg-neutral-900/80 border border-neutral-700 text-xs space-y-1">
-                      <div className="flex items-center text-gold font-semibold">
-                        <Calculator className="w-3.5 h-3.5 mr-1.5" /> Payback Investment Estimate
-                      </div>
-                      <p className="text-neutral-300 text-[11px] sm:text-xs">
-                        At NPR 500 per haircut / facial (5 clients/day), this chair pays back its full cost in <strong className="text-white font-mono">2.4 months</strong>.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex gap-3">
-                    <Link
-                      href={`/p/${p.slug}`}
-                      className="flex-1 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs text-center transition-colors shadow-gold"
-                    >
-                      Select Color & Request Quote
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Section 5: Interactive B2B Salon Payback Calculator Widget */}
+        <section className="container mx-auto px-4 lg:px-8">
+          <SalonCalculatorWidget />
         </section>
 
         {/* Section 6: Salon Membership Tier Matrix */}
