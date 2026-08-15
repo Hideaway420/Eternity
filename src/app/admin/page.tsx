@@ -4,7 +4,7 @@ import { db, initTables } from "@/db";
 import { orders, inventory, products } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { PhoneCall, AlertTriangle, ArrowRight } from "lucide-react";
+import { PhoneCall, AlertTriangle, ArrowRight, PackageCheck } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -40,10 +40,12 @@ export default async function AdminDashboardPage() {
           </div>
 
           <nav className="flex items-center space-x-6 text-xs font-semibold">
-            <Link href="/admin/cod-queue" className="text-gold font-bold flex items-center">
+            <Link href="/admin/products" className="text-gold font-bold flex items-center bg-gold/15 px-3 py-1.5 rounded-lg border border-gold/40">
+              <PackageCheck className="w-3.5 h-3.5 mr-1 text-gold" /> Catalog & Products
+            </Link>
+            <Link href="/admin/cod-queue" className="hover:text-gold transition-colors flex items-center">
               <PhoneCall className="w-3.5 h-3.5 mr-1" /> COD Queue ({pendingCodOrders.length})
             </Link>
-            <Link href="/admin/orders" className="hover:text-gold transition-colors">Orders</Link>
             <Link href="/admin/inventory" className="hover:text-gold transition-colors">Inventory</Link>
             <Link href="/admin/purchase-orders" className="hover:text-gold transition-colors">Purchase Orders</Link>
             <Link href="/admin/broadcasts" className="hover:text-gold transition-colors">Broadcasts</Link>
@@ -82,9 +84,11 @@ export default async function AdminDashboardPage() {
           </div>
 
           <div className="bg-surface-lowest p-6 rounded-2xl border border-outline-variant space-y-2 shadow-soft">
-            <span className="text-xs text-outline font-semibold uppercase">Pending Salon Quotes</span>
-            <div className="text-3xl font-bold font-mono text-on-surface">3</div>
-            <p className="text-[11px] text-outline">Equipment fit-out requests</p>
+            <span className="text-xs text-outline font-semibold uppercase">Catalog Product Manager</span>
+            <div className="text-3xl font-bold font-mono text-on-surface">Manage</div>
+            <Link href="/admin/products" className="text-xs text-gold font-bold hover:underline inline-flex items-center mt-1">
+              Add & Edit Catalog <ArrowRight className="w-3 h-3 ml-1" />
+            </Link>
           </div>
         </div>
 
