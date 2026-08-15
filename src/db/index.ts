@@ -80,15 +80,6 @@ export async function initTables() {
         is_primary INTEGER DEFAULT 0
       );
 
-      CREATE TABLE IF NOT EXISTS product_variants (
-        id TEXT PRIMARY KEY,
-        product_id TEXT NOT NULL REFERENCES products(id),
-        sku TEXT NOT NULL,
-        name TEXT NOT NULL,
-        price_delta_npr INTEGER DEFAULT 0,
-        barcode TEXT
-      );
-
       CREATE TABLE IF NOT EXISTS warehouses (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -112,196 +103,54 @@ export async function initTables() {
         bin_location TEXT
       );
 
-      CREATE TABLE IF NOT EXISTS stock_movements (
-        id TEXT PRIMARY KEY,
-        product_id TEXT NOT NULL REFERENCES products(id),
-        variant_id TEXT,
-        warehouse_id TEXT NOT NULL REFERENCES warehouses(id),
-        type TEXT NOT NULL,
-        qty_delta INTEGER NOT NULL,
-        ref_type TEXT,
-        ref_id TEXT,
-        unit_cost_npr INTEGER,
-        reason TEXT,
-        created_by TEXT,
-        created_at TEXT NOT NULL
-      );
+      -- Default Warehouse
+      INSERT OR IGNORE INTO warehouses (id, name, type, address, district, is_default, active)
+      VALUES ('wh-main', 'Kathmandu Main Showroom & Warehouse', 'warehouse', 'New Road', 'Kathmandu', 1, 1);
 
-      CREATE TABLE IF NOT EXISTS suppliers (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        country TEXT DEFAULT 'India',
-        contact TEXT,
-        currency TEXT DEFAULT 'INR',
-        lead_time_days INTEGER DEFAULT 14,
-        requires_coo INTEGER DEFAULT 1
-      );
+      -- Categories
+      INSERT OR IGNORE INTO categories (id, name, slug, sort_order)
+      VALUES 
+        ('cat-spa', 'Luxury Pedicure & Spa Chairs', 'spa', 1),
+        ('cat-chairs', 'Luxury Salon Chairs', 'luxury-salon-chairs', 2),
+        ('cat-straighteners', 'Hair Straighteners', 'hair-straighteners', 3),
+        ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers', 4);
 
-      CREATE TABLE IF NOT EXISTS purchase_orders (
-        id TEXT PRIMARY KEY,
-        po_number TEXT NOT NULL UNIQUE,
-        supplier_id TEXT NOT NULL REFERENCES suppliers(id),
-        warehouse_id TEXT NOT NULL REFERENCES warehouses(id),
-        status TEXT NOT NULL DEFAULT 'draft',
-        currency TEXT DEFAULT 'INR',
-        fx_rate INTEGER DEFAULT 160,
-        subtotal_foreign INTEGER NOT NULL,
-        freight_npr INTEGER DEFAULT 0,
-        duty_npr INTEGER DEFAULT 0,
-        vat_npr INTEGER DEFAULT 0,
-        clearing_npr INTEGER DEFAULT 0,
-        inland_npr INTEGER DEFAULT 0,
-        coo_received INTEGER DEFAULT 0,
-        expected_at TEXT,
-        received_at TEXT,
-        notes TEXT
-      );
+      -- 4 NEW LUXURY SPA & PEDICURE CHAIRS INVENTORY SEED
+      INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
+      VALUES
+        ('prod-etp-spa-01', 'ETP-SPA-01', 'classic-eternity-spa-chair', 'Classic Eternity Spa Chair', 'Transform your salon into a sanctuary of relaxation with the Classic Eternity Spa Chair. Ergonomic plush cushioning wrapped in spill-resistant upholstery with foot hydromassage.', 'cat-spa', 'profit', 12000000, 13000000, 7800000, 'active', datetime('now'), datetime('now')),
+        ('prod-etp-spa-02', 'ETP-SPA-02', 'eternity-elegance-pedicure-station', 'Eternity Elegance Pedicure Station', 'Gold standard of foot care with quiet massage mechanics, deep soaking basin, and full lumbar support backrest.', 'cat-spa', 'profit', 12800000, 13900000, 8200000, 'active', datetime('now'), datetime('now')),
+        ('prod-etp-spa-03', 'ETP-SPA-03', 'eternity-luxe-spa-recliner', 'Eternity Luxe Spa Recliner', 'VIP Spa recliner engineered for luxury wellness resorts. Cloud-like plushness with minimalist gold accents.', 'cat-spa', 'profit', 13500000, 14650000, 8700000, 'active', datetime('now'), datetime('now')),
+        ('prod-etp-spa-04', 'ETP-SPA-04', 'eternity-signature-series-limited-edition', 'Eternity Signature Series (Limited Edition)', 'Pinnacle of salon luxury. Hand-stitched detailing, ultra-premium memory foam, and state-of-the-art spa technology.', 'cat-spa', 'profit', 14000000, 14500000, 9000000, 'active', datetime('now'), datetime('now'));
 
-      CREATE TABLE IF NOT EXISTS po_lines (
-        id TEXT PRIMARY KEY,
-        po_id TEXT NOT NULL REFERENCES purchase_orders(id),
-        product_id TEXT NOT NULL REFERENCES products(id),
-        variant_id TEXT,
-        qty_ordered INTEGER NOT NULL,
-        qty_received INTEGER DEFAULT 0,
-        unit_cost_foreign INTEGER NOT NULL,
-        landed_unit_cost_npr INTEGER
-      );
+      -- 3 SIGNATURE LUXURY SALON CHAIRS INVENTORY SEED
+      INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
+      VALUES
+        ('prod-etp-chair-01', 'ETP-LSC-01', 'eternity-emerald-royal-luxury-salon-chair', 'Eternity Emerald Royal Luxury Salon Chair', 'Heavy-duty hydraulic reclining chair in Emerald Green leather with 360-degree lockable swivel base.', 'cat-chairs', 'profit', 3500000, 3685000, 2200000, 'active', datetime('now'), datetime('now')),
+        ('prod-etp-chair-02', 'ETP-LSC-02', 'eternity-espresso-vintage-luxury-salon-chair', 'Eternity Espresso Vintage Luxury Salon Chair', 'Vintage Espresso Brown leather hydraulic styling chair with heavy-duty chrome hydraulic pump.', 'cat-chairs', 'profit', 3750000, 3950000, 2350000, 'active', datetime('now'), datetime('now')),
+        ('prod-etp-chair-03', 'ETP-LSC-03', 'eternity-burgundy-regal-luxury-salon-chair', 'Eternity Burgundy Regal Luxury Salon Chair', 'Regal Burgundy Red leather reclining chair with adjustable headrest and stainless steel footrest.', 'cat-chairs', 'profit', 3850000, 4050000, 2400000, 'active', datetime('now'), datetime('now'));
 
-      CREATE TABLE IF NOT EXISTS customers (
-        id TEXT PRIMARY KEY,
-        auth_user_id TEXT,
-        name TEXT NOT NULL,
-        phone TEXT NOT NULL UNIQUE,
-        email TEXT,
-        type TEXT NOT NULL DEFAULT 'retail',
-        created_at TEXT NOT NULL
-      );
+      -- PRODUCT IMAGES SEED
+      INSERT OR IGNORE INTO product_images (id, product_id, url, alt, is_primary)
+      VALUES
+        ('img-spa-01', 'prod-etp-spa-01', '/products/spa_chair_classic.jpg', 'Classic Eternity Spa Chair', 1),
+        ('img-spa-02', 'prod-etp-spa-02', '/products/spa_chair_elegance.jpg', 'Eternity Elegance Pedicure Station', 1),
+        ('img-spa-03', 'prod-etp-spa-03', '/products/spa_chair_pink_recliner.jpg', 'Eternity Luxe Spa Recliner', 1),
+        ('img-spa-04', 'prod-etp-spa-04', '/products/spa_chair_signature.jpg', 'Eternity Signature Series', 1),
+        ('img-chair-01', 'prod-etp-chair-01', '/products/chair_emerald_green_1786235658712.jpg', 'Emerald Royal Salon Chair', 1),
+        ('img-chair-02', 'prod-etp-chair-02', '/products/chair_espresso_brown_1786235685819.jpg', 'Espresso Vintage Salon Chair', 1),
+        ('img-chair-03', 'prod-etp-chair-03', '/products/chair_burgundy_red_1786235698852.jpg', 'Burgundy Regal Salon Chair', 1);
 
-      CREATE TABLE IF NOT EXISTS addresses (
-        id TEXT PRIMARY KEY,
-        customer_id TEXT NOT NULL REFERENCES customers(id),
-        label TEXT DEFAULT 'Home',
-        recipient TEXT NOT NULL,
-        phone TEXT NOT NULL,
-        district TEXT NOT NULL,
-        city TEXT NOT NULL,
-        area TEXT,
-        landmark TEXT,
-        inside_valley INTEGER NOT NULL,
-        is_default INTEGER DEFAULT 0
-      );
-
-      CREATE TABLE IF NOT EXISTS orders (
-        id TEXT PRIMARY KEY,
-        order_number TEXT NOT NULL UNIQUE,
-        customer_id TEXT REFERENCES customers(id),
-        status TEXT NOT NULL DEFAULT 'pending',
-        payment_method TEXT NOT NULL DEFAULT 'cod',
-        payment_status TEXT NOT NULL DEFAULT 'unpaid',
-        subtotal_npr INTEGER NOT NULL,
-        discount_npr INTEGER DEFAULT 0,
-        delivery_npr INTEGER DEFAULT 0,
-        vat_npr INTEGER DEFAULT 0,
-        total_npr INTEGER NOT NULL,
-        address_snapshot TEXT,
-        cod_confirmed_at TEXT,
-        cod_confirmed_by TEXT,
-        courier TEXT,
-        tracking_number TEXT,
-        placed_at TEXT NOT NULL,
-        dispatched_at TEXT,
-        delivered_at TEXT,
-        cancelled_at TEXT,
-        notes TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS order_items (
-        id TEXT PRIMARY KEY,
-        order_id TEXT NOT NULL REFERENCES orders(id),
-        product_id TEXT NOT NULL REFERENCES products(id),
-        variant_id TEXT,
-        name_snapshot TEXT NOT NULL,
-        sku_snapshot TEXT NOT NULL,
-        qty INTEGER NOT NULL,
-        unit_price_npr INTEGER NOT NULL,
-        unit_cost_npr INTEGER,
-        line_total_npr INTEGER NOT NULL
-      );
-
-      CREATE TABLE IF NOT EXISTS payments (
-        id TEXT PRIMARY KEY,
-        order_id TEXT NOT NULL REFERENCES orders(id),
-        method TEXT NOT NULL,
-        amount_npr INTEGER NOT NULL,
-        gateway_ref TEXT,
-        status TEXT NOT NULL DEFAULT 'pending',
-        received_at TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS salon_accounts (
-        id TEXT PRIMARY KEY,
-        customer_id TEXT NOT NULL REFERENCES customers(id),
-        salon_name TEXT NOT NULL,
-        owner_name TEXT NOT NULL,
-        district TEXT NOT NULL,
-        area TEXT,
-        chair_count INTEGER DEFAULT 1,
-        tier TEXT NOT NULL DEFAULT 'registered',
-        credit_limit_npr INTEGER DEFAULT 0,
-        credit_days INTEGER DEFAULT 0,
-        first_order_at TEXT,
-        last_order_at TEXT,
-        lifetime_npr INTEGER DEFAULT 0,
-        avg_days_between_orders INTEGER,
-        next_nudge_at TEXT,
-        broadcast_opt_in INTEGER DEFAULT 1,
-        viber_number TEXT,
-        notes TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS price_tiers (
-        id TEXT PRIMARY KEY,
-        tier TEXT NOT NULL,
-        category_id TEXT,
-        product_id TEXT,
-        discount_pct INTEGER NOT NULL
-      );
-
-      CREATE TABLE IF NOT EXISTS quote_requests (
-        id TEXT PRIMARY KEY,
-        salon_account_id TEXT REFERENCES salon_accounts(id),
-        status TEXT NOT NULL DEFAULT 'pending',
-        items TEXT NOT NULL,
-        message TEXT,
-        quoted_total_npr INTEGER,
-        quoted_by TEXT,
-        quoted_at TEXT,
-        expires_at TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS broadcasts (
-        id TEXT PRIMARY KEY,
-        title TEXT NOT NULL,
-        body TEXT NOT NULL,
-        body_np TEXT,
-        channel TEXT NOT NULL DEFAULT 'viber',
-        audience TEXT NOT NULL DEFAULT 'all',
-        audience_filter TEXT,
-        product_ids TEXT,
-        scheduled_at TEXT,
-        sent_at TEXT,
-        sent_count INTEGER DEFAULT 0,
-        created_by TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS staff (
-        id TEXT PRIMARY KEY,
-        auth_user_id TEXT,
-        name TEXT NOT NULL,
-        role TEXT NOT NULL DEFAULT 'sales',
-        active INTEGER DEFAULT 1
-      );
+      -- WAREHOUSE INVENTORY QUANTITIES SEED
+      INSERT OR IGNORE INTO inventory (id, product_id, warehouse_id, qty_on_hand, qty_reserved, qty_incoming, reorder_point, safety_stock)
+      VALUES
+        ('inv-spa-01', 'prod-etp-spa-01', 'wh-main', 5, 1, 2, 2, 1),
+        ('inv-spa-02', 'prod-etp-spa-02', 'wh-main', 4, 0, 2, 2, 1),
+        ('inv-spa-03', 'prod-etp-spa-03', 'wh-main', 3, 1, 3, 2, 1),
+        ('inv-spa-04', 'prod-etp-spa-04', 'wh-main', 2, 0, 1, 1, 1),
+        ('inv-chair-01', 'prod-etp-chair-01', 'wh-main', 8, 2, 5, 3, 2),
+        ('inv-chair-02', 'prod-etp-chair-02', 'wh-main', 6, 1, 4, 3, 2),
+        ('inv-chair-03', 'prod-etp-chair-03', 'wh-main', 7, 0, 5, 3, 2);
     `);
   } catch (err) {
     console.warn("⚠️ initTables warning (likely read-only environment or missing Turso env):", err);
