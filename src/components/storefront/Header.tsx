@@ -82,11 +82,11 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Header with Cream Color (#F8F3EC) and Seamless EP Gold Logo */}
+        {/* Main Header with Cream Color (#F8F3EC) and PROPER GAP IN NAV LINKS */}
         <nav className="bg-[#F8F3EC] backdrop-blur-md border-b border-[#E8E1D7] px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 shadow-sm">
-          <div className="container mx-auto flex items-center justify-between gap-3">
+          <div className="container mx-auto flex items-center justify-between gap-4 sm:gap-6">
             {/* Seamless EP Gold Logo Icon & Text Motion on "ETERNITY PRODUCTS NEPAL" */}
-            <Link href="/" className="flex items-center space-x-3 group">
+            <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
               <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <img
                   src="/logo.png"
@@ -104,31 +104,41 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </Link>
 
-            {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-[#2C2A29]">
-              <Link href="/" className="hover:text-gold transition-colors font-bold">
+            {/* Desktop Navigation Links (EXACT REQUESTED ORDER & PROPER SPACING GAP) */}
+            <div className="hidden xl:flex items-center space-x-7 text-sm font-semibold text-[#2C2A29]">
+              <Link href="/" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
-              <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center">
+              
+              {/* 1. Luxury Pedicure & Spa Chairs */}
+              <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center whitespace-nowrap">
                 <Footprints className="w-4 h-4 mr-1 text-gold" />
-                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "SPA"}
+                {isNp ? "लग्जरी पेडिक्योर र स्पा कुर्सीहरू" : "Luxury Pedicure & Spa Chairs"}
               </Link>
-              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-[#2C2A29]">
-                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
+
+              {/* 2. Luxury Salon Chairs */}
+              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-[#2C2A29] whitespace-nowrap">
+                {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
               </Link>
-              <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors font-bold">
+
+              {/* 3. Straighteners */}
+              <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
-              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors font-bold">
+
+              {/* 4. Dryers & Curlers */}
+              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
                 {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
               </Link>
-              <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold">
+
+              {/* 5. Authenticity */}
+              <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold whitespace-nowrap">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
               </Link>
             </div>
 
             {/* Search & Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
               {/* Command + K Instant Search Button */}
               <button
                 id="search-modal-trigger"
@@ -137,7 +147,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Search className="w-3.5 h-3.5 text-gold" />
                 <span className="font-semibold text-[#3D3A37]">
-                  {isNp ? "स्पा कुर्सी, पेडीक्योर खोज्नुहोस्..." : "Search spa chairs, pedicure..."}
+                  {isNp ? "स्पा कुर्सी, पेडीक्योर खोज्नुहोस्..." : "Search spa chairs..."}
                 </span>
                 <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-[#F2EBE1] border border-[#D8CFC3] rounded text-outline font-bold">
                   ⌘K
@@ -179,7 +189,7 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Mobile Hamburger Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2 text-on-surface focus:outline-none rounded-lg"
+                className="xl:hidden p-2 text-on-surface focus:outline-none rounded-lg"
                 aria-label="Toggle Menu"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -189,13 +199,20 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Navigation Drawer */}
           {mobileMenuOpen && (
-            <div className="lg:hidden border-t border-[#E8E1D7] mt-3 pt-3 pb-3 space-y-2 animate-in slide-in-from-top duration-200">
+            <div className="xl:hidden border-t border-[#E8E1D7] mt-3 pt-3 pb-3 space-y-2 animate-in slide-in-from-top duration-200">
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-bold hover:bg-white/60 rounded-xl"
               >
                 {isNp ? "गृहपृष्ठ" : "Home"}
+              </Link>
+              <Link
+                href="/c/spa"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-black text-gold hover:bg-white/60 rounded-xl"
+              >
+                {isNp ? "लग्जरी पेडिक्योर र स्पा कुर्सीहरू" : "Luxury Pedicure & Spa Chairs"}
               </Link>
               <Link
                 href="/c/luxury-salon-chairs"
@@ -205,18 +222,18 @@ export const Header: React.FC<HeaderProps> = ({
                 {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
               </Link>
               <Link
-                href="/c/spa"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-black text-gold hover:bg-white/60 rounded-xl"
-              >
-                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "SPA Collection"}
-              </Link>
-              <Link
                 href="/c/hair-straighteners"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-medium hover:bg-white/60 rounded-xl"
               >
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
+              </Link>
+              <Link
+                href="/c/hair-dryers"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-medium hover:bg-white/60 rounded-xl"
+              >
+                {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
               </Link>
             </div>
           )}
