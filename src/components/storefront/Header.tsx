@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, ShieldCheck, UserCheck, Menu, X, Sparkles, Building2, PhoneCall } from "lucide-react";
+import { Search, ShoppingBag, ShieldCheck, Menu, X, Sparkles, Building2, PhoneCall } from "lucide-react";
 
 interface HeaderProps {
   cartCount?: number;
@@ -12,11 +12,20 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   cartCount = 0,
-  lang = "en",
+  lang: initialLang = "en",
   onToggleLang,
 }) => {
+  const [currentLang, setCurrentLang] = useState<"en" | "np">(initialLang);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const toggleLanguage = () => {
+    const nextLang = currentLang === "en" ? "np" : "en";
+    setCurrentLang(nextLang);
+    if (onToggleLang) onToggleLang();
+  };
+
+  const isNp = currentLang === "np";
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
@@ -25,22 +34,24 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-              Official Ikonic Nepal
+              {isNp ? "आधिकारिक आइकोनिक नेपाल" : "Official Ikonic Nepal"}
             </span>
             <span className="hidden sm:inline">
-              🚚 Open-Box Cash on Delivery Across Kathmandu & Major Nepal Cities
+              {isNp
+                ? "🚚 काठमाडौँ र प्रमुख सहरहरूमा ओपन-बक्स क्यास अन डेलिभरी"
+                : "🚚 Open-Box Cash on Delivery Across Kathmandu & Major Nepal Cities"}
             </span>
           </div>
           <div className="flex items-center space-x-4 text-[11px]">
-            <a href="tel:+9779800000000" className="flex items-center hover:underline">
+            <a href="tel:+9779801234567" className="flex items-center hover:underline">
               <PhoneCall className="w-3 h-3 mr-1" /> Viber / Call: +977 9801234567
             </a>
             <span className="opacity-40">|</span>
             <button
-              onClick={onToggleLang}
-              className="font-bold hover:text-gold transition-colors underline"
+              onClick={toggleLanguage}
+              className="font-bold hover:text-gold transition-colors underline flex items-center space-x-1"
             >
-              {lang === "en" ? "🇳🇵 नेपाली" : "🇬🇧 English"}
+              <span>{isNp ? "🇬🇧 English" : "🇳🇵 नेपाली"}</span>
             </button>
           </div>
         </div>
@@ -59,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ETERNITY
               </span>
               <span className="text-[9px] uppercase tracking-[0.25em] text-outline font-semibold block mt-0.5">
-                Products Nepal
+                {isNp ? "इटरनिटी प्रडक्ट्स नेपाल" : "Products Nepal"}
               </span>
             </div>
           </Link>
@@ -67,22 +78,22 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-7 text-sm font-medium text-on-surface-variant">
             <Link href="/" className="hover:text-gold transition-colors">
-              Home
+              {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
             <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">
-              Straighteners
+              {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
             </Link>
             <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
-              Dryers & Curlers
+              {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
             </Link>
             <Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
-              Salon Furniture
+              {isNp ? "सलोन फर्निचर" : "Salon Furniture"}
               <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-spa-blue text-secondary-on-container rounded font-bold uppercase">
-                B2B Bulk
+                {isNp ? "थोक B2B" : "B2B Bulk"}
               </span>
             </Link>
             <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> Authenticity
+              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
             </Link>
           </div>
 
@@ -92,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="hidden md:flex items-center relative">
               <input
                 type="text"
-                placeholder="Search straightener, dryer, barber chair..."
+                placeholder={isNp ? "स्ट्रेटर, ड्रायर, कुर्सी खोज्नुहोस्..." : "Search straightener, dryer, barber chair..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-56 lg:w-64 bg-surface-low border border-outline-variant text-xs rounded-lg py-2 pl-8 pr-3 focus:outline-none focus:border-gold transition-all"
@@ -106,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="hidden sm:flex items-center px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-inverse-surface hover:text-inverse-on-surface text-xs font-semibold text-on-surface transition-all border border-outline-variant"
             >
               <Building2 className="w-3.5 h-3.5 mr-1.5 text-gold" />
-              Salon Account
+              <span className="font-bold">{isNp ? "सलोन खाता" : "Salon Account"}</span>
             </Link>
 
             {/* Cart Button */}
@@ -141,35 +152,35 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
             >
-              Home
+              {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
             <Link
               href="/c/hair-straighteners"
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
             >
-              Hair Straighteners
+              {isNp ? "स्ट्रेटरहरू" : "Hair Straighteners"}
             </Link>
             <Link
               href="/c/hair-dryers"
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
             >
-              Hair Dryers & Curlers
+              {isNp ? "ड्रायर र कर्लर" : "Hair Dryers & Curlers"}
             </Link>
             <Link
               href="/c/salon-furniture-equipment"
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-semibold text-gold hover:bg-surface-low rounded-lg"
             >
-              Salon Furniture & Equipment (B2B)
+              {isNp ? "सलोन फर्निचर र उपकरणहरू (B2B)" : "Salon Furniture & Equipment (B2B)"}
             </Link>
             <Link
               href="/salon/portal"
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-medium bg-surface-container text-on-surface rounded-lg"
             >
-              ✨ B2B Salon Portal Log In
+              ✨ {isNp ? "सलोन पोर्टलम लन इन् गर्नुहोस्" : "B2B Salon Portal Log In"}
             </Link>
           </div>
         )}
