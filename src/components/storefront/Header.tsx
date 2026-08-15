@@ -69,43 +69,47 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Glass Header */}
-        <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+        {/* Main Glass Header (HIGH CONTRAST BOLD LOGO & GOLD MOTION TEXT) */}
+        <nav className="glass-header border-b border-outline-variant/60 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 shadow-soft">
           <div className="container mx-auto flex items-center justify-between gap-3">
-            {/* Official Brand Logo */}
+            {/* Official EP Gold Logo & Motion Brand Title */}
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl overflow-hidden bg-black/90 p-1 border border-gold/50 shadow-gold group-hover:scale-105 transition-transform flex-shrink-0 flex items-center justify-center">
-                <img src="/logo.png" alt="Eternity Products Logo" className="w-full h-full object-contain" />
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl overflow-hidden bg-gradient-to-b from-neutral-900 to-black p-1 border-2 border-gold/60 shadow-gold group-hover:scale-105 transition-transform flex-shrink-0 flex items-center justify-center">
+                <img
+                  src="/logo.png"
+                  alt="Eternity Products Logo"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]"
+                />
               </div>
               <div>
-                <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-on-surface block leading-none">
+                <span className="font-serif text-xl sm:text-2xl font-black tracking-tight block leading-none gold-motion-text">
                   ETERNITY
                 </span>
-                <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-gold font-semibold block mt-0.5">
-                  {isNp ? "इटरनिटी नेपाल" : "Products Nepal"}
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.22em] block mt-1 gold-sub-motion">
+                  {isNp ? "इटरनिटी नेपाल" : "PRODUCTS NEPAL"}
                 </span>
               </div>
             </Link>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center space-x-6 text-sm font-medium text-on-surface-variant">
-              <Link href="/" className="hover:text-gold transition-colors">
+            <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-on-surface-variant">
+              <Link href="/" className="hover:text-gold transition-colors font-bold">
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
-              <Link href="/c/spa" className="hover:text-gold transition-colors font-bold text-gold flex items-center">
-                <Footprints className="w-4 h-4 mr-1 text-gold" />
+              <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center">
+                <Footprints className="w-4 h-4 mr-1 text-gold animate-bounce" />
                 {isNp ? "स्पा संकलन" : "SPA"}
               </Link>
-              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface">
+              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-on-surface">
                 {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
               </Link>
-              <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">
+              <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors font-bold">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
-              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
+              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors font-bold">
                 {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
               </Link>
-              <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
+              <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
               </Link>
             </div>
@@ -119,10 +123,10 @@ export const Header: React.FC<HeaderProps> = ({
                 className="hidden md:flex items-center space-x-3 bg-surface-low hover:bg-surface-container border border-outline-variant text-xs rounded-xl py-2 px-3 text-outline hover:text-on-surface transition-all"
               >
                 <Search className="w-3.5 h-3.5 text-gold" />
-                <span className="font-medium">
+                <span className="font-semibold">
                   {isNp ? "स्पा कुर्सी, पेडीक्योर खोज्नुहोस्..." : "Search spa chairs, pedicure..."}
                 </span>
-                <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-lowest border border-outline-variant rounded text-outline">
+                <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-lowest border border-outline-variant rounded text-outline font-bold">
                   ⌘K
                 </kbd>
               </button>
@@ -176,21 +180,21 @@ export const Header: React.FC<HeaderProps> = ({
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
+                className="block px-3.5 py-2.5 text-sm font-bold hover:bg-surface-low rounded-xl"
               >
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
               <Link
                 href="/c/spa"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
+                className="block px-3.5 py-2.5 text-sm font-black text-gold hover:bg-surface-low rounded-xl"
               >
                 {isNp ? "स्पा संकलन" : "SPA Collection"}
               </Link>
               <Link
                 href="/c/luxury-salon-chairs"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-semibold hover:bg-surface-low rounded-xl"
+                className="block px-3.5 py-2.5 text-sm font-bold hover:bg-surface-low rounded-xl"
               >
                 {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
               </Link>

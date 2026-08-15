@@ -24,13 +24,13 @@
 
 @layer utilities {
   .glass-header {
-    background: rgba(253, 251, 247, 0.85);
+    background: rgba(253, 251, 247, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
   
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(228, 226, 225, 0.6);
   }
@@ -43,5 +43,32 @@
   .trade-card {
     background-color: #1E2224;
     border: 1px solid #2B3033;
+  }
+
+  @keyframes goldShimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .gold-motion-text {
+    background: linear-gradient(90deg, #1B1C1C 0%, #D4AF37 40%, #1B1C1C 80%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: goldShimmer 5s infinite linear;
+  }
+
+  .gold-sub-motion {
+    background: linear-gradient(90deg, #B58A18 0%, #F3D068 50%, #B58A18 100%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: goldShimmer 3.5s infinite linear;
   }
 }
