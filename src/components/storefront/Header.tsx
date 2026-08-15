@@ -17,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [currentLang, setCurrentLang] = useState<"en" | "np">(initialLang);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const toggleLanguage = () => {
@@ -30,58 +31,61 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       {/* Announcement Bar */}
-      <div className="bg-primary text-on-primary text-xs py-2 px-4 flex justify-between items-center tracking-wide font-medium">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
-              {isNp ? "आधिकारिक आइकोनिक नेपाल" : "Official Ikonic Nepal"}
+      <div className="bg-primary text-on-primary text-[11px] sm:text-xs py-2 px-3 sm:px-4 tracking-wide font-medium">
+        <div className="container mx-auto flex justify-between items-center gap-2">
+          <div className="flex items-center space-x-2 truncate">
+            <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex-shrink-0">
+              {isNp ? "आधिकारिक आइकोनिक" : "Official Ikonic"}
             </span>
-            <span className="hidden sm:inline">
+            <span className="truncate hidden xs:inline">
               {isNp
-                ? "🚚 काठमाडौँ र प्रमुख सहरहरूमा ओपन-बक्स क्यास अन डेलिभरी"
-                : "🚚 Open-Box Cash on Delivery Across Kathmandu & Major Nepal Cities"}
+                ? "🚚 काठमाडौँ र नेपालभरि ओपन-बक्स क्यास अन डेलिभरी"
+                : "🚚 Open-Box Cash on Delivery Across Nepal"}
             </span>
           </div>
-          <div className="flex items-center space-x-4 text-[11px]">
+
+          <div className="flex items-center space-x-3 flex-shrink-0">
             <a
               href="https://wa.me/9779868089892"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center hover:underline font-bold text-gold"
+              className="flex items-center hover:underline font-bold text-gold text-[11px]"
             >
-              <PhoneCall className="w-3 h-3 mr-1" /> Viber / Call / WhatsApp: +977 9868089892
+              <PhoneCall className="w-3 h-3 mr-1" />
+              <span className="hidden sm:inline">Viber / WhatsApp: </span>
+              <span>+977 9868089892</span>
             </a>
             <span className="opacity-40">|</span>
             <button
               onClick={toggleLanguage}
               className="font-bold hover:text-gold transition-colors underline flex items-center space-x-1"
             >
-              <span>{isNp ? "🇬🇧 English" : "🇳🇵 नेपाली"}</span>
+              <span>{isNp ? "🇬🇧 EN" : "🇳🇵 NP"}</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Glass Header */}
-      <nav className="glass-header border-b border-outline-variant/50 px-4 lg:px-8 py-3">
-        <div className="container mx-auto flex items-center justify-between gap-4">
+      <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+        <div className="container mx-auto flex items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 fill-gold/20" />
+          <Link href="/" className="flex items-center space-x-2.5 group">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold group-hover:scale-105 transition-transform flex-shrink-0">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 fill-gold/20" />
             </div>
             <div>
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-on-surface block leading-none">
+              <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-on-surface block leading-none">
                 ETERNITY
               </span>
-              <span className="text-[9px] uppercase tracking-[0.25em] text-outline font-semibold block mt-0.5">
-                {isNp ? "इटरनिटी प्रडक्ट्स नेपाल" : "Products Nepal"}
+              <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-outline font-semibold block mt-0.5">
+                {isNp ? "इटरनिटी नेपाल" : "Products Nepal"}
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex items-center space-x-7 text-sm font-medium text-on-surface-variant">
+          <div className="hidden lg:flex items-center space-x-6 text-sm font-medium text-on-surface-variant">
             <Link href="/" className="hover:text-gold transition-colors">
               {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
@@ -103,18 +107,27 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Search & Actions */}
-          <div className="flex items-center space-x-3">
-            {/* Search Input */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Desktop Search Input */}
             <div className="hidden md:flex items-center relative">
               <input
                 type="text"
-                placeholder={isNp ? "स्ट्रेटर, ड्रायर, कुर्सी खोज्नुहोस्..." : "Search straightener, dryer, barber chair..."}
+                placeholder={isNp ? "स्ट्रेटर, ड्रायर, कुर्सी..." : "Search straightener, dryer, barber chair..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-56 lg:w-64 bg-surface-low border border-outline-variant text-xs rounded-lg py-2 pl-8 pr-3 focus:outline-none focus:border-gold transition-all"
+                className="w-48 lg:w-64 bg-surface-low border border-outline-variant text-xs rounded-lg py-2 pl-8 pr-3 focus:outline-none focus:border-gold transition-all"
               />
               <Search className="w-3.5 h-3.5 text-outline absolute left-2.5" />
             </div>
+
+            {/* Mobile Search Toggle Button */}
+            <button
+              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+              className="md:hidden p-2 text-on-surface hover:text-gold rounded-lg"
+              aria-label="Toggle Search"
+            >
+              <Search className="w-5 h-5" />
+            </button>
 
             {/* B2B Salon Portal Button */}
             <Link
@@ -128,12 +141,12 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Cart Button */}
             <Link
               href="/checkout"
-              className="relative p-2 rounded-xl bg-gold text-on-surface hover:bg-gold-hover transition-colors shadow-soft"
+              className="relative p-2 sm:p-2.5 rounded-xl bg-gold text-on-surface hover:bg-gold-hover transition-colors shadow-soft"
               aria-label="View Cart"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-on-surface text-surface text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-surface">
+                <span className="absolute -top-1.5 -right-1.5 bg-on-surface text-surface text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-surface">
                   {cartCount}
                 </span>
               )}
@@ -142,50 +155,75 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-on-surface focus:outline-none"
+              className="lg:hidden p-2 text-on-surface focus:outline-none rounded-lg"
+              aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
+        {/* Mobile Search Expandable Bar */}
+        {mobileSearchOpen && (
+          <div className="md:hidden mt-2 pt-2 border-t border-outline-variant/50 animate-in fade-in duration-150">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder={isNp ? "स्ट्रेटर, ड्रायर, कुर्सी खोज्नुहोस्..." : "Search straightener, dryer, chair..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-surface-low border border-outline-variant text-xs rounded-xl py-2.5 pl-9 pr-4 focus:outline-none focus:border-gold"
+              />
+              <Search className="w-4 h-4 text-outline absolute left-3 top-3" />
+            </div>
+          </div>
+        )}
+
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-outline-variant/60 mt-3 pt-3 pb-2 space-y-2 animate-in slide-in-from-top duration-200">
+          <div className="lg:hidden border-t border-outline-variant/60 mt-3 pt-3 pb-3 space-y-2 animate-in slide-in-from-top duration-200">
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
+              className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
             >
               {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
             <Link
               href="/c/hair-straighteners"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
+              className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
             >
               {isNp ? "स्ट्रेटरहरू" : "Hair Straighteners"}
             </Link>
             <Link
               href="/c/hair-dryers"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-medium hover:bg-surface-low rounded-lg"
+              className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
             >
               {isNp ? "ड्रायर र कर्लर" : "Hair Dryers & Curlers"}
             </Link>
             <Link
               href="/c/salon-furniture-equipment"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-semibold text-gold hover:bg-surface-low rounded-lg"
+              className="block px-3.5 py-2.5 text-sm font-semibold text-gold hover:bg-surface-low rounded-xl"
             >
               {isNp ? "सलोन फर्निचर र उपकरणहरू (B2B)" : "Salon Furniture & Equipment (B2B)"}
             </Link>
             <Link
+              href="/warranty"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3.5 py-2.5 text-sm font-medium text-outline hover:bg-surface-low rounded-xl"
+            >
+              <ShieldCheck className="w-4 h-4 inline mr-2 text-gold" />
+              {isNp ? "असली उत्पादन वारेन्टी" : "Authenticity Guarantee"}
+            </Link>
+            <Link
               href="/salon/portal"
               onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-medium bg-surface-container text-on-surface rounded-lg"
+              className="block px-4 py-3 text-sm font-bold bg-surface-container text-on-surface rounded-xl border border-outline-variant"
             >
-              ✨ {isNp ? "सलोन पोर्टलम लन इन् गर्नुहोस्" : "B2B Salon Portal Log In"}
+              ✨ {isNp ? "सलोन पोर्टलम लग्न इन् गर्नुहोस्" : "B2B Salon Portal Log In"}
             </Link>
           </div>
         )}
