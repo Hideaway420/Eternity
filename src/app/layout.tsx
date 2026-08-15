@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
     description:
-      "Nepal's premier supplier of Ikonic titanium straighteners, blow dryers, curling wands, luxury hydraulic salon chairs (NPR 30k-40k range), and pedicure spa equipment. Open-box COD nationwide.",
+      "Nepal's premier supplier of Ikonic titanium straighteners, blow dryers, curling wands, luxury hydraulic salon chairs (NPR 30k-40k range), and pedicure spa equipment. Open-box Cash on Delivery nationwide.",
     url: "https://eternityproducts.online",
     siteName: "Eternity Products Nepal",
     images: [

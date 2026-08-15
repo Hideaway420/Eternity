@@ -304,7 +304,7 @@ export default async function HomePage() {
                 ✨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Straighteners</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Titanium Shine 3.0 • COD</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Titanium Shine 3.0 • Cash on Delivery</p>
             </Link>
 
             <Link href="/c/hair-dryers" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
@@ -312,7 +312,7 @@ export default async function HomePage() {
                 💨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Dryers & Curlers</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Pro 2500+ AC Motors • COD</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Pro 2500+ AC Motors • Cash on Delivery</p>
             </Link>
           </div>
         </section>
@@ -426,7 +426,7 @@ export default async function HomePage() {
                     href={`/p/${p.slug}`}
                     className="w-full block py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs text-center transition-colors shadow-soft"
                   >
-                    Select Color & Order Chair (COD)
+                    Select Color & Order Chair (Cash on Delivery)
                   </Link>
                 </div>
               </div>
@@ -441,7 +441,7 @@ export default async function HomePage() {
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold flex items-center">
                 <Flame className="w-3.5 h-3.5 mr-1 text-gold" /> Consumer Best Sellers
               </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Professional Hair Styling Tools (COD)</h2>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Professional Hair Styling Tools (Cash on Delivery)</h2>
             </div>
           </div>
 

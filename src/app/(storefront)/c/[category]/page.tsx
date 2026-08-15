@@ -297,19 +297,19 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     href="/c/luxury-salon-chairs"
                     className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    Luxury Salon Chairs (COD)
+                    Luxury Salon Chairs (Cash on Delivery)
                   </Link>
                   <Link
                     href="/c/hair-straighteners"
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    Hair Straighteners (COD)
+                    Hair Straighteners (Cash on Delivery)
                   </Link>
                   <Link
                     href="/c/hair-dryers"
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    Hair Dryers & Curlers (COD)
+                    Hair Dryers & Curlers (Cash on Delivery)
                   </Link>
                 </div>
               </div>
@@ -376,7 +376,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                             {formatNpr(p.price_npr)}
                           </div>
                           <span className="text-[10px] text-green-700 font-bold block">
-                            {p.isSpaCategory ? "15% Upfront Deposit" : "Open-Box COD"}
+                            {p.isSpaCategory ? "15% Upfront Deposit" : "Open-Box Cash on Delivery"}
                           </span>
                         </div>
                         {/* CLICKABLE ORDER BUTTON */}

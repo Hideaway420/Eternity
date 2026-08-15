@@ -349,7 +349,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           <p className="text-xs text-on-surface-variant leading-relaxed">
             {isSpaCategory
               ? `Secure your order today with a convenient 10% - 15% upfront booking payment (${formatNpr(totalDepositNpr)} deposit). The remaining balance is payable upon delivery inspection.`
-              : "100% Cash on Delivery (COD) across Kathmandu Valley and all 77 districts of Nepal."}
+              : "100% Cash on Delivery across Kathmandu Valley and all 77 districts of Nepal."}
           </p>
         </div>
 

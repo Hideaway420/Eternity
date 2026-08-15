@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
               <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-serif font-semibold text-base">Open-Box COD Delivery</h4>
+              <h4 className="font-serif font-semibold text-base">Open-Box Cash on Delivery</h4>
               <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
                 Open and inspect the box before making cash payment. Kathmandu Valley & all 77 districts covered.
               </p>
@@ -131,7 +131,7 @@ export const Footer: React.FC = () => {
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Accepted Nepal Payments</h4>
           <p className="text-xs text-on-surface-variant mb-4 font-light">
-            Cash on Delivery (COD), eSewa, Khalti, Fonepay QR, and direct Nepal Bank Transfer.
+            Cash on Delivery, eSewa, Khalti, Fonepay QR, and direct Nepal Bank Transfer.
           </p>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
             <span className="px-2.5 py-1 bg-surface rounded border border-[#DCD4CA]">🇳🇵 Cash on Delivery</span>

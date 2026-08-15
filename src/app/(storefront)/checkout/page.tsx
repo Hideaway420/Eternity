@@ -68,7 +68,7 @@ export default function CheckoutPage() {
               <p className="text-on-surface-variant leading-relaxed">
                 {isSpaOrder
                   ? `Our concierge manager will call your phone (${phone}) to verify your 15% upfront booking deposit of ${formatNpr(upfrontDepositNpr)} and schedule custom color matching & floor delivery.`
-                  : `Our sales team will call your phone (${phone}) within 30 minutes to confirm your shipping address and COD order.`}
+                  : `Our sales team will call your phone (${phone}) within 30 minutes to confirm your shipping address and Cash on Delivery order.`}
               </p>
               <div className="pt-2 border-t border-outline-variant flex items-center space-x-2 text-green-700 font-semibold">
                 <PackageCheck className="w-4 h-4" />
@@ -95,7 +95,7 @@ export default function CheckoutPage() {
                 <p className="text-xs text-outline mt-1">
                   {isSpaOrder
                     ? "Luxury Spa Chairs require a 10% - 15% upfront booking deposit. Remaining balance on delivery."
-                    : "Other product categories set strictly to 100% Open-Box Cash on Delivery (COD)."}
+                    : "Other product categories set strictly to 100% Open-Box Cash on Delivery."}
                 </p>
               </div>
 
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
                   }}
                   className="px-3 py-1.5 rounded-lg bg-gold/15 border border-gold/40 text-gold text-xs font-bold hover:bg-gold/30 transition-colors"
                 >
-                  {isSpaOrder ? "Luxury Spa Product (15% Deposit)" : "Standard Category (100% COD)"}
+                  {isSpaOrder ? "Luxury Spa Product (15% Deposit)" : "Standard Category (100% Cash on Delivery)"}
                 </button>
               </div>
 
@@ -259,7 +259,7 @@ export default function CheckoutPage() {
                           className="mt-1 accent-gold"
                         />
                         <div className="ml-3">
-                          <span className="font-bold text-sm text-on-surface block">Strict Cash on Delivery (COD)</span>
+                          <span className="font-bold text-sm text-on-surface block">Strict Cash on Delivery</span>
                           <span className="text-xs text-outline block mt-0.5">Pay 100% cash after opening and inspecting the product box upon delivery.</span>
                         </div>
                       </label>
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                     </>
                   ) : (
                     <div className="flex justify-between font-bold text-sm text-on-surface pt-2 border-t border-outline-variant">
-                      <span>Total Amount (COD)</span>
+                      <span>Total Amount (Cash on Delivery)</span>
                       <span className="font-mono text-gold text-base">{formatNpr(totalNpr)}</span>
                     </div>
                   )}
