@@ -14,7 +14,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Curated Master Product Catalog Mapping for Instant Fallback
+// Unique Eternity Salon Luxury Chair Catalogue (NPR 30,000 - 40,000 Range with 5% Limited Offer)
 const CATALOG_DICTIONARY: Record<
   string,
   {
@@ -28,15 +28,45 @@ const CATALOG_DICTIONARY: Record<
     imageUrl: string;
   }
 > = {
-  "ikonic-professional-pro-2500-advanced-hair-dryer": {
-    id: "prod-etp-095",
-    sku: "ETP-095",
-    slug: "ikonic-professional-pro-2500-advanced-hair-dryer",
-    name: "Ikonic Professional Pro 2500+ Advanced Hair Dryer",
-    price_npr: 1000000,
-    compare_at_npr: 1120000,
-    line: "traffic",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
+  "eternity-emerald-royal-luxury-salon-chair": {
+    id: "prod-etp-chair-01",
+    sku: "ETP-LSC-01",
+    slug: "eternity-emerald-royal-luxury-salon-chair",
+    name: "Eternity Emerald Royal Luxury Salon Chair",
+    price_npr: 3500000, // NPR 35,000 (after 5% Limited Offer)
+    compare_at_npr: 3685000, // Original NPR 36,850
+    line: "profit",
+    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
+  },
+  "eternity-espresso-vintage-luxury-salon-chair": {
+    id: "prod-etp-chair-02",
+    sku: "ETP-LSC-02",
+    slug: "eternity-espresso-vintage-luxury-salon-chair",
+    name: "Eternity Espresso Vintage Luxury Salon Chair",
+    price_npr: 3750000, // NPR 37,500
+    compare_at_npr: 3950000, // Original NPR 39,500
+    line: "profit",
+    imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
+  },
+  "eternity-burgundy-regal-luxury-salon-chair": {
+    id: "prod-etp-chair-03",
+    sku: "ETP-LSC-03",
+    slug: "eternity-burgundy-regal-luxury-salon-chair",
+    name: "Eternity Burgundy Regal Luxury Salon Chair",
+    price_npr: 3850000, // NPR 38,500
+    compare_at_npr: 4050000, // Original NPR 40,500
+    line: "profit",
+    imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
+  },
+  "ikonic-barber-chair-felix": {
+    id: "prod-etp-005",
+    sku: "ETP-005",
+    slug: "ikonic-barber-chair-felix",
+    name: "Eternity Emerald Royal Luxury Salon Chair",
+    price_npr: 3500000, // NPR 35,000
+    compare_at_npr: 3685000,
+    line: "profit",
+    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
   "ikonic-professional-pro-titanium-shine-3-0-hair-straightener": {
     id: "prod-etp-066",
@@ -48,55 +78,25 @@ const CATALOG_DICTIONARY: Record<
     line: "traffic",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
   },
-  "ikonic-professional-gleam-pro-hair-straightener": {
-    id: "prod-etp-067",
-    sku: "ETP-067",
-    slug: "ikonic-professional-gleam-pro-hair-straightener",
-    name: "Ikonic Professional Gleam Pro Hair Straightener",
-    price_npr: 1376000,
-    compare_at_npr: 1500000,
+  "ikonic-professional-pro-2500-advanced-hair-dryer": {
+    id: "prod-etp-095",
+    sku: "ETP-095",
+    slug: "ikonic-professional-pro-2500-advanced-hair-dryer",
+    name: "Ikonic Professional Pro 2500+ Advanced Hair Dryer",
+    price_npr: 1000000,
+    compare_at_npr: 1120000,
     line: "traffic",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
+    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
   },
-  "ikonic-professional-id-2-0-hair-dryer": {
-    id: "prod-etp-089",
-    sku: "ETP-089",
-    slug: "ikonic-professional-id-2-0-hair-dryer",
-    name: "Ikonic Professional Id 2.0 Hair Dryer",
-    price_npr: 2622000,
-    compare_at_npr: 2800000,
-    line: "traffic",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231093140_1_6594bc6f-a625-47f5-863b-04f017f8c9a8.jpg",
-  },
-  "ikonic-barber-chair-felix": {
-    id: "prod-etp-005",
-    sku: "ETP-005",
-    slug: "ikonic-barber-chair-felix",
-    name: "Ikonic Felix Luxury Salon Styling Chair",
-    price_npr: 3500000, // NPR 35,000 (VAT 13% Incl.)
-    compare_at_npr: 4200000,
-    line: "profit",
-    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-  },
-  "autumn-electric-bed": {
-    id: "prod-etp-002",
-    sku: "ETP-002",
-    slug: "autumn-electric-bed",
-    name: "Autumn Electric Spa Bed",
-    price_npr: 3800000, // NPR 38,000
-    compare_at_npr: null,
+  "ikonic-pedicure-foot-spa-manicure-suite": {
+    id: "prod-etp-mp-01",
+    sku: "ETP-MP-01",
+    slug: "ikonic-pedicure-foot-spa-manicure-suite",
+    name: "Eternity Luxury Pedicure Spa Chair Suite",
+    price_npr: 3850000, // NPR 38,500
+    compare_at_npr: 4050000,
     line: "profit",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
-  },
-  "shampoo-station-chair-ik-1254": {
-    id: "prod-etp-009",
-    sku: "ETP-009",
-    slug: "shampoo-station-chair-ik-1254",
-    name: "Ikonic Shampoo Station Chair IK-1254",
-    price_npr: 3650000, // NPR 36,500
-    compare_at_npr: null,
-    line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-1254_Ikonic.jpg",
   },
 };
 
@@ -128,10 +128,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
     if (fetchedProd) {
       product = fetchedProd;
-      // Override price & name if old seed record had 195,150
-      if (product.slug === "ikonic-barber-chair-felix") {
-        product.name = "Ikonic Felix Luxury Salon Styling Chair";
+      // Apply clean overrides for luxury salon chairs
+      if (product.slug === "ikonic-barber-chair-felix" || product.slug === "eternity-emerald-royal-luxury-salon-chair") {
+        product.name = "Eternity Emerald Royal Luxury Salon Chair";
         product.price_npr = 3500000; // NPR 35,000
+        product.compare_at_npr = 3685000;
         product.imageUrl = "/products/chair_emerald_green_1786235658712.jpg";
       }
       if (product.id) {
@@ -159,7 +160,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         slug: slug,
         name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()).replace(/Barber/g, "Luxury Salon"),
         price_npr: isFurniture ? 3500000 : 1150000,
-        compare_at_npr: isFurniture ? 4200000 : 1350000,
+        compare_at_npr: isFurniture ? 3685000 : 1350000,
         line: isFurniture ? "profit" : "traffic",
         imageUrl: isFurniture ? "/products/chair_emerald_green_1786235658712.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
       };

@@ -7,7 +7,7 @@ import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { SlidersHorizontal, ShieldCheck, Palette, Sparkles } from "lucide-react";
+import { SlidersHorizontal, ShieldCheck, Palette, Tag } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -16,34 +16,45 @@ interface CategoryPageProps {
   searchParams: Promise<{ line?: string; color?: string }>;
 }
 
-const FALLBACK_CATEGORY_PRODUCTS = [
+// 3 Unique Eternity Luxury Salon Chairs & Pedicure Spa Catalog (NPR 30k-40k Range with 5% Discount)
+const ETERNITY_CHAIR_PRODUCTS = [
   {
-    id: "prod-etp-005",
-    sku: "ETP-005",
-    slug: "ikonic-barber-chair-felix",
-    name: "Ikonic Felix Luxury Salon Styling Chair",
-    price_npr: 3500000, // NPR 35,000 (VAT 13% Incl.)
-    compare_at_npr: 4200000,
+    id: "prod-etp-chair-01",
+    sku: "ETP-LSC-01",
+    slug: "eternity-emerald-royal-luxury-salon-chair",
+    name: "Eternity Emerald Royal Luxury Salon Chair",
+    price_npr: 3500000, // NPR 35,000 (5% OFF)
+    compare_at_npr: 3685000,
     line: "profit",
     imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
   {
-    id: "prod-etp-066",
-    sku: "ETP-066",
-    slug: "ikonic-professional-pro-titanium-shine-3-0-hair-straightener",
-    name: "Ikonic Professional Pro Titanium Shine 3.0 Hair Straightener",
-    price_npr: 1292000,
-    compare_at_npr: 1450000,
-    line: "traffic",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
+    id: "prod-etp-chair-02",
+    sku: "ETP-LSC-02",
+    slug: "eternity-espresso-vintage-luxury-salon-chair",
+    name: "Eternity Espresso Vintage Luxury Salon Chair",
+    price_npr: 3750000, // NPR 37,500 (5% OFF)
+    compare_at_npr: 3950000,
+    line: "profit",
+    imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
+  },
+  {
+    id: "prod-etp-chair-03",
+    sku: "ETP-LSC-03",
+    slug: "eternity-burgundy-regal-luxury-salon-chair",
+    name: "Eternity Burgundy Regal Luxury Salon Chair",
+    price_npr: 3850000, // NPR 38,500 (5% OFF)
+    compare_at_npr: 4050000,
+    line: "profit",
+    imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
   },
   {
     id: "prod-etp-mani-pedi-01",
     sku: "ETP-MP-01",
     slug: "ikonic-pedicure-foot-spa-manicure-suite",
-    name: "Ikonic Pedicure Foot Spa & Manicure Station Suite",
-    price_npr: 3850000, // NPR 38,500
-    compare_at_npr: 4500000,
+    name: "Eternity Luxury Pedicure Spa Chair Suite",
+    price_npr: 3850000, // NPR 38,500 (5% OFF)
+    compare_at_npr: 4050000,
     line: "profit",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
   },
@@ -58,7 +69,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const lineFilter = resolvedSearchParams.line;
   const selectedColor = resolvedSearchParams.color;
 
-  let categoryProducts = FALLBACK_CATEGORY_PRODUCTS;
+  let categoryProducts = ETERNITY_CHAIR_PRODUCTS;
   let title = categorySlug.replace(/-/g, " ").toUpperCase();
 
   try {
@@ -91,7 +102,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }
 
     if (fetched && fetched.length > 0) {
-      categoryProducts = fetched as typeof FALLBACK_CATEGORY_PRODUCTS;
+      categoryProducts = fetched as typeof ETERNITY_CHAIR_PRODUCTS;
     }
   } catch (err) {
     console.warn("⚠️ Category DB query fallback active:", err);
@@ -113,14 +124,23 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           <span className="text-on-surface font-semibold capitalize">{title}</span>
         </div>
 
-        {/* Category Header */}
-        <div className="bg-surface-container-low rounded-2xl p-5 sm:p-8 mb-6 sm:mb-10 border border-outline-variant/60">
-          <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize">
-            {title}
-          </h1>
-          <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
-            Authorized Ikonic professional hair tools, luxury salon chairs, and pedicure spa stations. Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery.
-          </p>
+        {/* Category Header with 5% Discount Promo */}
+        <div className="bg-surface-container-low rounded-2xl p-5 sm:p-8 mb-6 sm:mb-10 border border-gold/40 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <span className="text-[10px] sm:text-xs uppercase font-bold text-gold tracking-widest block">Eternity Salon Equipment Catalogue</span>
+              <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize mt-1">
+                {title}
+              </h1>
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
+                Discover Eternity luxury salon chairs and pedicure spa chairs (NPR 30,000 – NPR 40,000 range). Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery.
+              </p>
+            </div>
+            <div className="px-4 py-2 bg-red-600/10 border border-red-600/30 text-red-700 rounded-xl text-xs font-bold flex items-center space-x-2 flex-shrink-0">
+              <Tag className="w-4 h-4 text-red-600" />
+              <span>5% OFF Limited Time Offer</span>
+            </div>
+          </div>
         </div>
 
         {/* Color Swatch Filter Strip */}
@@ -145,18 +165,18 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               <span>Emerald Green</span>
             </Link>
             <Link
-              href={`/c/${categorySlug}?color=black`}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "black" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
-            >
-              <span className="w-3 h-3 rounded-full bg-[#1A1A1A]" />
-              <span>Obsidian Black</span>
-            </Link>
-            <Link
               href={`/c/${categorySlug}?color=brown`}
               className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "brown" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
             >
               <span className="w-3 h-3 rounded-full bg-[#4A2E1B]" />
               <span>Espresso Brown</span>
+            </Link>
+            <Link
+              href={`/c/${categorySlug}?color=red`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "red" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
+            >
+              <span className="w-3 h-3 rounded-full bg-[#6B1D2F]" />
+              <span>Burgundy Red</span>
             </Link>
           </div>
         </div>
@@ -178,18 +198,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Category Catalogue</h4>
                 <div className="space-y-1.5 text-xs">
                   <Link
-                    href="/c/hair-straighteners"
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
-                  >
-                    Hair Straighteners
-                  </Link>
-                  <Link
-                    href="/c/hair-dryers"
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
-                  >
-                    Hair Dryers & Curlers
-                  </Link>
-                  <Link
                     href="/c/luxury-salon-chairs"
                     className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low text-gold"}`}
                   >
@@ -200,6 +208,18 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "manicure-pedicure-equipment" ? "bg-spa-blue/30 text-on-surface border border-spa-blue" : "hover:bg-surface-low text-spa-blue"}`}
                   >
                     Luxury Pedicure Spa Chairs
+                  </Link>
+                  <Link
+                    href="/c/hair-straighteners"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                  >
+                    Hair Straighteners
+                  </Link>
+                  <Link
+                    href="/c/hair-dryers"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                  >
+                    Hair Dryers & Curlers
                   </Link>
                 </div>
               </div>
@@ -216,7 +236,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             </div>
           </div>
 
-          {/* Main Products Grid (COMPACT 2-COLUMN MOBILE GRID MATCHING DARAZ APP) */}
+          {/* Main Products Grid (3 UNIQUE ETERNITY LUXURY CHAIRS WITH 5% DISCOUNT) */}
           <div className="lg:col-span-9 space-y-6">
             {categoryProducts.length === 0 ? (
               <div className="text-center py-16 bg-surface-lowest rounded-2xl border border-outline-variant">
@@ -229,7 +249,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {categoryProducts.map((p) => {
                   const hasDarazAnchor = !!p.compare_at_npr;
-                  const isProfitLine = p.line === "profit";
 
                   return (
                     <div
@@ -239,19 +258,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       <div>
                         <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3">
                           <img
-                            src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
+                            src={p.imageUrl || "/products/chair_emerald_green_1786235658712.jpg"}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          {isProfitLine ? (
-                            <span className="absolute top-1.5 left-1.5 bg-inverse-surface text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-                              B2B Equipment
-                            </span>
-                          ) : (
-                            <span className="absolute top-1.5 left-1.5 bg-surface-lowest/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
-                              Genuine Ikonic
-                            </span>
-                          )}
+                          <span className="absolute top-1.5 left-1.5 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm">
+                            5% OFF OFFER
+                          </span>
                         </div>
                         <span className="text-[9px] sm:text-[11px] font-mono text-outline uppercase tracking-wider block">
                           SKU: {p.sku}
@@ -265,7 +278,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                         <div>
                           {hasDarazAnchor && (
                             <div className="text-[10px] sm:text-xs text-outline line-through font-mono">
-                              Daraz: {formatNpr(p.compare_at_npr!)}
+                              Original: {formatNpr(p.compare_at_npr!)}
                             </div>
                           )}
                           <div className="text-xs sm:text-base font-bold text-on-surface font-sans">
@@ -274,13 +287,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                         </div>
                         <Link
                           href={`/p/${p.slug}`}
-                          className={`w-full sm:w-auto text-center px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-colors ${
-                            isProfitLine
-                              ? "bg-inverse-surface text-white hover:bg-neutral-800"
-                              : "bg-gold text-on-surface hover:bg-gold-hover"
-                          }`}
+                          className="w-full sm:w-auto text-center px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gold text-on-surface hover:bg-gold-hover text-[10px] sm:text-xs font-bold transition-colors shadow-soft"
                         >
-                          {isProfitLine ? "Get Quote" : "View Item"}
+                          Order Chair
                         </Link>
                       </div>
                     </div>
