@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db, initTables } from "@/db";
-import { products, productImages, inventory, warehouses } from "@/db/schema";
+import { products, productImages, inventory } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   try {
@@ -115,6 +116,11 @@ export async function POST(req: Request) {
         bin_location: null,
       })
       .run();
+
+    // Instant Revalidation across Storefront
+    revalidatePath("/");
+    revalidatePath("/c/[category]", "page");
+    revalidatePath("/p/[slug]", "page");
 
     return NextResponse.json({
       success: true,
