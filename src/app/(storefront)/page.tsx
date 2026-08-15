@@ -5,11 +5,12 @@ import { Footer } from "@/components/storefront/Footer";
 import { MobileBottomBar } from "@/components/storefront/MobileBottomBar";
 import { TopLoadingBar } from "@/components/storefront/TopLoadingBar";
 import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
+import { InteractiveColorSection } from "@/components/storefront/InteractiveColorSection";
 import { db, initTables } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Palette, Check, Footprints, Armchair } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Check, Footprints, Armchair } from "lucide-react";
 
 export const revalidate = 0; // Dynamic rendering
 
@@ -66,7 +67,7 @@ const FALLBACK_PROFIT_PRODUCTS = [
     price_npr: 3500000, // NPR 35,000
     compare_at_npr: 4200000,
     line: "profit",
-    imageUrl: "/products/chair_obsidian_black_1786235672157.jpg",
+    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
   {
     id: "prod-etp-mani-pedi-01",
@@ -168,11 +169,11 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase (UPDATED: 1st image luxury chair priced NPR 35,000) */}
+            {/* Hero Image Showcase (UPDATED: 1st image luxury chair priced NPR 35,000 with Real Emerald Green Photo) */}
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest group">
                 <img
-                  src="/products/chair_obsidian_black_1786235672157.jpg"
+                  src="/products/chair_emerald_green_1786235658712.jpg"
                   alt="Ikonic Felix Luxury Salon Styling Chair"
                   className="w-full h-[280px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -181,7 +182,7 @@ export default async function HomePage() {
                     <div>
                       <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Luxury Chair Collection (NPR 30k–40k)</span>
                       <h4 className="font-serif font-bold text-xs sm:text-base">Ikonic Felix Luxury Salon Chair</h4>
-                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Genuine Leather</span>
+                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Emerald Green</span>
                     </div>
                     <div className="text-right">
                       <span className="text-xs sm:text-base font-bold text-on-surface font-sans block">NPR 35,000</span>
@@ -194,47 +195,12 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 2: Interactive Color & Upholstery Theme Customizer */}
+        {/* Section 2: Interactive Real Studio Color Customizer */}
         <section className="container mx-auto px-4 lg:px-8">
-          <div className="rounded-3xl bg-surface-lowest border border-gold/40 p-5 sm:p-8 lg:p-12 shadow-soft grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-            <div className="lg:col-span-6 space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center space-x-2 text-gold font-bold text-[11px] sm:text-xs uppercase tracking-widest">
-                <Palette className="w-4 h-4" />
-                <span>Custom Salon Styling Themes</span>
-              </div>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold">Customize Your Salon Furniture Color Scheme</h2>
-              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed font-light">
-                Top salon chains in Kathmandu match their equipment leather with interior lighting. Choose between 3 signature real upholstery themes for your luxury chairs and manicure-pedicure spa beds.
-              </p>
-              
-              <div className="pt-2 flex flex-wrap gap-2 sm:gap-3">
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
-                  <span className="w-3.5 h-3.5 rounded-full bg-[#1B4D3E]" />
-                  <span className="font-semibold">Emerald Green</span>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
-                  <span className="w-3.5 h-3.5 rounded-full bg-[#4A2E1B]" />
-                  <span className="font-semibold">Espresso Brown</span>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
-                  <span className="w-3.5 h-3.5 rounded-full bg-[#6B1D2F]" />
-                  <span className="font-semibold">Burgundy Red</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] border border-outline-variant">
-                <img src="/products/chair_emerald_green_1786235658712.jpg" alt="Emerald Green Chair" className="w-full h-full object-cover" />
-              </div>
-              <div className="rounded-2xl overflow-hidden aspect-[4/3] border border-outline-variant">
-                <img src="/products/chair_espresso_brown_1786235685819.jpg" alt="Espresso Brown Chair" className="w-full h-full object-cover" />
-              </div>
-            </div>
-          </div>
+          <InteractiveColorSection />
         </section>
 
-        {/* Section 3: Categories Showcase (UPDATED with Luxury Chairs & Manicure Pedicure Spa) */}
+        {/* Section 3: Categories Showcase */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -361,7 +327,7 @@ export default async function HomePage() {
                   <div>
                     <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-neutral-900">
                       <img
-                        src={p.imageUrl || "/products/chair_obsidian_black_1786235672157.jpg"}
+                        src={p.imageUrl || "/products/chair_emerald_green_1786235658712.jpg"}
                         alt={p.name}
                         className="w-full h-full object-cover"
                       />
