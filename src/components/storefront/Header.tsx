@@ -95,14 +95,14 @@ export const Header: React.FC<HeaderProps> = ({
               <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
-              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
-                {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
-              </Link>
-              <Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
-                {isNp ? "सलोन फर्निचर" : "Salon Furniture"}
-                <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-spa-blue text-secondary-on-container rounded font-bold uppercase">
-                  {isNp ? "थोक B2B" : "B2B Bulk"}
+              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
+                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
+                <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-gold/20 text-on-surface rounded font-bold uppercase border border-gold/40">
+                  NPR 30k–40k
                 </span>
+              </Link>
+              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold flex items-center">
+                {isNp ? "मेनिक्योर पेडिक्योर" : "Mani-Pedi Spa"}
               </Link>
               <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
@@ -119,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Search className="w-3.5 h-3.5 text-gold" />
                 <span className="font-medium">
-                  {isNp ? "स्ट्रेटर, ड्रायर, कुर्सी खोज्नुहोस्..." : "Search tools, chairs..."}
+                  {isNp ? "स्ट्रेटर, कुर्सी, पेडिक्योर खोज्नुहोस्..." : "Search tools, chairs, mani-pedi..."}
                 </span>
                 <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-lowest border border-outline-variant rounded text-outline">
                   ⌘K
@@ -187,18 +187,18 @@ export const Header: React.FC<HeaderProps> = ({
                 {isNp ? "स्ट्रेटरहरू" : "Hair Straighteners"}
               </Link>
               <Link
-                href="/c/hair-dryers"
+                href="/c/luxury-salon-chairs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
+              >
+                {isNp ? "लग्जरी सलोन कुर्सीहरू (NPR 30k-40k)" : "Luxury Salon Chairs (NPR 30k–40k)"}
+              </Link>
+              <Link
+                href="/c/manicure-pedicure-equipment"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
               >
-                {isNp ? "ड्रायर र कर्लर" : "Hair Dryers & Curlers"}
-              </Link>
-              <Link
-                href="/c/salon-furniture-equipment"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-semibold text-gold hover:bg-surface-low rounded-xl"
-              >
-                {isNp ? "सलोन फर्निचर र उपकरणहरू (B2B)" : "Salon Furniture & Equipment (B2B)"}
+                {isNp ? "मेनिक्योर र पेडिक्योर स्पा" : "Manicure & Pedicure Spa Equipment"}
               </Link>
               <Link
                 href="/warranty"

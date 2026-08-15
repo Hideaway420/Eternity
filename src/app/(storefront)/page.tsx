@@ -9,7 +9,7 @@ import { db, initTables } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Palette, Check } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Palette, Check, Footprints, Armchair } from "lucide-react";
 
 export const revalidate = 0; // Dynamic rendering
 
@@ -62,19 +62,19 @@ const FALLBACK_PROFIT_PRODUCTS = [
     id: "prod-etp-005",
     sku: "ETP-005",
     slug: "ikonic-barber-chair-felix",
-    name: "Ikonic Barber Chair Felix",
-    price_npr: 19515000,
-    compare_at_npr: null,
+    name: "Ikonic Felix Luxury Salon Styling Chair",
+    price_npr: 3500000, // NPR 35,000
+    compare_at_npr: 4200000,
     line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg",
+    imageUrl: "/products/chair_obsidian_black_1786235672157.jpg",
   },
   {
-    id: "prod-etp-002",
-    sku: "ETP-002",
-    slug: "autumn-electric-bed",
-    name: "Autumn Electric Spa Bed",
-    price_npr: 18800000,
-    compare_at_npr: null,
+    id: "prod-etp-mani-pedi-01",
+    sku: "ETP-MP-01",
+    slug: "ikonic-pedicure-foot-spa-manicure-suite",
+    name: "Ikonic Pedicure Foot Spa & Manicure Station Suite",
+    price_npr: 3850000, // NPR 38,500
+    compare_at_npr: 4500000,
     line: "profit",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
   },
@@ -133,22 +133,22 @@ export default async function HomePage() {
                 Serene Opulence in Hair Styling & Salon Excellence
               </h1>
               <p className="text-sm sm:text-lg text-on-surface-variant font-light leading-relaxed max-w-2xl">
-                Elevate your personal styling routine or beauty parlour floor with Ikonic titanium straighteners, high-velocity blow dryers, and customizable hydraulic barber chairs.
+                Elevate your personal styling routine or beauty parlour floor with Ikonic titanium straighteners, high-velocity blow dryers, luxury chairs (NPR 30k-40k), and manicure-pedicure spa stations.
               </p>
               <div className="pt-2 flex flex-wrap gap-3 sm:gap-4 items-center">
                 <Link
-                  href="/c/hair-straighteners"
+                  href="/c/luxury-salon-chairs"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm shadow-gold transition-all flex items-center space-x-2"
                 >
-                  <span>Shop Styling Tools</span>
+                  <span>Explore Luxury Chairs (NPR 35,000)</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/salon/portal"
+                  href="/c/manicure-pedicure-equipment"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-inverse-surface text-white hover:bg-neutral-800 font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 shadow-soft"
                 >
-                  <Building2 className="w-4 h-4 text-gold" />
-                  <span className="text-white font-bold">B2B Salon Wholesale</span>
+                  <Footprints className="w-4 h-4 text-gold" />
+                  <span className="text-white font-bold">Manicure & Pedicure Catalogue</span>
                 </Link>
               </div>
 
@@ -168,22 +168,25 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase */}
+            {/* Hero Image Showcase (UPDATED: 1st image luxury chair priced NPR 35,000) */}
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest group">
                 <img
-                  src="https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg"
-                  alt="Ikonic Barber Chair Felix Official Edition"
+                  src="/products/chair_obsidian_black_1786235672157.jpg"
+                  alt="Ikonic Felix Luxury Salon Styling Chair"
                   className="w-full h-[280px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Official Ikonic World Import</span>
-                      <h4 className="font-serif font-bold text-xs sm:text-base">Ikonic Felix Barber Chair</h4>
-                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Genuine Factory Import</span>
+                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Luxury Chair Collection (NPR 30k–40k)</span>
+                      <h4 className="font-serif font-bold text-xs sm:text-base">Ikonic Felix Luxury Salon Chair</h4>
+                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Genuine Leather</span>
                     </div>
-                    <span className="text-xs sm:text-base font-bold text-on-surface font-sans">NPR 195,150</span>
+                    <div className="text-right">
+                      <span className="text-xs sm:text-base font-bold text-on-surface font-sans block">NPR 35,000</span>
+                      <span className="text-[9px] text-green-700 font-bold block">(VAT 13% Incl.)</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -191,7 +194,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 2: Interactive Color & Leather Theme Customizer Teaser */}
+        {/* Section 2: Interactive Color & Upholstery Theme Customizer */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="rounded-3xl bg-surface-lowest border border-gold/40 p-5 sm:p-8 lg:p-12 shadow-soft grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             <div className="lg:col-span-6 space-y-3 sm:space-y-4">
@@ -201,17 +204,13 @@ export default async function HomePage() {
               </div>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold">Customize Your Salon Furniture Color Scheme</h2>
               <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed font-light">
-                Top salon chains in Kathmandu match their equipment leather with interior lighting. Choose between 4 signature upholstery themes for your barber chairs and spa beds.
+                Top salon chains in Kathmandu match their equipment leather with interior lighting. Choose between 3 signature real upholstery themes for your luxury chairs and manicure-pedicure spa beds.
               </p>
               
               <div className="pt-2 flex flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
                   <span className="w-3.5 h-3.5 rounded-full bg-[#1B4D3E]" />
                   <span className="font-semibold">Emerald Green</span>
-                </div>
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
-                  <span className="w-3.5 h-3.5 rounded-full bg-[#1A1A1A]" />
-                  <span className="font-semibold">Obsidian Black</span>
                 </div>
                 <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant text-[11px] sm:text-xs">
                   <span className="w-3.5 h-3.5 rounded-full bg-[#4A2E1B]" />
@@ -226,24 +225,24 @@ export default async function HomePage() {
 
             <div className="lg:col-span-6 grid grid-cols-2 gap-3 sm:gap-4">
               <div className="rounded-2xl overflow-hidden aspect-[4/3] border border-outline-variant">
-                <img src="/products/barber_chair_black_1786231899221.jpg" alt="Black Chair" className="w-full h-full object-cover" />
+                <img src="/products/chair_emerald_green_1786235658712.jpg" alt="Emerald Green Chair" className="w-full h-full object-cover" />
               </div>
               <div className="rounded-2xl overflow-hidden aspect-[4/3] border border-outline-variant">
-                <img src="/products/barber_chair_brown_1786231912699.jpg" alt="Brown Chair" className="w-full h-full object-cover" />
+                <img src="/products/chair_espresso_brown_1786235685819.jpg" alt="Espresso Brown Chair" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Section 3: Categories Showcase */}
+        {/* Section 3: Categories Showcase (UPDATED with Luxury Chairs & Manicure Pedicure Spa) */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold">Catalogue</span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Explore By Category</h2>
             </div>
-            <Link href="/c/hair-straighteners" className="text-xs font-bold text-gold hover:underline flex items-center">
-              View All <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            <Link href="/c/luxury-salon-chairs" className="text-xs font-bold text-gold hover:underline flex items-center">
+              View All Categories <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           </div>
 
@@ -260,24 +259,24 @@ export default async function HomePage() {
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
                 💨
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Dryers & Blowers</h3>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Dryers & Curlers</h3>
               <p className="text-[11px] sm:text-xs text-outline mt-1">High wattage AC motors</p>
             </Link>
 
-            <Link href="/c/hair-curlers" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
+            <Link href="/c/luxury-salon-chairs" className="group p-4 sm:p-6 rounded-2xl bg-gold/15 hover:bg-gold/30 border border-gold/40 transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
-                🌀
+                <Armchair className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Curling Wands</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Conical & Tong stylers</p>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Luxury Salon Chairs</h3>
+              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">NPR 30,000 - 40,000 Range</p>
             </Link>
 
-            <Link href="/c/salon-furniture-equipment" className="group p-4 sm:p-6 rounded-2xl bg-spa-blue/40 hover:bg-spa-blue/70 border border-secondary-container transition-all">
+            <Link href="/c/manicure-pedicure-equipment" className="group p-4 sm:p-6 rounded-2xl bg-spa-blue/40 hover:bg-spa-blue/70 border border-secondary-container transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
-                💈
+                <Footprints className="w-6 h-6 text-spa-blue" />
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Salon Furniture</h3>
-              <p className="text-[11px] sm:text-xs text-secondary-on-container font-semibold mt-1">Barber chairs & spa beds</p>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Manicure & Pedicure Spa</h3>
+              <p className="text-[11px] sm:text-xs text-secondary-on-container font-semibold mt-1">Tables, basins & foot spa</p>
             </Link>
           </div>
         </section>
@@ -341,12 +340,61 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 5: Interactive B2B Salon Payback Calculator Widget */}
+        {/* Section 5: B2B Profit Line Salon Fit-Out Suite */}
+        <section className="bg-inverse-surface text-inverse-on-surface py-12 sm:py-16">
+          <div className="container mx-auto px-4 lg:px-8">
+            <div className="max-w-3xl mb-8 sm:mb-12">
+              <span className="text-xs uppercase tracking-widest text-gold font-bold flex items-center">
+                <Building2 className="w-4 h-4 mr-1.5" /> High-Margin Salon Fit-Outs
+              </span>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight mt-2">
+                Luxury Salon Chairs & Manicure-Pedicure Spa Stations
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-300 mt-2 sm:mt-3 font-light leading-relaxed">
+                Empower your beauty parlour or barber shop with heavy-duty hydraulic chairs (NPR 30k-40k range) and electric pedicure spa stations.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              {profitProducts.map((p) => (
+                <div key={p.id} className="trade-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-gold/50 transition-all">
+                  <div>
+                    <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-neutral-900">
+                      <img
+                        src={p.imageUrl || "/products/chair_obsidian_black_1786235672157.jpg"}
+                        alt={p.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-xs font-mono text-gold uppercase">B2B Trade Line</span>
+                        <h3 className="font-serif font-bold text-lg sm:text-xl text-white mt-1">{p.name}</h3>
+                      </div>
+                      <span className="text-base sm:text-xl font-bold text-gold font-sans">{formatNpr(p.price_npr)}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex gap-3">
+                    <Link
+                      href={`/p/${p.slug}`}
+                      className="flex-1 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs text-center transition-colors shadow-gold"
+                    >
+                      Select Color & Request Quote
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 6: Interactive B2B Salon Payback Calculator Widget */}
         <section className="container mx-auto px-4 lg:px-8">
           <SalonCalculatorWidget />
         </section>
 
-        {/* Section 6: Salon Membership Tier Matrix */}
+        {/* Section 7: Salon Membership Tier Matrix */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-2">
             <span className="text-xs font-bold uppercase tracking-widest text-gold">Wholesale Membership</span>
@@ -393,7 +441,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 7: Authenticity Guarantee */}
+        {/* Section 8: Authenticity Guarantee */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="rounded-3xl bg-surface-container-low border border-gold/30 p-6 sm:p-8 lg:p-12 relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
