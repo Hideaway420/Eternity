@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, ShieldCheck, Menu, X, Building2, PhoneCall, Footprints } from "lucide-react";
+import { Search, ShoppingBag, ShieldCheck, Menu, X, Building2, PhoneCall, Sparkles, Footprints, Flame } from "lucide-react";
 import { SearchModal } from "@/components/storefront/SearchModal";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 
@@ -33,20 +33,29 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       <header className="sticky top-0 z-50 w-full transition-all duration-300">
-        {/* Announcement Bar */}
-        <div className="bg-primary text-on-primary text-[11px] sm:text-xs py-2 px-3 sm:px-4 tracking-wide font-medium">
+        {/* Announcement Bar (Top Bar with Limited Time Offer & WhatsApp Phone Link) */}
+        <div className="bg-inverse-surface text-inverse-on-surface text-[11px] sm:text-xs py-2 px-3 sm:px-4 tracking-wide font-medium border-b border-neutral-800">
           <div className="container mx-auto flex justify-between items-center gap-2">
+            {/* Left: Limited Offer Link to Spa Page */}
             <div className="flex items-center space-x-2 truncate">
-              <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex-shrink-0">
+              <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex-shrink-0 flex items-center">
+                <Sparkles className="w-2.5 h-2.5 mr-1" />
                 {isNp ? "आधिकारिक इटरनिटी" : "Official Eternity"}
               </span>
-              <span className="truncate hidden xs:inline">
-                {isNp
-                  ? "🚚 काठमाडौँ र नेपालभरि ओपन-बक्स क्यास अन डेलिभरी र स्पा बुकिङ"
-                  : "🚚 Open-Box Cash on Delivery & Luxury Spa Deposit Booking Across Nepal"}
-              </span>
+              <Link
+                href="/c/spa"
+                className="hover:text-gold transition-colors font-semibold truncate flex items-center space-x-1.5"
+              >
+                <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
+                <span className="truncate">
+                  {isNp
+                    ? "🔥 सीमित समयको अफर: लग्जरी स्पा कुर्सीहरूमा ५% छूट र १०%-१५% पेश्की बुकिङ!"
+                    : "🔥 Limited Offer: 5% OFF & 10%-15% Upfront Deposit on Luxury Spa Chairs!"}
+                </span>
+              </Link>
             </div>
 
+            {/* Right: Phone & Language Switcher */}
             <div className="flex items-center space-x-3 flex-shrink-0">
               <a
                 href="https://wa.me/9779868089892"
@@ -54,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
                 rel="noreferrer"
                 className="flex items-center hover:underline font-bold text-gold text-[11px]"
               >
-                <PhoneCall className="w-3 h-3 mr-1" />
+                <PhoneCall className="w-3 h-3 mr-1 text-gold" />
                 <span className="hidden sm:inline">Viber / WhatsApp: </span>
                 <span>+977 9868089892</span>
               </a>
@@ -69,16 +78,16 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Glass Header (HIGH CONTRAST BOLD LOGO & GOLD MOTION TEXT) */}
+        {/* Main Glass Header (CLEAN LOGO WITH NO BLACK BACKGROUND & RESTORED NAV LINKS) */}
         <nav className="glass-header border-b border-outline-variant/60 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 shadow-soft">
           <div className="container mx-auto flex items-center justify-between gap-3">
-            {/* Official EP Gold Logo & Motion Brand Title */}
+            {/* Clean Transparent EP Gold Logo & Motion Brand Title */}
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl overflow-hidden bg-gradient-to-b from-neutral-900 to-black p-1 border-2 border-gold/60 shadow-gold group-hover:scale-105 transition-transform flex-shrink-0 flex items-center justify-center">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <img
                   src="/logo.png"
                   alt="Eternity Products Logo"
-                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]"
+                  className="w-full h-full object-contain mix-blend-multiply filter drop-shadow-[0_2px_4px_rgba(212,175,55,0.5)]"
                 />
               </div>
               <div>
@@ -91,17 +100,17 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </Link>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Links (RESTORED LUXURY PEDICURE SPA CHAIRS LIKE BEFORE) */}
             <div className="hidden lg:flex items-center space-x-6 text-sm font-semibold text-on-surface-variant">
               <Link href="/" className="hover:text-gold transition-colors font-bold">
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
-              <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center">
-                <Footprints className="w-4 h-4 mr-1 text-gold animate-bounce" />
-                {isNp ? "स्पा संकलन" : "SPA"}
-              </Link>
               <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-on-surface">
                 {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
+              </Link>
+              <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center">
+                <Footprints className="w-4 h-4 mr-1 text-gold" />
+                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
               </Link>
               <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors font-bold">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
@@ -185,13 +194,6 @@ export const Header: React.FC<HeaderProps> = ({
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
               <Link
-                href="/c/spa"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-black text-gold hover:bg-surface-low rounded-xl"
-              >
-                {isNp ? "स्पा संकलन" : "SPA Collection"}
-              </Link>
-              <Link
                 href="/c/luxury-salon-chairs"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-bold hover:bg-surface-low rounded-xl"
@@ -199,11 +201,25 @@ export const Header: React.FC<HeaderProps> = ({
                 {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
               </Link>
               <Link
+                href="/c/spa"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-black text-gold hover:bg-surface-low rounded-xl"
+              >
+                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
+              </Link>
+              <Link
                 href="/c/hair-straighteners"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
               >
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
+              </Link>
+              <Link
+                href="/c/hair-dryers"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
+              >
+                {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
               </Link>
               <Link
                 href="/warranty"
