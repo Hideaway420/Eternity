@@ -58,12 +58,21 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Footer Links */}
+      {/* Main Footer Links with Official EP Infinity Logo */}
       <div className="container mx-auto px-4 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="font-serif text-xl font-bold tracking-tight">ETERNITY PRODUCTS</h3>
-          <p className="text-xs text-on-surface-variant mt-3 leading-relaxed">
-            Nepal&apos;s leading authorized distributor of Ikonic professional hair styling tools, barber equipment, and salon spa furniture.
+          <div className="flex items-center space-x-3 mb-3">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-black/90 p-1 border border-gold/50 shadow-gold flex items-center justify-center flex-shrink-0">
+              <img src="/logo.png" alt="Eternity Products Logo" className="w-full h-full object-contain" />
+            </div>
+            <div>
+              <h3 className="font-serif text-xl font-bold tracking-tight text-on-surface leading-none">ETERNITY PRODUCTS</h3>
+              <span className="text-[9px] uppercase tracking-widest text-gold font-bold">Nepal Authorized Importer</span>
+            </div>
+          </div>
+
+          <p className="text-xs text-on-surface-variant leading-relaxed">
+            Nepal&apos;s leading authorized distributor of Ikonic professional hair styling tools, Eternity luxury chairs, and pedicure spa furniture.
           </p>
           
           <div className="mt-4 space-y-2 text-xs text-outline">
@@ -105,8 +114,8 @@ export const Footer: React.FC = () => {
           <ul className="space-y-2 text-xs text-on-surface-variant">
             <li><Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">Hair Straighteners & Crimpers</Link></li>
             <li><Link href="/c/hair-dryers" className="hover:text-gold transition-colors">Professional Blow Dryers</Link></li>
-            <li><Link href="/c/hair-curlers" className="hover:text-gold transition-colors">Curling Wands & Tongs</Link></li>
-            <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Barber Chairs & Spa Beds</Link></li>
+            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-gold">Luxury Salon Chairs</Link></li>
+            <li><Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-bold text-spa-blue">Luxury Pedicure Spa Chairs</Link></li>
           </ul>
         </div>
 
@@ -114,8 +123,8 @@ export const Footer: React.FC = () => {
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Salon B2B Hub</h4>
           <ul className="space-y-2 text-xs text-on-surface-variant">
             <li><Link href="/salon/portal" className="hover:text-gold transition-colors font-semibold text-on-surface">Salon Partner Portal Login</Link></li>
-            <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
-            <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Shampoo Basins & Pedicure Tubs</Link></li>
+            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
+            <li><Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors">Shampoo Basins & Pedicure Tubs</Link></li>
             <li><Link href="/contact" className="hover:text-gold transition-colors">Concierge Support & Head Office</Link></li>
             <li><Link href="/admin" className="hover:text-gold transition-colors text-outline">Staff Operations Admin</Link></li>
           </ul>

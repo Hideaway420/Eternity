@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, ShieldCheck, Menu, X, Sparkles, Building2, PhoneCall } from "lucide-react";
+import { Search, ShoppingBag, ShieldCheck, Menu, X, Building2, PhoneCall } from "lucide-react";
 import { SearchModal } from "@/components/storefront/SearchModal";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 
@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="container mx-auto flex justify-between items-center gap-2">
             <div className="flex items-center space-x-2 truncate">
               <span className="bg-gold text-on-surface px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase tracking-wider flex-shrink-0">
-                {isNp ? "आधिकारिक आइकोनिक" : "Official Ikonic"}
+                {isNp ? "आधिकारिक इटरनिटी" : "Official Eternity"}
               </span>
               <span className="truncate hidden xs:inline">
                 {isNp
@@ -69,25 +69,25 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Glass Header (CLEAN: No price badges on menu items) */}
-        <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+        {/* Main Glass Header (Featuring Official Gold EP Infinity Logo) */}
+        <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
           <div className="container mx-auto flex items-center justify-between gap-3">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2.5 group">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gold/15 border border-gold/40 flex items-center justify-center text-gold group-hover:scale-105 transition-transform flex-shrink-0">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 fill-gold/20" />
+            {/* Official Brand Logo */}
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl overflow-hidden bg-black/90 p-1 border border-gold/50 shadow-gold group-hover:scale-105 transition-transform flex-shrink-0 flex items-center justify-center">
+                <img src="/logo.png" alt="Eternity Products Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <span className="font-serif text-lg sm:text-2xl font-bold tracking-tight text-on-surface block leading-none">
                   ETERNITY
                 </span>
-                <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-outline font-semibold block mt-0.5">
+                <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-gold font-semibold block mt-0.5">
                   {isNp ? "इटरनिटी नेपाल" : "Products Nepal"}
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Navigation Links (CLEAN: Prices belong on product cards only) */}
+            {/* Desktop Navigation Links */}
             <div className="hidden lg:flex items-center space-x-6 text-sm font-medium text-on-surface-variant">
               <Link href="/" className="hover:text-gold transition-colors">
                 {isNp ? "गृहपृष्ठ" : "Home"}
