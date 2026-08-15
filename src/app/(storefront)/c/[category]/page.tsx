@@ -7,7 +7,7 @@ import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { SlidersHorizontal, ShieldCheck, Palette } from "lucide-react";
+import { SlidersHorizontal, ShieldCheck, Palette, Sparkles } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -17,6 +17,16 @@ interface CategoryPageProps {
 }
 
 const FALLBACK_CATEGORY_PRODUCTS = [
+  {
+    id: "prod-etp-005",
+    sku: "ETP-005",
+    slug: "ikonic-barber-chair-felix",
+    name: "Ikonic Felix Luxury Salon Styling Chair",
+    price_npr: 3500000, // NPR 35,000 (VAT 13% Incl.)
+    compare_at_npr: 4200000,
+    line: "profit",
+    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
+  },
   {
     id: "prod-etp-066",
     sku: "ETP-066",
@@ -28,24 +38,14 @@ const FALLBACK_CATEGORY_PRODUCTS = [
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
   },
   {
-    id: "prod-etp-067",
-    sku: "ETP-067",
-    slug: "ikonic-professional-gleam-pro-hair-straightener",
-    name: "Ikonic Professional Gleam Pro Hair Straightener",
-    price_npr: 1376000,
-    compare_at_npr: 1500000,
-    line: "traffic",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-  },
-  {
-    id: "prod-etp-005",
-    sku: "ETP-005",
-    slug: "ikonic-barber-chair-felix",
-    name: "Ikonic Barber Chair Felix",
-    price_npr: 19515000,
-    compare_at_npr: null,
+    id: "prod-etp-mani-pedi-01",
+    sku: "ETP-MP-01",
+    slug: "ikonic-pedicure-foot-spa-manicure-suite",
+    name: "Ikonic Pedicure Foot Spa & Manicure Station Suite",
+    price_npr: 3850000, // NPR 38,500
+    compare_at_npr: 4500000,
     line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg",
+    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
   },
 ];
 
@@ -119,7 +119,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             {title}
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
-            Authorized Ikonic professional hair tools & salon equipment. Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery.
+            Authorized Ikonic professional hair tools, luxury salon chairs, and pedicure spa stations. Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery.
           </p>
         </div>
 
@@ -168,32 +168,38 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             <div className="bg-surface-lowest p-5 rounded-2xl border border-outline-variant space-y-4">
               <div className="flex items-center justify-between border-b border-outline-variant pb-3">
                 <h3 className="font-serif font-bold text-sm flex items-center">
-                  <SlidersHorizontal className="w-4 h-4 mr-2 text-gold" /> Filter Products
+                  <SlidersHorizontal className="w-4 h-4 mr-2 text-gold" /> Categories
                 </h3>
                 <span className="text-xs text-outline">{categoryProducts.length} items</span>
               </div>
 
-              {/* Product Line Filter */}
+              {/* Dedicated Category Quick Filters */}
               <div>
-                <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Product Line</h4>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Category Catalogue</h4>
                 <div className="space-y-1.5 text-xs">
                   <Link
-                    href={`/c/${categorySlug}`}
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${!lineFilter ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/hair-straighteners"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    All Lines
+                    Hair Straighteners
                   </Link>
                   <Link
-                    href={`/c/${categorySlug}?line=traffic`}
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${lineFilter === "traffic" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/hair-dryers"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    D2C Styling Tools
+                    Hair Dryers & Curlers
                   </Link>
                   <Link
-                    href={`/c/${categorySlug}?line=profit`}
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${lineFilter === "profit" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/luxury-salon-chairs"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low text-gold"}`}
                   >
-                    B2B Salon Furniture
+                    Luxury Salon Chairs
+                  </Link>
+                  <Link
+                    href="/c/manicure-pedicure-equipment"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "manicure-pedicure-equipment" ? "bg-spa-blue/30 text-on-surface border border-spa-blue" : "hover:bg-surface-low text-spa-blue"}`}
+                  >
+                    Luxury Pedicure Spa Chairs
                   </Link>
                 </div>
               </div>
