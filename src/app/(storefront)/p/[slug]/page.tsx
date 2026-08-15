@@ -72,18 +72,18 @@ const CATALOG_DICTIONARY: Record<
     id: "prod-etp-005",
     sku: "ETP-005",
     slug: "ikonic-barber-chair-felix",
-    name: "Ikonic Barber Chair Felix",
-    price_npr: 19515000,
-    compare_at_npr: null,
+    name: "Ikonic Felix Luxury Salon Styling Chair",
+    price_npr: 3500000, // NPR 35,000 (VAT 13% Incl.)
+    compare_at_npr: 4200000,
     line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg",
+    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
   "autumn-electric-bed": {
     id: "prod-etp-002",
     sku: "ETP-002",
     slug: "autumn-electric-bed",
     name: "Autumn Electric Spa Bed",
-    price_npr: 18800000,
+    price_npr: 3800000, // NPR 38,000
     compare_at_npr: null,
     line: "profit",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
@@ -93,7 +93,7 @@ const CATALOG_DICTIONARY: Record<
     sku: "ETP-009",
     slug: "shampoo-station-chair-ik-1254",
     name: "Ikonic Shampoo Station Chair IK-1254",
-    price_npr: 14880000,
+    price_npr: 3650000, // NPR 36,500
     compare_at_npr: null,
     line: "profit",
     imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-1254_Ikonic.jpg",
@@ -128,6 +128,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
     if (fetchedProd) {
       product = fetchedProd;
+      // Override price & name if old seed record had 195,150
+      if (product.slug === "ikonic-barber-chair-felix") {
+        product.name = "Ikonic Felix Luxury Salon Styling Chair";
+        product.price_npr = 3500000; // NPR 35,000
+        product.imageUrl = "/products/chair_emerald_green_1786235658712.jpg";
+      }
       if (product.id) {
         const prodRecord = await db.select().from(products).where(eq(products.slug, slug)).get();
         if (prodRecord && prodRecord.category_id) {
@@ -151,11 +157,11 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         id: `prod-${slug}`,
         sku: `ETP-${slug.slice(0, 4).toUpperCase()}`,
         slug: slug,
-        name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        price_npr: isFurniture ? 18500000 : 1150000,
-        compare_at_npr: isFurniture ? null : 1350000,
+        name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()).replace(/Barber/g, "Luxury Salon"),
+        price_npr: isFurniture ? 3500000 : 1150000,
+        compare_at_npr: isFurniture ? 4200000 : 1350000,
         line: isFurniture ? "profit" : "traffic",
-        imageUrl: isFurniture ? "/products/ikonic_barber_chair_1786231855404.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
+        imageUrl: isFurniture ? "/products/chair_emerald_green_1786235658712.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
       };
     }
   }
