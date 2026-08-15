@@ -4,9 +4,9 @@ import { ShieldCheck, Truck, RotateCcw, Award, Phone, Mail, MapPin, MessageSquar
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-surface-container-high border-t border-outline-variant text-on-surface mt-20">
+    <footer className="bg-[#EAE4DC] border-t border-[#DCD4CA] text-on-surface mt-20">
       {/* Value Proposition Strip */}
-      <div className="border-b border-outline-variant/60 py-10 bg-surface-low px-4 lg:px-8">
+      <div className="border-b border-[#D8CFC3] py-10 bg-[#F4EFE9] px-4 lg:px-8">
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-start space-x-4">
             <div className="w-12 h-12 rounded-2xl bg-gold/15 flex items-center justify-center text-gold flex-shrink-0">
@@ -58,33 +58,31 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Footer Links with Official EP Infinity Logo */}
+      {/* Main Footer Links with Seamless Full Brand Logo Banner */}
       <div className="container mx-auto px-4 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden bg-black/90 p-1 border border-gold/50 shadow-gold flex items-center justify-center flex-shrink-0">
-              <img src="/logo.png" alt="Eternity Products Logo" className="w-full h-full object-contain" />
-            </div>
-            <div>
-              <h3 className="font-serif text-xl font-bold tracking-tight text-on-surface leading-none">ETERNITY PRODUCTS</h3>
-              <span className="text-[9px] uppercase tracking-widest text-gold font-bold">Nepal Authorized Importer</span>
-            </div>
+          <div className="mb-4">
+            <img
+              src="/logo_full_banner.jpg"
+              alt="Eternity Products Nepal Logo"
+              className="h-12 w-auto object-contain mix-blend-multiply rounded-md"
+            />
           </div>
 
           <p className="text-xs text-on-surface-variant leading-relaxed">
             Nepal&apos;s leading authorized distributor of Ikonic professional hair styling tools, Eternity luxury chairs, and pedicure spa furniture.
           </p>
           
-          <div className="mt-4 space-y-2 text-xs text-outline">
+          <div className="mt-4 space-y-2 text-xs text-outline font-medium">
             <p className="flex items-center"><MapPin className="w-3.5 h-3.5 mr-2 text-gold" /> New Road, Kathmandu, Nepal</p>
-            <a href="https://wa.me/9779868089892" target="_blank" rel="noreferrer" className="flex items-center hover:text-gold transition-colors">
+            <a href="https://wa.me/9779868089892" target="_blank" rel="noreferrer" className="flex items-center hover:text-gold transition-colors font-bold text-on-surface">
               <Phone className="w-3.5 h-3.5 mr-2 text-gold" /> +977 9868089892 (Call & WhatsApp)
             </a>
             <p className="flex items-center"><Mail className="w-3.5 h-3.5 mr-2 text-gold" /> sales@eternityproducts.com.np</p>
           </div>
 
           {/* Social Links */}
-          <div className="mt-5 pt-4 border-t border-outline-variant/60">
+          <div className="mt-5 pt-4 border-t border-[#D8CFC3]">
             <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Connect & Shop Social</h4>
             <div className="flex flex-wrap gap-2 text-xs">
               <a
@@ -111,20 +109,20 @@ export const Footer: React.FC = () => {
 
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Retail Categories</h4>
-          <ul className="space-y-2 text-xs text-on-surface-variant">
+          <ul className="space-y-2 text-xs text-on-surface-variant font-medium">
+            <li><Link href="/c/spa" className="hover:text-gold transition-colors font-bold text-gold">Luxury Pedicure Spa Chairs</Link></li>
+            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-on-surface">Luxury Salon Chairs</Link></li>
             <li><Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">Hair Straighteners & Crimpers</Link></li>
             <li><Link href="/c/hair-dryers" className="hover:text-gold transition-colors">Professional Blow Dryers</Link></li>
-            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-gold">Luxury Salon Chairs</Link></li>
-            <li><Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-bold text-spa-blue">Luxury Pedicure Spa Chairs</Link></li>
           </ul>
         </div>
 
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Salon B2B Hub</h4>
-          <ul className="space-y-2 text-xs text-on-surface-variant">
-            <li><Link href="/salon/portal" className="hover:text-gold transition-colors font-semibold text-on-surface">Salon Partner Portal Login</Link></li>
+          <ul className="space-y-2 text-xs text-on-surface-variant font-medium">
+            <li><Link href="/salon/portal" className="hover:text-gold transition-colors font-bold text-on-surface">Salon Partner Portal Login</Link></li>
             <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
-            <li><Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors">Shampoo Basins & Pedicure Tubs</Link></li>
+            <li><Link href="/c/spa" className="hover:text-gold transition-colors">Pedicure Tubs & Spa Beds</Link></li>
             <li><Link href="/contact" className="hover:text-gold transition-colors">Concierge Support & Head Office</Link></li>
             <li><Link href="/admin" className="hover:text-gold transition-colors text-outline">Staff Operations Admin</Link></li>
           </ul>
@@ -132,20 +130,19 @@ export const Footer: React.FC = () => {
 
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Accepted Nepal Payments</h4>
-          <p className="text-xs text-on-surface-variant mb-4">
+          <p className="text-xs text-on-surface-variant mb-4 font-light">
             Cash on Delivery (COD), eSewa, Khalti, Fonepay QR, and direct Nepal Bank Transfer.
           </p>
           <div className="flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="px-2.5 py-1 bg-surface rounded border border-outline-variant">🇳🇵 Cash on Delivery</span>
+            <span className="px-2.5 py-1 bg-surface rounded border border-[#DCD4CA]">🇳🇵 Cash on Delivery</span>
             <span className="px-2.5 py-1 bg-green-50 text-green-700 rounded border border-green-200">eSewa</span>
             <span className="px-2.5 py-1 bg-purple-50 text-purple-700 rounded border border-purple-200">Khalti</span>
             <span className="px-2.5 py-1 bg-red-50 text-red-700 rounded border border-red-200">Fonepay</span>
-            <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200">Bank Transfer</span>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-outline-variant/60 py-6 text-center text-xs text-outline bg-surface-lowest">
+      <div className="border-t border-[#D8CFC3] py-6 text-center text-xs text-outline bg-[#F4EFE9]">
         <p>© {new Date().getFullYear()} Eternity Products Nepal. All rights reserved. Prices in NPR (VAT 13% Inclusive).</p>
       </div>
     </footer>
