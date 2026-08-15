@@ -3,7 +3,8 @@ import "./globals.css";
 import { WhatsAppFloatingButton } from "@/components/storefront/WhatsAppFloatingButton";
 
 export const metadata: Metadata = {
-  title: "Eternity Products Nepal | Official Ikonic Styling Tools & Luxury Salon Equipment",
+  metadataBase: new URL("https://eternityproducts.online"),
+  title: "Eternity Products Nepal | Official Ikonic Styling Tools & Luxury Spa Chairs",
   description:
     "Eternity Products is Nepal's authorized importer of Ikonic professional titanium hair straighteners, blow dryers 2500+, curling wands, luxury salon chairs, and pedicure spa stations. 100% genuine seal, 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery across Kathmandu Valley and nationwide Nepal.",
   keywords: [
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     "Pedicure Spa Chair Nepal",
     "Beauty Parlour Equipment Distributor Nepal",
     "Eternity Products Nepal",
+    "eternityproducts.online",
     "Open-Box Cash on Delivery Nepal",
     "Ikonic Straightener Price Nepal",
   ],
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
     description:
       "Nepal's premier supplier of Ikonic titanium straighteners, blow dryers, curling wands, luxury hydraulic salon chairs (NPR 30k-40k range), and pedicure spa equipment. Open-box COD nationwide.",
-    url: "https://eternity-black-nine.vercel.app",
+    url: "https://eternityproducts.online",
     siteName: "Eternity Products Nepal",
     images: [
       {
