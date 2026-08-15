@@ -21,6 +21,13 @@ export const metadata: Metadata = {
     "Open-Box Cash on Delivery Nepal",
     "Ikonic Straightener Price Nepal",
   ],
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png" }],
+  },
   openGraph: {
     title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
     description:
@@ -29,15 +36,35 @@ export const metadata: Metadata = {
     siteName: "Eternity Products Nepal",
     images: [
       {
-        url: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
+        url: "https://eternityproducts.online/logo.png",
         width: 1200,
         height: 630,
-        alt: "Ikonic Professional Hair Tools Nepal",
+        alt: "Eternity Products Nepal Official Logo",
       },
     ],
     locale: "en_NP",
     type: "website",
   },
+};
+
+// JSON-LD Structured Data for Google Search Engine Logo & Organization
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Eternity Products Nepal",
+  url: "https://eternityproducts.online",
+  logo: "https://eternityproducts.online/logo.png",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+977-9868089892",
+    contactType: "customer service",
+    areaServed: "NP",
+    availableLanguage: ["en", "ne"],
+  },
+  sameAs: [
+    "https://www.tiktok.com/@eternity.products",
+    "https://wa.me/9779868089892",
+  ],
 };
 
 export default function RootLayout({
@@ -47,6 +74,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="bg-surface text-on-surface antialiased min-h-screen flex flex-col selection:bg-gold-light selection:text-on-surface">
         {children}
         <WhatsAppFloatingButton />
