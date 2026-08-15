@@ -2,9 +2,12 @@
 /node_modules
 /.pnpm-store
 
-# raw heavy media & prompt / design spec folders
+# raw heavy media, prompt, design spec & raw presentation docs
 /Products/
 /Design/
+/*.pdf
+/*.xlsx
+/*.pptx
 
 # ignore root markdown files except CLAUDE.md
 /*.md
