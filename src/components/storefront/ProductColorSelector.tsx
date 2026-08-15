@@ -23,6 +23,7 @@ interface ProductColorSelectorProps {
     compare_at_npr?: number | null;
     line: string;
     specs?: string | null;
+    imageUrl?: string | null;
   };
   categoryName?: string;
 }
@@ -30,16 +31,24 @@ interface ProductColorSelectorProps {
 export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   product,
 }) => {
-  const isProfitLine = product.line === "profit";
-  const hasDarazAnchor = !!product.compare_at_npr;
+  const isFurniture =
+    product.line === "profit" ||
+    product.name.toLowerCase().includes("chair") ||
+    product.name.toLowerCase().includes("bed") ||
+    product.name.toLowerCase().includes("basin") ||
+    product.name.toLowerCase().includes("station") ||
+    product.name.toLowerCase().includes("trolley");
 
-  // Ultra-Distinct Color Swatches with Dedicated Product Photography
-  const colorVariants: ColorVariant[] = isProfitLine
+  const hasDarazAnchor = !!product.compare_at_npr;
+  const primaryImg = product.imageUrl || (isFurniture ? "/products/ikonic_barber_chair_1786231855404.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
+
+  // Distinct Color Swatches for Furniture vs Styling Tools
+  const colorVariants: ColorVariant[] = isFurniture
     ? [
         {
           name: "Emerald Green & Gold",
           hex: "#1B4D3E",
-          image: "/products/chair_emerald_green_1786235658712.jpg",
+          image: primaryImg.includes("http") ? primaryImg : "/products/chair_emerald_green_1786235658712.jpg",
           inStock: true,
           stockCount: 3,
         },
@@ -69,21 +78,28 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
         {
           name: "Matte Charcoal & Gold",
           hex: "#2B2C2C",
-          image: "/products/ikonic_straightener_1786231866243.jpg",
+          image: primaryImg,
           inStock: true,
           stockCount: 12,
         },
         {
           name: "Rose Gold Edition",
           hex: "#B76E79",
-          image: "/products/ikonic_blow_dryer_1786231888743.jpg",
+          image: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
           inStock: true,
           stockCount: 8,
+        },
+        {
+          name: "Titanium Silver Pro",
+          hex: "#C0C0C0",
+          image: "https://www.ikonicworld.com/cdn/shop/files/8904231093140_1_6594bc6f-a625-47f5-863b-04f017f8c9a8.jpg",
+          inStock: true,
+          stockCount: 6,
         },
       ];
 
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(colorVariants[0]);
-  const [selectedImage, setSelectedImage] = useState<string>(colorVariants[0].image);
+  const [selectedImage, setSelectedImage] = useState<string>(primaryImg);
 
   const handleColorChange = (variant: ColorVariant) => {
     setSelectedColor(variant);
@@ -92,7 +108,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-      {/* Interactive Gallery Showcase */}
+      {/* Dynamic Gallery Showcase */}
       <div className="lg:col-span-6 space-y-4">
         <div className="relative aspect-square rounded-3xl overflow-hidden bg-surface-lowest border-2 border-gold/40 shadow-elevated group">
           <img
@@ -105,7 +121,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           {/* Active Color Badge Overlay */}
           <div className="absolute top-4 left-4 glass-card px-4 py-2 rounded-full text-xs font-bold text-on-surface border border-outline-variant flex items-center space-x-2 shadow-soft">
             <span className="w-3.5 h-3.5 rounded-full border border-white shadow-sm" style={{ backgroundColor: selectedColor.hex }} />
-            <span>Theme: <strong className="text-gold font-serif">{selectedColor.name}</strong></span>
+            <span>Finish: <strong className="text-gold font-serif">{selectedColor.name}</strong></span>
           </div>
 
           <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">
@@ -164,11 +180,11 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           )}
         </div>
 
-        {/* Top Company Style Color Swatch Picker */}
+        {/* Color Swatch Picker */}
         <div className="p-5 rounded-2xl bg-surface-lowest border border-outline-variant space-y-4 shadow-soft">
           <div className="flex justify-between items-center text-xs">
             <span className="font-serif font-bold text-sm text-on-surface uppercase tracking-wider">
-              1. Choose Leather / Finish Theme:
+              {isFurniture ? "1. Choose Leather Theme:" : "1. Choose Color Edition:"}
             </span>
             <span className="font-bold text-gold font-mono">{selectedColor.name}</span>
           </div>
@@ -220,7 +236,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
         {/* CTA Buttons */}
         <div className="space-y-3">
-          {isProfitLine ? (
+          {isFurniture ? (
             <Link
               href="/salon/portal"
               className="w-full py-4 rounded-xl bg-inverse-surface text-white font-bold text-sm hover:bg-neutral-800 transition-colors flex justify-center items-center space-x-2 shadow-soft"

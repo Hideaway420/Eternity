@@ -45,13 +45,18 @@ export async function runSeed() {
   }
 
   const csvContent = fs.readFileSync(csvPath, "utf-8");
-  const records = parse(csvContent, {
+  const rawRecords = parse(csvContent, {
     columns: true,
     skip_empty_lines: true,
     trim: true,
   });
 
-  console.log(`📦 Found ${records.length} product rows in CSV seed.`);
+  // Curate ~60 top products: ~15 B2B Salon Furniture + ~45 D2C Hair Styling Tools
+  const profitFurniture = rawRecords.filter((r: { line: string }) => (r.line || "").toLowerCase() === "profit").slice(0, 15);
+  const trafficTools = rawRecords.filter((r: { line: string }) => (r.line || "").toLowerCase() !== "profit").slice(0, 45);
+  const records = [...profitFurniture, ...trafficTools];
+
+  console.log(`📦 Curated ${records.length} top products (${profitFurniture.length} Salon Furniture + ${trafficTools.length} Styling Tools).`);
 
   const now = new Date().toISOString();
 
@@ -220,13 +225,14 @@ export async function runSeed() {
         qty_incoming: 0,
         reorder_point: stockPriority === 1 ? 1 : 5,
         safety_stock: stockPriority === 1 ? 0 : 2,
+        bin_location: null,
       })
       .onConflictDoNothing();
 
     insertedCount++;
   }
 
-  console.log(`✅ Successfully seeded ${insertedCount} products into Eternity Products database with official Ikonic image URLs.`);
+  console.log(`✅ Successfully seeded ${insertedCount} curated products into Eternity Products database.`);
 }
 
 if (require.main === module) {
