@@ -28,6 +28,9 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/apple-icon.png" }],
   },
+  verification: {
+    google: "0ahB6Zbvm8IrToCcYC_CsFlziYMvb31S2a-VkEkXj0U",
+  },
   openGraph: {
     title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
     description:
@@ -75,6 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
+        <meta name="google-site-verification" content="0ahB6Zbvm8IrToCcYC_CsFlziYMvb31S2a-VkEkXj0U" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
