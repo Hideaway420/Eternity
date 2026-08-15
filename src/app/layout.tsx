@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { WhatsAppFloatingButton } from "@/components/storefront/WhatsAppFloatingButton";
 
 export const metadata: Metadata = {
   title: "Eternity Products Nepal | Official Ikonic Styling Tools & Luxury Salon Equipment",
@@ -46,6 +47,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="bg-surface text-on-surface antialiased min-h-screen flex flex-col selection:bg-gold-light selection:text-on-surface">
         {children}
+        <WhatsAppFloatingButton />
       </body>
     </html>
   );
