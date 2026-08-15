@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Sparkles, User, ShieldCheck } from "lucide-react";
+import { Lock, Sparkles, User } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
         router.push("/admin");
         router.refresh();
       } else {
-        setErrorMsg(data.error || "Login failed. Please check your credentials.");
+        setErrorMsg(data.error || "Invalid credentials. Access denied.");
       }
     } catch (err) {
       setErrorMsg("Network error trying to sign in.");
@@ -46,11 +46,11 @@ export default function AdminLoginPage() {
             <Sparkles className="w-6 h-6 fill-gold/20" />
           </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-white">ETERNITY PRODUCTS</h1>
-          <p className="text-xs text-neutral-400 font-light">Staff Operations & Confidential Vault Portal</p>
+          <p className="text-xs text-neutral-400 font-light">Authorized Staff Operations & Vault Access</p>
         </div>
 
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-red-950/80 border border-red-800 text-red-300 text-xs font-semibold">
+          <div className="p-4 rounded-xl bg-red-950/80 border border-red-800 text-red-300 text-xs font-semibold text-center">
             ⚠️ {errorMsg}
           </div>
         )}
@@ -58,12 +58,12 @@ export default function AdminLoginPage() {
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-neutral-400 mb-1">Username / Admin Phone</label>
+            <label className="block font-bold text-neutral-400 mb-1">Username / Authorized Phone</label>
             <div className="relative">
               <input
                 type="text"
                 required
-                placeholder="admin or +977 9868089892"
+                placeholder="Enter username or phone"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-neutral-950 border border-neutral-800 rounded-xl p-3.5 pl-10 text-white placeholder-neutral-600 focus:outline-none focus:border-gold transition-all"
@@ -95,14 +95,6 @@ export default function AdminLoginPage() {
             {loading ? "Verifying Credentials..." : "Sign In to Admin Operations"}
           </button>
         </form>
-
-        <div className="p-4 rounded-xl bg-neutral-950 border border-neutral-800 text-[11px] text-neutral-400 space-y-1">
-          <div className="flex items-center text-gold font-bold">
-            <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Default Staff Credentials:
-          </div>
-          <p>User: <strong className="text-white font-mono">admin</strong> or <strong className="text-white font-mono">9868089892</strong></p>
-          <p>Password: <strong className="text-white font-mono">eternity2026</strong></p>
-        </div>
       </div>
     </div>
   );
