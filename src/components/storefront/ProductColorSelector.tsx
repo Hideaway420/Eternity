@@ -107,7 +107,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hi Eternity Products Nepal! I would like to order ${quantity}x "${product.name}" (${selectedColor.name}) with 5% Limited Offer Discount for NPR ${formatNpr(
+    `Hi Eternity Products Nepal! I would like to order ${quantity}x "${product.name}" (${selectedColor.name}) with 5% Limited Offer Discount (NPR 30k-40k range) for NPR ${formatNpr(
       product.price_npr * quantity
     )} with Open-Box Cash on Delivery.`
   );
@@ -134,9 +134,9 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           </div>
 
           {/* 5% Limited Offer Badge Overlay */}
-          <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 animate-pulse">
-            <Tag className="w-3 h-3" />
-            <span>5% OFF Limited Offer</span>
+          <div className="absolute top-4 right-4 bg-red-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center space-x-1.5 animate-pulse">
+            <Tag className="w-3.5 h-3.5" />
+            <span>5% OFF LIMITED OFFER</span>
           </div>
         </div>
 
@@ -162,43 +162,47 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
       {/* Product Purchasing & CRO Conversion Panel */}
       <div className="lg:col-span-6 space-y-6">
         <div>
+          {isFurniture && (
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gold/15 text-gold border border-gold/40 text-xs font-bold mb-2">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Category Price Range: NPR 30,000 – NPR 40,000</span>
+            </div>
+          )}
           <span className="text-xs font-mono text-outline uppercase tracking-widest block mb-1">
-            Ikonic • SKU: {product.sku}
+            Eternity Salon Line • SKU: {product.sku}
           </span>
           <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface">
             {product.name}
           </h1>
         </div>
 
-        {/* Price & 5% Discount Anchor Block */}
-        <div className="p-5 rounded-2xl bg-surface-container-low border border-gold/40 space-y-2 relative overflow-hidden">
-          <div className="flex items-baseline space-x-3">
-            <span className="text-2xl sm:text-3xl font-bold font-sans text-on-surface">
-              {formatNpr(product.price_npr * quantity)}
+        {/* Price & 5% Discount Offer Block */}
+        <div className="p-5 rounded-2xl bg-surface-container-low border-2 border-gold/50 space-y-3 relative overflow-hidden shadow-soft">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center">
+              <Tag className="w-3.5 h-3.5 mr-1 text-red-600" /> Limited Time 5% Discount Offer
             </span>
-            <span className="text-xs sm:text-sm font-mono text-outline line-through">
-              {formatNpr(originalComparePrice * quantity)}
-            </span>
-            <span className="px-2 py-0.5 rounded-full bg-red-600/10 text-red-700 text-xs font-bold border border-red-600/30">
+            <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider shadow-sm">
               5% OFF
             </span>
           </div>
-          <div className="text-xs text-green-700 font-semibold flex items-center">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-green-600" />
-            Limited Offer: Save NPR {savingsNpr.toLocaleString()} today! (VAT 13% Inclusive)
+
+          <div className="flex items-baseline space-x-3">
+            <span className="text-3xl sm:text-4xl font-bold font-sans text-on-surface">
+              {formatNpr(product.price_npr * quantity)}
+            </span>
+            <span className="text-sm sm:text-base font-mono text-outline line-through">
+              {formatNpr(originalComparePrice * quantity)}
+            </span>
+          </div>
+
+          <div className="text-xs text-green-700 font-bold flex items-center">
+            <CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />
+            Special Deal: You Save NPR {savingsNpr.toLocaleString()} today! (VAT 13% Inclusive)
           </div>
         </div>
 
-        {/* 5% Limited Offer Banner Box */}
-        <div className="p-4 rounded-2xl bg-gold/15 border border-gold/50 flex items-center space-x-3 text-xs font-bold text-on-surface">
-          <Sparkles className="w-5 h-5 text-gold flex-shrink-0" />
-          <div>
-            <span className="text-gold uppercase tracking-wider block text-[10px]">Eternity Nepal Special Promo</span>
-            <span>🔥 Limited Time Offer: Extra 5% Discount Applied Automatically!</span>
-          </div>
-        </div>
-
-        {/* Color Swatch Picker (3 Distinct Real Colors) */}
+        {/* Color Swatch Picker */}
         <div className="p-5 rounded-2xl bg-surface-lowest border border-outline-variant space-y-4 shadow-soft">
           <div className="flex justify-between items-center text-xs">
             <span className="font-serif font-bold text-xs sm:text-sm text-on-surface uppercase tracking-wider">
@@ -260,29 +264,19 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             <span>असली उत्पादन Promise (Open-Box Inspection)</span>
           </div>
           <p className="text-xs text-on-surface-variant leading-relaxed">
-            Direct import from Ikonic India. Serialized box seal + Eternity warranty card included. Open outer box to inspect before paying cash on delivery.
+            Direct import by Eternity Products. Serialized box seal + Eternity warranty card included. Open outer box to inspect before paying cash on delivery.
           </p>
         </div>
 
         {/* High-Converting CTA Action Buttons */}
         <div className="space-y-3 pt-1">
-          {isFurniture ? (
-            <Link
-              href="/checkout"
-              className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
-            >
-              <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="font-bold">Buy Now with 5% Discount — Open-Box COD</span>
-            </Link>
-          ) : (
-            <Link
-              href="/checkout"
-              className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
-            >
-              <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span>Buy Now — Open-Box Cash on Delivery</span>
-            </Link>
-          )}
+          <Link
+            href="/checkout"
+            className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
+          >
+            <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <span>Order Chair Now with 5% Offer — Open-Box COD</span>
+          </Link>
 
           {/* WhatsApp Direct Order Button */}
           <a
@@ -292,7 +286,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             className="w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Claim 5% Discount & Order via WhatsApp (+977 9868089892)</span>
+            <span>Order via WhatsApp (+977 9868089892) — Claim 5% OFF</span>
           </a>
         </div>
 
