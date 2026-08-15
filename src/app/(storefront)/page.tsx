@@ -238,7 +238,7 @@ export default async function HomePage() {
                 <img
                   src="/products/spa_chair_classic.jpg"
                   alt="Classic Eternity Spa Chair"
-                  className="w-full h-[280px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-[320px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 
                 {/* Badge */}
