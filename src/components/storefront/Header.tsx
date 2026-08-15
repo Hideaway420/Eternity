@@ -87,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             </Link>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Links (EXACT USER REQUEST MATCH) */}
             <div className="hidden lg:flex items-center space-x-6 text-sm font-medium text-on-surface-variant">
               <Link href="/" className="hover:text-gold transition-colors">
                 {isNp ? "गृहपृष्ठ" : "Home"}
@@ -95,14 +95,17 @@ export const Header: React.FC<HeaderProps> = ({
               <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
+              <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
+                {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
+              </Link>
               <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
                 {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
-                <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-gold/20 text-on-surface rounded font-bold uppercase border border-gold/40">
-                  NPR 30k–40k
-                </span>
               </Link>
-              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold flex items-center">
-                {isNp ? "मेनिक्योर पेडिक्योर" : "Mani-Pedi Spa"}
+              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface flex items-center">
+                {isNp ? "पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
+                <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-spa-blue text-secondary-on-container rounded font-bold uppercase">
+                  {isNp ? "थोक B2B" : "B2B Bulk"}
+                </span>
               </Link>
               <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
@@ -119,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Search className="w-3.5 h-3.5 text-gold" />
                 <span className="font-medium">
-                  {isNp ? "स्ट्रेटर, कुर्सी, पेडिक्योर खोज्नुहोस्..." : "Search tools, chairs, mani-pedi..."}
+                  {isNp ? "लग्जरी कुर्सी, पेडिक्योर स्पा खोज्नुहोस्..." : "Search luxury chairs, pedicure spa..."}
                 </span>
                 <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-lowest border border-outline-variant rounded text-outline">
                   ⌘K
@@ -184,21 +187,21 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
               >
-                {isNp ? "स्ट्रेटरहरू" : "Hair Straighteners"}
+                {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
               <Link
                 href="/c/luxury-salon-chairs"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
               >
-                {isNp ? "लग्जरी सलोन कुर्सीहरू (NPR 30k-40k)" : "Luxury Salon Chairs (NPR 30k–40k)"}
+                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs (NPR 30k–40k)"}
               </Link>
               <Link
                 href="/c/manicure-pedicure-equipment"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
+                className="block px-3.5 py-2.5 text-sm font-bold text-spa-blue hover:bg-surface-low rounded-xl"
               >
-                {isNp ? "मेनिक्योर र पेडिक्योर स्पा" : "Manicure & Pedicure Spa Equipment"}
+                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
               </Link>
               <Link
                 href="/warranty"
