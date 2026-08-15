@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact &amp; Concierge Support | LuxeSalon</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-surface": "#1b1c1c",
+                      "error-container": "#ffdad6",
+                      "on-background": "#1b1c1c",
+                      "inverse-surface": "#303030",
+                      "on-secondary-fixed-variant": "#3e4948",
+                      "background": "#fbf9f8",
+                      "tertiary-container": "#fffaf9",
+                      "primary-fixed": "#e4e2de",
+                      "on-secondary-fixed": "#131d1d",
+                      "on-secondary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#eae8e7",
+                      "primary-container": "#fdfbf7",
+                      "surface-dim": "#dcd9d9",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f6f3f2",
+                      "primary-fixed-dim": "#c8c6c3",
+                      "on-tertiary-fixed": "#211a1a",
+                      "surface": "#fbf9f8",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed-variant": "#4d4544",
+                      "surface-tint": "#5e5e5c",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f3f0f0",
+                      "tertiary-fixed-dim": "#d0c4c3",
+                      "surface-variant": "#e4e2e1",
+                      "on-secondary-container": "#5a6564",
+                      "surface-bright": "#fbf9f8",
+                      "on-primary-fixed": "#1b1c1a",
+                      "surface-container": "#f0eded",
+                      "outline-variant": "#c6c7c0",
+                      "on-primary-container": "#747471",
+                      "secondary-fixed": "#dae5e4",
+                      "primary": "#5e5e5c",
+                      "error": "#ba1a1a",
+                      "inverse-primary": "#c8c6c3",
+                      "secondary-fixed-dim": "#bec9c8",
+                      "on-surface-variant": "#454742",
+                      "outline": "#767872",
+                      "secondary": "#566060",
+                      "on-tertiary-container": "#7b7170",
+                      "surface-container-highest": "#e4e2e1",
+                      "tertiary": "#665c5c",
+                      "secondary-container": "#d7e2e1",
+                      "on-primary-fixed-variant": "#474744",
+                      "tertiary-fixed": "#eddfde"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "container-max": "1440px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Playfair Display"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(253, 251, 247, 0.85); /* primary-container approx */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .ambient-shadow {
+            box-shadow: 0 20px 40px -10px rgba(94, 94, 92, 0.05); /* primary color low opacity */
+        }
+        
+        .smooth-transition {
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl shadow-sm opacity-95">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between h-20 bg-surface-container-low/80 backdrop-blur-2xl">
+<a class="font-display-lg text-display-lg-mobile md:text-display-lg tracking-tight text-on-surface dark:text-surface-bright" href="#">LuxeSalon</a>
+<nav class="hidden md:flex gap-8">
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300 font-label-caps text-label-caps" href="#">Shop All</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300 font-label-caps text-label-caps" href="#">Pedicure Chairs</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300 font-label-caps text-label-caps" href="#">Manicure Tables</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300 font-label-caps text-label-caps" href="#">Stools</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300 font-label-caps text-label-caps" href="#">Financing</a>
+<a class="text-primary border-b-2 border-primary pb-1 font-label-caps text-label-caps hover:text-primary dark:hover:text-primary-fixed transition-all duration-300 translate-y-[-1px]" href="#">Contact</a>
+</nav>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed-dim">
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</button>
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-32 pb-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Hero Section -->
+<section class="mb-24 text-center max-w-3xl mx-auto">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6">Here to Help Your Business Grow</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                Whether you're opening a new luxury spa or upgrading your current salon furniture, our dedicated concierge team is here to provide personalized guidance and support every step of the way.
+            </p>
+</section>
+<!-- Bento Grid: Contact & Concierge -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-32">
+<!-- Contact Form Area (Left) -->
+<div class="md:col-span-7 glass-panel rounded-xl p-8 md:p-12 ambient-shadow">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Send an Inquiry</h2>
+<form action="#" class="space-y-6" method="POST">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="fullName">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary smooth-transition" id="fullName" name="fullName" required="" type="text"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="salonName">Salon/Business Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary smooth-transition" id="salonName" name="salonName" type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="email">Email Address</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary smooth-transition" id="email" name="email" required="" type="email"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="inquiryType">Inquiry Type</label>
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary smooth-transition appearance-none" id="inquiryType" name="inquiryType">
+<option value="trade">Trade Account / Bulk Order</option>
+<option value="product">Product Question</option>
+<option value="shipping">Shipping &amp; Delivery</option>
+<option value="other">Other</option>
+</select>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2" for="message">Message</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary smooth-transition resize-none" id="message" name="message" required="" rows="4"></textarea>
+</div>
+<button class="inline-flex items-center justify-center bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded-full w-full sm:w-auto hover:bg-on-surface hover:-translate-y-[2px] smooth-transition ambient-shadow" type="submit">
+                        Submit Inquiry
+                    </button>
+</form>
+</div>
+<!-- Concierge Details (Right) -->
+<div class="md:col-span-5 flex flex-col gap-6">
+<!-- Concierge Contact Card -->
+<div class="bg-surface-container rounded-xl p-8 flex-grow ambient-shadow flex flex-col justify-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-6">Concierge Support</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">For immediate assistance with trade accounts or high-volume orders, please reach out directly.</p>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="phone_iphone">phone_iphone</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">WhatsApp &amp; Direct Line</p>
+<p class="font-body-lg text-body-lg text-on-surface">+1 (800) 555-LUXE</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Trade Inquiries</p>
+<p class="font-body-lg text-body-lg text-on-surface">concierge@luxesalon.com</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">Hours of Operation</p>
+<p class="font-body-md text-body-md text-on-surface">Mon - Fri: 9am - 6pm EST</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Showroom Location Area -->
+<section class="mt-20">
+<h2 class="font-headline-md text-headline-md text-center text-on-surface mb-12">Visit Our Showroom</h2>
+<div class="relative w-full h-[500px] rounded-xl overflow-hidden ambient-shadow">
+<!-- Simulated Map Area using an image -->
+<div class="absolute inset-0 bg-surface-container-high flex items-center justify-center">
+<img class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="A stylized, high-end minimalist map graphic showing a chic metropolitan area, indicating a flagship showroom location. The map uses a soft grayscale and beige palette consistent with a luxury brand aesthetic, featuring subtle gold accents for major roads and a stylized marker for the showroom." data-location="New York City" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB57FgDSEoKn72vYQoVHhcOwgQUn4g2T6KtWOScziGwFSA3zMrRphyKKQO4bypfAdbAa47BJXCFhp7pcWvOV7RriPCtkyvmUHhZlezAFA1YQAlmv5UuQ2djd5hkdkunf6Ph7xRiaK114i-R8eJDYYvWxH3U6KfCFeGIpRjK5hPLJk1W7kqdeFugQwB-7i3ERATus89YT9gyL8MjEI1YfhG_tAfc9IrktAq_5BKhEgOq7XMuBMZQS8YuQg"/>
+</div>
+<!-- Floating Location Card -->
+<div class="absolute bottom-8 left-8 right-8 md:left-auto md:right-12 md:w-96 glass-panel p-6 rounded-xl ambient-shadow">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Flagship Showroom</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                        123 Luxury Avenue, Suite 400<br/>
+                        New York, NY 10001
+                    </p>
+<a class="inline-block font-label-caps text-label-caps text-primary border-b border-primary pb-1 hover:text-on-surface hover:border-on-surface smooth-transition" href="#">Get Directions</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-20 bg-surface-container-lowest dark:bg-surface-dim bg-surface-container dark:bg-surface-container-highest">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="col-span-1 md:col-span-4 mb-10 md:mb-0">
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-4">LuxeSalon</h2>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-surface-variant">Elevating the salon experience through premium design and craftsmanship.</p>
+</div>
+<div class="col-span-1 md:col-span-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
+<nav class="flex flex-wrap gap-8">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Newsletter</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Shipping Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Privacy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Terms of Service</a>
+<a class="font-label-caps text-label-caps text-primary font-bold hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Contact Us</a>
+</nav>
+<div class="font-body-md text-body-md text-on-surface dark:text-on-surface-variant">
+                    © 2024 LuxeSalon. All Rights Reserved.
+                </div>
+</div>
+</div>
+</footer>
+</body></html>

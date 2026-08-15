@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LuxeSalon - User Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed": "#131d1d",
+                      "on-surface": "#1b1c1c",
+                      "outline": "#767872",
+                      "on-secondary-container": "#5a6564",
+                      "background": "#fbf9f8",
+                      "on-primary-fixed": "#1b1c1a",
+                      "secondary-fixed": "#dae5e4",
+                      "secondary": "#566060",
+                      "on-secondary-fixed-variant": "#3e4948",
+                      "primary": "#5e5e5c",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#211a1a",
+                      "secondary-fixed-dim": "#bec9c8",
+                      "surface-container-high": "#eae8e7",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c6c7c0",
+                      "on-primary-fixed-variant": "#474744",
+                      "primary-fixed": "#e4e2de",
+                      "error-container": "#ffdad6",
+                      "tertiary": "#665c5c",
+                      "inverse-primary": "#c8c6c3",
+                      "tertiary-fixed-dim": "#d0c4c3",
+                      "surface-container": "#f0eded",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-tertiary-container": "#7b7170",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#f3f0f0",
+                      "secondary-container": "#d7e2e1",
+                      "tertiary-fixed": "#eddfde",
+                      "on-primary": "#ffffff",
+                      "surface-container-low": "#f6f3f2",
+                      "surface-tint": "#5e5e5c",
+                      "primary-fixed-dim": "#c8c6c3",
+                      "on-background": "#1b1c1c",
+                      "on-primary-container": "#747471",
+                      "surface-dim": "#dcd9d9",
+                      "on-surface-variant": "#454742",
+                      "surface-bright": "#fbf9f8",
+                      "primary-container": "#fdfbf7",
+                      "tertiary-container": "#fffaf9",
+                      "on-tertiary-fixed-variant": "#4d4544",
+                      "inverse-surface": "#303030",
+                      "on-secondary": "#ffffff",
+                      "surface-variant": "#e4e2e1",
+                      "surface": "#fbf9f8"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "unit": "8px",
+                      "gutter": "24px",
+                      "container-max": "1440px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": [
+                              "Playfair Display"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Playfair Display"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Playfair Display"
+                      ],
+                      "headline-sm": [
+                              "Playfair Display"
+                      ]
+              },
+              "fontSize": {
+                      "display-lg-mobile": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-sm": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+      </script>
+<style>
+        .ambient-shadow {
+            box-shadow: 0 20px 40px -10px rgba(94, 94, 92, 0.05);
+        }
+        .luxury-transition {
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl shadow-sm opacity-95">
+<div class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-20">
+<a class="font-display-lg text-display-lg tracking-tight text-on-surface dark:text-surface-bright" href="#">LuxeSalon</a>
+<nav class="hidden md:flex gap-8">
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300" href="#">Shop All</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300" href="#">Pedicure Chairs</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300" href="#">Manicure Tables</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300" href="#">Stools</a>
+<a class="text-secondary dark:text-secondary-fixed-dim font-label-caps hover:text-primary transition-colors duration-300" href="#">Financing</a>
+</nav>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed-dim">
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-all duration-300 active:translate-y-[-1px]"><span class="material-symbols-outlined" data-icon="search">search</span></button>
+<button class="text-primary border-b-2 border-primary pb-1 active:translate-y-[-1px]"><span class="material-symbols-outlined" data-icon="person">person</span></button>
+<button class="hover:text-primary dark:hover:text-primary-fixed transition-all duration-300 active:translate-y-[-1px]"><span class="material-symbols-outlined" data-icon="shopping_bag">shopping_bag</span></button>
+</div>
+</div>
+</header>
+<div class="flex-1 flex max-w-container-max mx-auto w-full pt-[120px] pb-20 px-margin-desktop gap-gutter">
+<!-- Sidebar Navigation -->
+<aside class="w-64 flex-shrink-0 hidden lg:block">
+<div class="sticky top-[120px] bg-surface-container-lowest rounded-xl p-8 ambient-shadow border border-surface-container">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-8">Dashboard</h3>
+<nav class="flex flex-col gap-4">
+<a class="flex items-center gap-3 text-primary font-body-md bg-secondary-container/50 px-4 py-3 rounded-lg luxury-transition" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+                        Overview
+                    </a>
+<a class="flex items-center gap-3 text-secondary font-body-md px-4 py-3 rounded-lg hover:bg-surface-container luxury-transition" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="receipt_long">receipt_long</span>
+                        My Orders
+                    </a>
+<a class="flex items-center gap-3 text-secondary font-body-md px-4 py-3 rounded-lg hover:bg-surface-container luxury-transition" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_balance">account_balance</span>
+                        Financing Status
+                    </a>
+<a class="flex items-center gap-3 text-secondary font-body-md px-4 py-3 rounded-lg hover:bg-surface-container luxury-transition" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="favorite">favorite</span>
+                        Saved Designs
+                    </a>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col gap-12">
+<!-- Welcome Section -->
+<section class="flex justify-between items-end">
+<div>
+<p class="font-label-caps text-label-caps text-secondary mb-2">Welcome Back</p>
+<h1 class="font-display-lg text-display-lg text-on-surface">Eleanor's Spa &amp; Retreat</h1>
+</div>
+</section>
+<!-- Top Row: Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Financing Overview Card -->
+<div class="bg-surface-container-lowest rounded-xl p-8 ambient-shadow border border-surface-container flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Financing Overview</h3>
+<span class="material-symbols-outlined text-outline" data-icon="more_horiz">more_horiz</span>
+</div>
+<p class="font-label-caps text-label-caps text-secondary mb-1">Remaining Balance</p>
+<p class="font-display-lg text-display-lg text-on-surface">$12,450</p>
+<p class="font-body-md text-body-md text-secondary mt-2">Aura Shiatsu Spa Chairs (x4)</p>
+</div>
+<div class="mt-8">
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden mb-2">
+<div class="bg-primary h-full w-[45%] rounded-full"></div>
+</div>
+<div class="flex justify-between font-label-caps text-label-caps text-secondary">
+<span>Paid: $10,185</span>
+<span>Total: $22,635</span>
+</div>
+</div>
+</div>
+<!-- Recent Activity/Notification Card -->
+<div class="bg-primary-container rounded-xl p-8 ambient-shadow flex flex-col justify-between relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute -right-10 -bottom-10 opacity-10">
+<span class="material-symbols-outlined text-[200px]" data-icon="local_shipping">local_shipping</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-primary-container mb-4">Latest Shipment</h3>
+<p class="font-body-md text-body-md text-on-primary-container/80 mb-6">Your order #LS-9942 is out for white-glove delivery today between 1:00 PM and 4:00 PM.</p>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-lg font-label-caps text-label-caps tracking-wider hover:-translate-y-[2px] luxury-transition inline-flex items-center gap-2">
+                            TRACK ORDER <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Recent Orders Table Area -->
+<section class="bg-surface-container-lowest rounded-xl p-8 ambient-shadow border border-surface-container">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Orders</h2>
+<a class="font-label-caps text-label-caps text-primary hover:text-on-surface luxury-transition flex items-center gap-1" href="#">VIEW ALL <span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span></a>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-surface-container">
+<th class="font-label-caps text-label-caps text-secondary py-4 px-4 font-normal">Order ID</th>
+<th class="font-label-caps text-label-caps text-secondary py-4 px-4 font-normal">Date</th>
+<th class="font-label-caps text-label-caps text-secondary py-4 px-4 font-normal">Items</th>
+<th class="font-label-caps text-label-caps text-secondary py-4 px-4 font-normal">Total</th>
+<th class="font-label-caps text-label-caps text-secondary py-4 px-4 font-normal">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<tr class="border-b border-surface-container/50 hover:bg-surface-container-low/50 luxury-transition">
+<td class="py-5 px-4 font-medium">#LS-9942</td>
+<td class="py-5 px-4 text-secondary">Oct 12, 2024</td>
+<td class="py-5 px-4">Ergo Technician Stool (x2)</td>
+<td class="py-5 px-4">$850.00</td>
+<td class="py-5 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> Shipped
+                                    </span>
+</td>
+</tr>
+<tr class="border-b border-surface-container/50 hover:bg-surface-container-low/50 luxury-transition">
+<td class="py-5 px-4 font-medium">#LS-9821</td>
+<td class="py-5 px-4 text-secondary">Sep 28, 2024</td>
+<td class="py-5 px-4">Aura Shiatsu Spa Chair (x4)</td>
+<td class="py-5 px-4">$22,635.00</td>
+<td class="py-5 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-container text-on-tertiary-container font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Concierge Review
+                                    </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 luxury-transition">
+<td class="py-5 px-4 font-medium">#LS-9650</td>
+<td class="py-5 px-4 text-secondary">Aug 15, 2024</td>
+<td class="py-5 px-4">Lumina Styling Mirror (x3)</td>
+<td class="py-5 px-4">$3,450.00</td>
+<td class="py-5 px-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-caps text-label-caps">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Delivered
+                                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Saved for Later Bento Grid -->
+<section>
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-headline-md text-headline-md text-on-surface">Saved for Later</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden ambient-shadow border border-surface-container group cursor-pointer">
+<div class="h-48 relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 luxury-transition" data-alt="A luxurious, minimalist salon environment featuring a high-end ergonomic technician stool in soft ivory and brushed gold. The lighting is bright and soft, creating a serene, modern light-mode aesthetic tailored for high-end B2B salon furniture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5MWU9ep8jf9EXvk-dMeT_pMNyjTbjj0TQeMH6Tw76Ll_ufjE55xleeWs3ycwKNAzrTy26AYG67B8LrHe2kVesO5RC9SJ4ahVlc3sQeXiouaicJriCxf7wsId1TjwAoVzeBcbNuLRtTo03bRNR4tVXeqfboTbfis0Ri15uvZOcrcBLg-iWrKl53sgVkVL_EYLHP30LWWYNimrudoGn1smo6oJ-KITBU1a6WvTsA_dkX4TVaYxHW5vIWQ"/>
+<button class="absolute top-4 right-4 w-8 h-8 bg-surface-container-lowest/80 backdrop-blur rounded-full flex items-center justify-center text-primary hover:text-on-surface luxury-transition">
+<span class="material-symbols-outlined text-[18px]" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-6">
+<p class="font-label-caps text-label-caps text-secondary mb-2">Seating</p>
+<h4 class="font-headline-sm text-[20px] text-on-surface mb-2">Ergo Technician Stool</h4>
+<p class="font-body-md text-body-md text-on-surface/80">$425.00</p>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden ambient-shadow border border-surface-container group cursor-pointer">
+<div class="h-48 relative overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover group-hover:scale-105 luxury-transition" data-alt="A sleek, modern manicure table designed for a luxury spa. The table features subtle brushed gold accents and a soft ivory finish. Set in a bright, tranquil digital showroom environment with low-contrast ambient shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBA-6fJK5yFwpXiQ4NduUFdOg72zpdPUjFI6fGW0CK3mzEZjhs8RRtF6kcipU4AhB7T9FZL9DbdngSSp4WbEEbD-ew_UUpyRydjSu4a56lEL7fhswG3v3RYq-exZtur2054cW5S1xqup4ijZw2he1v8UxVe_t_G-4WBwtShKCFDo-z4FmUSgYFqQ5SVeoPk9s3s542hs8n9m_st1Z4N4Y4HLuq2w3V5AGU1o6qvw6BAwEghN74FYZvKQ"/>
+<button class="absolute top-4 right-4 w-8 h-8 bg-surface-container-lowest/80 backdrop-blur rounded-full flex items-center justify-center text-primary hover:text-on-surface luxury-transition">
+<span class="material-symbols-outlined text-[18px]" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-6">
+<p class="font-label-caps text-label-caps text-secondary mb-2">Tables</p>
+<h4 class="font-headline-sm text-[20px] text-on-surface mb-2">Veritas Manicure Station</h4>
+<p class="font-body-md text-body-md text-on-surface/80">$1,200.00</p>
+</div>
+</div>
+<!-- Add New Card -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden border border-dashed border-outline-variant flex flex-col items-center justify-center text-center p-8 cursor-pointer hover:bg-surface-container luxury-transition group min-h-[300px]">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest shadow-sm flex items-center justify-center text-primary mb-4 group-hover:scale-110 luxury-transition">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</div>
+<h4 class="font-headline-sm text-[20px] text-on-surface mb-2">Browse Catalog</h4>
+<p class="font-body-md text-body-md text-secondary">Discover more premium pieces for your space.</p>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-dim w-full py-20 bg-surface-container dark:bg-surface-container-highest flat no shadows">
+<div class="max-w-container-max mx-auto px-margin-desktop grid grid-cols-12 gap-gutter">
+<div class="col-span-12 md:col-span-4 mb-8 md:mb-0 flex flex-col items-start">
+<a class="font-display-lg text-display-lg text-primary mb-6" href="#">LuxeSalon</a>
+<p class="font-body-md text-body-md text-on-surface dark:text-on-surface-variant mb-6 opacity-80">Elevating the salon experience through intentional, luxury design.</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant dark:text-outline-variant">© 2024 LuxeSalon. All Rights Reserved.</p>
+</div>
+<div class="col-span-6 md:col-span-4 flex flex-col gap-4">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Newsletter</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Shipping Policy</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Privacy</a>
+</div>
+<div class="col-span-6 md:col-span-4 flex flex-col gap-4">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Terms of Service</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+</body></html>
