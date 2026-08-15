@@ -121,7 +121,7 @@ export default async function HomePage() {
       <Header />
 
       <main className="flex-1 space-y-12 sm:space-y-20 pb-16">
-        {/* Section 1: Hero Banner (CLEAN: No price text in buttons) */}
+        {/* Section 1: Hero Banner */}
         <section className="relative bg-surface-container-low border-b border-outline-variant/60 overflow-hidden py-10 sm:py-16 lg:py-24">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gold/15 via-spa-blue/20 to-transparent pointer-events-none" />
           <div className="container mx-auto px-4 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -138,10 +138,10 @@ export default async function HomePage() {
               </p>
               <div className="pt-2 flex flex-wrap gap-3 sm:gap-4 items-center">
                 <Link
-                  href="/c/luxury-salon-chairs"
+                  href="/p/ikonic-barber-chair-felix"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm shadow-gold transition-all flex items-center space-x-2"
                 >
-                  <span>Explore Luxury Chairs</span>
+                  <span>View Felix Luxury Chair</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -169,9 +169,12 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase (Product price shown cleanly on product badge) */}
+            {/* Hero Image Showcase (CLICKABLE DIRECTLY TO CHAIR PRODUCT PAGE) */}
             <div className="lg:col-span-5 relative">
-              <div className="relative rounded-3xl overflow-hidden shadow-elevated border border-outline-variant/80 bg-surface-lowest group">
+              <Link
+                href="/p/ikonic-barber-chair-felix"
+                className="block relative rounded-3xl overflow-hidden shadow-elevated border-2 border-gold/60 bg-surface-lowest group hover:ring-4 hover:ring-gold/30 transition-all cursor-pointer"
+              >
                 <img
                   src="/products/chair_emerald_green_1786235658712.jpg"
                   alt="Ikonic Felix Luxury Salon Styling Chair"
@@ -180,8 +183,8 @@ export default async function HomePage() {
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Luxury Chair Collection</span>
-                      <h4 className="font-serif font-bold text-xs sm:text-base">Ikonic Felix Luxury Salon Chair</h4>
+                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Click to Order Chair</span>
+                      <h4 className="font-serif font-bold text-xs sm:text-base group-hover:text-gold transition-colors">Ikonic Felix Luxury Salon Chair</h4>
                       <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Emerald Green</span>
                     </div>
                     <div className="text-right">
@@ -190,7 +193,7 @@ export default async function HomePage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </section>
@@ -325,17 +328,19 @@ export default async function HomePage() {
               {profitProducts.map((p) => (
                 <div key={p.id} className="trade-card rounded-2xl p-5 sm:p-6 flex flex-col justify-between hover:border-gold/50 transition-all">
                   <div>
-                    <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-neutral-900">
+                    <Link href={`/p/${p.slug}`} className="block aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-neutral-900 group">
                       <img
                         src={p.imageUrl || "/products/chair_emerald_green_1786235658712.jpg"}
                         alt={p.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                    </div>
+                    </Link>
                     <div className="flex justify-between items-start">
                       <div>
                         <span className="text-xs font-mono text-gold uppercase">B2B Trade Line</span>
-                        <h3 className="font-serif font-bold text-lg sm:text-xl text-white mt-1">{p.name}</h3>
+                        <h3 className="font-serif font-bold text-lg sm:text-xl text-white mt-1">
+                          <Link href={`/p/${p.slug}`} className="hover:text-gold transition-colors">{p.name}</Link>
+                        </h3>
                       </div>
                       <span className="text-base sm:text-xl font-bold text-gold font-sans">{formatNpr(p.price_npr)}</span>
                     </div>
@@ -346,7 +351,7 @@ export default async function HomePage() {
                       href={`/p/${p.slug}`}
                       className="flex-1 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs text-center transition-colors shadow-gold"
                     >
-                      Select Color & Request Quote
+                      Select Color & Order Chair
                     </Link>
                   </div>
                 </div>
