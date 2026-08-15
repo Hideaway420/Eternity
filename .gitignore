@@ -2,6 +2,17 @@
 /node_modules
 /.pnpm-store
 
+# raw heavy media & prompt / design spec folders
+/Products/
+/Design/
+
+# ignore root markdown files except CLAUDE.md
+/*.md
+!/CLAUDE.md
+
+# internal tooling
+/.gstack/
+
 # next.js
 /.next/
 /out/
