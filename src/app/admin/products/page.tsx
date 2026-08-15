@@ -3,7 +3,20 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatNpr } from "@/lib/money";
-import { Plus, Search, PackageCheck, Layers, ArrowLeft, Image as ImageIcon, Sparkles, Building2, CheckCircle2, ShieldAlert } from "lucide-react";
+import {
+  Plus,
+  Search,
+  PackageCheck,
+  ArrowLeft,
+  Menu,
+  X,
+  PhoneCall,
+  Boxes,
+  ShoppingCart,
+  Radio,
+  FileBarChart,
+  Home,
+} from "lucide-react";
 
 interface ProductItem {
   id: string;
@@ -25,6 +38,7 @@ export default function AdminProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [lineFilter, setLineFilter] = useState<"all" | "traffic" | "profit">("all");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -109,31 +123,76 @@ export default function AdminProductsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-surface-container-low text-on-surface p-6 lg:p-10 space-y-8">
+    <div className="min-h-screen bg-surface-container-low text-on-surface p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-outline-variant pb-6">
-        <div>
-          <div className="flex items-center space-x-2">
-            <Link href="/admin" className="text-xs text-outline hover:underline flex items-center">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Admin Operations
-            </Link>
+      <div className="bg-surface-lowest rounded-2xl p-4 sm:p-6 border border-outline-variant shadow-soft flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="w-full sm:w-auto flex justify-between items-center">
+          <div>
+            <div className="flex items-center space-x-2">
+              <Link href="/admin" className="text-xs text-outline hover:underline flex items-center">
+                <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Admin Dashboard
+              </Link>
+            </div>
+            <h1 className="font-serif text-xl sm:text-3xl font-bold tracking-tight mt-1 flex items-center">
+              <PackageCheck className="w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 text-gold" /> Catalog & Products
+            </h1>
           </div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight mt-1 flex items-center">
-            <PackageCheck className="w-7 h-7 mr-3 text-gold" /> Catalog & Product Management
-          </h1>
-          <p className="text-xs text-on-surface-variant mt-1 font-light">
-            Backend catalog management for Ikonic hair tools, barber chairs, and salon equipment.
-          </p>
+
+          {/* Slide-out Menu Toggle for Mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="sm:hidden p-2.5 rounded-xl bg-surface-low border border-outline-variant text-on-surface"
+            aria-label="Toggle Admin Navigation"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs shadow-gold transition-colors flex items-center space-x-2"
+          className="w-full sm:w-auto px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs shadow-gold transition-colors flex items-center justify-center space-x-2"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Product</span>
         </button>
       </div>
+
+      {/* Slide-Out Mobile Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="sm:hidden bg-neutral-900 text-white rounded-2xl p-4 border border-neutral-800 space-y-2 animate-in slide-in-from-top duration-200">
+          <span className="text-[10px] uppercase tracking-widest text-gold font-bold block mb-2 px-2">
+            Staff Navigation Menu
+          </span>
+          <Link href="/admin/products" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-gold/20 text-gold font-bold text-xs">
+            <PackageCheck className="w-4 h-4" />
+            <span>Catalog & Product Manager</span>
+          </Link>
+          <Link href="/admin/cod-queue" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs">
+            <PhoneCall className="w-4 h-4 text-gold" />
+            <span>COD Order Confirmation Queue</span>
+          </Link>
+          <Link href="/admin/inventory" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs">
+            <Boxes className="w-4 h-4 text-gold" />
+            <span>Stock & Warehouse Inventory</span>
+          </Link>
+          <Link href="/admin/purchase-orders" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs">
+            <ShoppingCart className="w-4 h-4 text-gold" />
+            <span>Supplier Purchase Orders</span>
+          </Link>
+          <Link href="/admin/broadcasts" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs">
+            <Radio className="w-4 h-4 text-gold" />
+            <span>Viber & SMS Reorder Broadcasts</span>
+          </Link>
+          <Link href="/admin/reports" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs">
+            <FileBarChart className="w-4 h-4 text-gold" />
+            <span>Financial Reports (Vault)</span>
+          </Link>
+          <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-2.5 p-2.5 rounded-xl hover:bg-neutral-800 text-xs text-neutral-400">
+            <Home className="w-4 h-4" />
+            <span>Return to Public Storefront</span>
+          </Link>
+        </div>
+      )}
 
       {feedbackMsg && (
         <div
@@ -151,24 +210,24 @@ export default function AdminProductsPage() {
       )}
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div className="p-4 sm:p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
           <span className="text-xs font-mono text-outline uppercase tracking-wider block">Total Catalog Items</span>
-          <div className="text-3xl font-bold font-sans text-on-surface mt-2">{productList.length}</div>
+          <div className="text-2xl sm:text-3xl font-bold font-sans text-on-surface mt-1.5">{productList.length}</div>
           <span className="text-[11px] text-green-700 font-semibold mt-1 block">Active in Storefront</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
+        <div className="p-4 sm:p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
           <span className="text-xs font-mono text-outline uppercase tracking-wider block">D2C Styling Tools</span>
-          <div className="text-3xl font-bold font-sans text-gold mt-2">
+          <div className="text-2xl sm:text-3xl font-bold font-sans text-gold mt-1.5">
             {productList.filter((p) => p.line === "traffic").length}
           </div>
           <span className="text-[11px] text-outline mt-1 block">Traffic Line</span>
         </div>
 
-        <div className="p-5 rounded-2xl bg-inverse-surface text-inverse-on-surface p-5 rounded-2xl border border-neutral-800 shadow-soft">
+        <div className="p-4 sm:p-5 rounded-2xl bg-inverse-surface text-inverse-on-surface border border-neutral-800 shadow-soft">
           <span className="text-xs font-mono text-gold uppercase tracking-wider block">Salon Furniture</span>
-          <div className="text-3xl font-bold font-sans text-white mt-2">
+          <div className="text-2xl sm:text-3xl font-bold font-sans text-white mt-1.5">
             {productList.filter((p) => p.line === "profit").length}
           </div>
           <span className="text-[11px] text-neutral-400 mt-1 block">High-Margin B2B Equipment</span>
@@ -176,11 +235,11 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filter & Search Strip */}
-      <div className="p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-wrap items-center justify-between gap-4 shadow-soft">
-        <div className="relative flex-1 min-w-[240px]">
+      <div className="p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-soft">
+        <div className="relative flex-1">
           <input
             type="text"
-            placeholder="Filter by product name or SKU..."
+            placeholder="Search product name or SKU..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-surface-low border border-outline-variant rounded-xl py-2.5 pl-9 pr-4 text-xs focus:outline-none focus:border-gold"
@@ -188,10 +247,10 @@ export default function AdminProductsPage() {
           <Search className="w-4 h-4 text-outline absolute left-3 top-3" />
         </div>
 
-        <div className="flex gap-2 text-xs">
+        <div className="flex gap-1.5 text-[11px] sm:text-xs overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setLineFilter("all")}
-            className={`px-3 py-1.5 rounded-lg border font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
               lineFilter === "all" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
             }`}
           >
@@ -199,7 +258,7 @@ export default function AdminProductsPage() {
           </button>
           <button
             onClick={() => setLineFilter("traffic")}
-            className={`px-3 py-1.5 rounded-lg border font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
               lineFilter === "traffic" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
             }`}
           >
@@ -207,11 +266,11 @@ export default function AdminProductsPage() {
           </button>
           <button
             onClick={() => setLineFilter("profit")}
-            className={`px-3 py-1.5 rounded-lg border font-semibold transition-colors ${
+            className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
               lineFilter === "profit" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
             }`}
           >
-            Salon Equipment (B2B)
+            Salon Equipment
           </button>
         </div>
       </div>
@@ -219,7 +278,7 @@ export default function AdminProductsPage() {
       {/* Product Listing Table */}
       <div className="rounded-2xl bg-surface-lowest border border-outline-variant overflow-hidden shadow-soft">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="w-full text-left border-collapse text-xs min-w-[640px]">
             <thead>
               <tr className="bg-surface-container-high text-outline uppercase font-mono border-b border-outline-variant">
                 <th className="py-3.5 px-4 font-bold">Image & Product</th>
@@ -249,7 +308,7 @@ export default function AdminProductsPage() {
                   <tr key={p.id} className="hover:bg-surface-low/60 transition-colors">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-surface-low border border-outline-variant flex-shrink-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-surface-low border border-outline-variant flex-shrink-0">
                           <img
                             src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                             alt={p.name}
@@ -257,7 +316,7 @@ export default function AdminProductsPage() {
                           />
                         </div>
                         <div>
-                          <span className="font-serif font-bold text-sm text-on-surface block line-clamp-1">{p.name}</span>
+                          <span className="font-serif font-bold text-xs sm:text-sm text-on-surface block line-clamp-1">{p.name}</span>
                           <span className="text-[10px] text-outline font-mono">/p/{p.slug}</span>
                         </div>
                       </div>
@@ -265,7 +324,7 @@ export default function AdminProductsPage() {
                     <td className="py-3.5 px-4 font-mono font-semibold">{p.sku}</td>
                     <td className="py-3.5 px-4">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                        className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase ${
                           p.line === "profit" ? "bg-purple-100 text-purple-800" : "bg-gold/20 text-on-surface"
                         }`}
                       >
@@ -289,9 +348,9 @@ export default function AdminProductsPage() {
                       <Link
                         href={`/p/${p.slug}`}
                         target="_blank"
-                        className="px-3 py-1.5 rounded-lg bg-surface-low hover:bg-gold/20 border border-outline-variant font-bold text-xs transition-colors"
+                        className="px-2.5 py-1.5 rounded-lg bg-surface-low hover:bg-gold/20 border border-outline-variant font-bold text-[11px] transition-colors inline-block"
                       >
-                        View Storefront PDP
+                        View PDP
                       </Link>
                     </td>
                   </tr>
@@ -305,9 +364,9 @@ export default function AdminProductsPage() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-surface-lowest border border-outline-variant rounded-3xl p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-6 shadow-elevated">
+          <div className="bg-surface-lowest border border-outline-variant rounded-3xl p-5 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-elevated">
             <div className="flex justify-between items-center border-b border-outline-variant pb-4">
-              <h2 className="font-serif text-2xl font-bold flex items-center">
+              <h2 className="font-serif text-xl sm:text-2xl font-bold flex items-center">
                 <Plus className="w-5 h-5 mr-2 text-gold" /> Add New Catalog Product
               </h2>
               <button

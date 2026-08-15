@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
+import { MobileBottomBar } from "@/components/storefront/MobileBottomBar";
 import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -101,58 +102,58 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface text-on-surface">
+    <div className="min-h-screen flex flex-col bg-surface text-on-surface pb-16 md:pb-0">
       <Header />
 
-      <main className="flex-1 py-10 container mx-auto px-4 lg:px-8">
+      <main className="flex-1 py-6 sm:py-10 container mx-auto px-3 sm:px-4 lg:px-8">
         {/* Breadcrumb */}
-        <div className="text-xs text-outline mb-6">
+        <div className="text-xs text-outline mb-4 sm:mb-6">
           <Link href="/" className="hover:underline">Home</Link>
           <span className="mx-2">/</span>
           <span className="text-on-surface font-semibold capitalize">{title}</span>
         </div>
 
         {/* Category Header */}
-        <div className="bg-surface-container-low rounded-2xl p-8 mb-10 border border-outline-variant/60">
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize">
+        <div className="bg-surface-container-low rounded-2xl p-5 sm:p-8 mb-6 sm:mb-10 border border-outline-variant/60">
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize">
             {title}
           </h1>
-          <p className="text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
             Authorized Ikonic professional hair tools & salon equipment. Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery.
           </p>
         </div>
 
         {/* Color Swatch Filter Strip */}
-        <div className="mb-8 p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-wrap items-center justify-between gap-4">
+        <div className="mb-6 p-3 sm:p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-outline">
             <Palette className="w-4 h-4 text-gold" />
-            <span>Filter By Leather / Theme Color:</span>
+            <span>Leather / Finish Color:</span>
           </div>
 
-          <div className="flex flex-wrap gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-[11px] sm:text-xs">
             <Link
               href={`/c/${categorySlug}`}
-              className={`px-3 py-1.5 rounded-lg border font-semibold transition-colors ${!selectedColor ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
+              className={`px-2.5 py-1 rounded-lg border font-semibold transition-colors ${!selectedColor ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
             >
               All Colors
             </Link>
             <Link
               href={`/c/${categorySlug}?color=emerald`}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-colors ${selectedColor === "emerald" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "emerald" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
             >
               <span className="w-3 h-3 rounded-full bg-[#1B4D3E]" />
               <span>Emerald Green</span>
             </Link>
             <Link
               href={`/c/${categorySlug}?color=black`}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-colors ${selectedColor === "black" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "black" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
             >
               <span className="w-3 h-3 rounded-full bg-[#1A1A1A]" />
               <span>Obsidian Black</span>
             </Link>
             <Link
               href={`/c/${categorySlug}?color=brown`}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border font-semibold transition-colors ${selectedColor === "brown" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "brown" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
             >
               <span className="w-3 h-3 rounded-full bg-[#4A2E1B]" />
               <span>Espresso Brown</span>
@@ -161,12 +162,12 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
         </div>
 
         {/* Catalog Grid with Sidebar */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Filter Sidebar */}
           <div className="lg:col-span-3 space-y-6">
-            <div className="bg-surface-lowest p-6 rounded-2xl border border-outline-variant space-y-6">
+            <div className="bg-surface-lowest p-5 rounded-2xl border border-outline-variant space-y-4">
               <div className="flex items-center justify-between border-b border-outline-variant pb-3">
-                <h3 className="font-serif font-bold text-base flex items-center">
+                <h3 className="font-serif font-bold text-sm flex items-center">
                   <SlidersHorizontal className="w-4 h-4 mr-2 text-gold" /> Filter Products
                 </h3>
                 <span className="text-xs text-outline">{categoryProducts.length} items</span>
@@ -174,8 +175,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
               {/* Product Line Filter */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-outline mb-3">Product Line</h4>
-                <div className="space-y-2 text-xs">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Product Line</h4>
+                <div className="space-y-1.5 text-xs">
                   <Link
                     href={`/c/${categorySlug}`}
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${!lineFilter ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
@@ -186,21 +187,21 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     href={`/c/${categorySlug}?line=traffic`}
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${lineFilter === "traffic" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    D2C Styling Tools (Traffic Line)
+                    D2C Styling Tools
                   </Link>
                   <Link
                     href={`/c/${categorySlug}?line=profit`}
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${lineFilter === "profit" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    B2B Salon Furniture (Profit Line)
+                    B2B Salon Furniture
                   </Link>
                 </div>
               </div>
 
               {/* Trust Badge */}
-              <div className="p-4 rounded-xl bg-surface-low border border-outline-variant/60 text-xs space-y-2">
-                <div className="flex items-center text-gold font-bold">
-                  <ShieldCheck className="w-4 h-4 mr-1.5" /> 100% Genuine Import
+              <div className="p-3.5 rounded-xl bg-surface-low border border-outline-variant/60 text-xs space-y-1.5">
+                <div className="flex items-center text-gold font-bold text-xs">
+                  <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> 100% Genuine Import
                 </div>
                 <p className="text-outline text-[11px]">
                   All tools are imported from Ikonic India with verified serial numbers.
@@ -209,7 +210,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             </div>
           </div>
 
-          {/* Main Products Grid */}
+          {/* Main Products Grid (COMPACT 2-COLUMN MOBILE GRID MATCHING DARAZ APP) */}
           <div className="lg:col-span-9 space-y-6">
             {categoryProducts.length === 0 ? (
               <div className="text-center py-16 bg-surface-lowest rounded-2xl border border-outline-variant">
@@ -219,7 +220,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 {categoryProducts.map((p) => {
                   const hasDarazAnchor = !!p.compare_at_npr;
                   const isProfitLine = p.line === "profit";
@@ -227,47 +228,47 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   return (
                     <div
                       key={p.id}
-                      className="group rounded-2xl bg-surface-lowest border border-outline-variant p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
+                      className="group rounded-2xl bg-surface-lowest border border-outline-variant p-3 sm:p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
                     >
                       <div>
-                        <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-4">
+                        <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3">
                           <img
                             src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {isProfitLine ? (
-                            <span className="absolute top-2 left-2 bg-inverse-surface text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">
-                              Salon B2B Equipment
+                            <span className="absolute top-1.5 left-1.5 bg-inverse-surface text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                              B2B Equipment
                             </span>
                           ) : (
-                            <span className="absolute top-2 left-2 bg-surface-lowest/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
+                            <span className="absolute top-1.5 left-1.5 bg-surface-lowest/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
                               Genuine Ikonic
                             </span>
                           )}
                         </div>
-                        <span className="text-[11px] font-mono text-outline uppercase tracking-wider block">
+                        <span className="text-[9px] sm:text-[11px] font-mono text-outline uppercase tracking-wider block">
                           SKU: {p.sku}
                         </span>
-                        <h3 className="font-serif font-bold text-base text-on-surface group-hover:text-gold transition-colors mt-1 line-clamp-2">
+                        <h3 className="font-serif font-bold text-xs sm:text-base text-on-surface group-hover:text-gold transition-colors mt-1 line-clamp-2 leading-tight">
                           {p.name}
                         </h3>
                       </div>
 
-                      <div className="mt-6 pt-4 border-t border-outline-variant/60 flex items-end justify-between">
+                      <div className="mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
                         <div>
                           {hasDarazAnchor && (
-                            <div className="text-xs text-outline line-through font-mono">
+                            <div className="text-[10px] sm:text-xs text-outline line-through font-mono">
                               Daraz: {formatNpr(p.compare_at_npr!)}
                             </div>
                           )}
-                          <div className="text-base font-bold text-on-surface font-sans">
+                          <div className="text-xs sm:text-base font-bold text-on-surface font-sans">
                             {formatNpr(p.price_npr)}
                           </div>
                         </div>
                         <Link
                           href={`/p/${p.slug}`}
-                          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors ${
+                          className={`w-full sm:w-auto text-center px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-colors ${
                             isProfitLine
                               ? "bg-inverse-surface text-white hover:bg-neutral-800"
                               : "bg-gold text-on-surface hover:bg-gold-hover"
@@ -286,6 +287,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       </main>
 
       <Footer />
+      <MobileBottomBar />
     </div>
   );
 }
