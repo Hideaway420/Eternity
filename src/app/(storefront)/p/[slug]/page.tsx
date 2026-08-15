@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
+import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
 import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -208,9 +209,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
       <Header />
 
-      <main className="flex-1 py-10 container mx-auto px-4 lg:px-8">
+      <main className="flex-1 py-10 container mx-auto px-4 lg:px-8 space-y-12">
         {/* Breadcrumb */}
-        <div className="text-xs text-outline mb-8 flex items-center space-x-2">
+        <div className="text-xs text-outline flex items-center space-x-2">
           <Link href="/" className="hover:underline">Home</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
           <Link href="/c/spa" className="hover:underline capitalize">{category?.name || "SPA"}</Link>
@@ -220,6 +221,14 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
         {/* Product Color Selection & Interactive Showcase */}
         <ProductColorSelector product={product} categoryName={category?.name || "SPA"} />
+
+        {/* Live Interactive B2B ROI Calculator Section (Featured right above footer on product pages) */}
+        <div className="pt-8 border-t border-outline-variant/60">
+          <SalonCalculatorWidget
+            defaultChairPriceNpr={Math.round(product.price_npr / 100)}
+            equipmentType={product.name}
+          />
+        </div>
       </main>
 
       <Footer />
