@@ -43,8 +43,13 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
           <div className="flex items-center space-x-4 text-[11px]">
-            <a href="tel:+9779801234567" className="flex items-center hover:underline">
-              <PhoneCall className="w-3 h-3 mr-1" /> Viber / Call: +977 9801234567
+            <a
+              href="https://wa.me/9779868089892"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center hover:underline font-bold text-gold"
+            >
+              <PhoneCall className="w-3 h-3 mr-1" /> Viber / Call / WhatsApp: +977 9868089892
             </a>
             <span className="opacity-40">|</span>
             <button

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, RotateCcw, Award, Phone, Mail, MapPin } from "lucide-react";
+import { ShieldCheck, Truck, RotateCcw, Award, Phone, Mail, MapPin, MessageSquare, Video } from "lucide-react";
 
 export const Footer: React.FC = () => {
   return (
@@ -65,10 +65,38 @@ export const Footer: React.FC = () => {
           <p className="text-xs text-on-surface-variant mt-3 leading-relaxed">
             Nepal&apos;s leading authorized distributor of Ikonic professional hair styling tools, barber equipment, and salon spa furniture.
           </p>
+          
           <div className="mt-4 space-y-2 text-xs text-outline">
             <p className="flex items-center"><MapPin className="w-3.5 h-3.5 mr-2 text-gold" /> New Road, Kathmandu, Nepal</p>
-            <p className="flex items-center"><Phone className="w-3.5 h-3.5 mr-2 text-gold" /> +977 9801234567 / 01-4200000</p>
+            <a href="https://wa.me/9779868089892" target="_blank" rel="noreferrer" className="flex items-center hover:text-gold transition-colors">
+              <Phone className="w-3.5 h-3.5 mr-2 text-gold" /> +977 9868089892 (Call & WhatsApp)
+            </a>
             <p className="flex items-center"><Mail className="w-3.5 h-3.5 mr-2 text-gold" /> sales@eternityproducts.com.np</p>
+          </div>
+
+          {/* Social Links */}
+          <div className="mt-5 pt-4 border-t border-outline-variant/60">
+            <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Connect & Shop Social</h4>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <a
+                href="https://www.tiktok.com/@eternity.products?is_from_webapp=1&sender_device=pc"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center px-3 py-1.5 rounded-lg bg-black text-white hover:bg-neutral-800 font-semibold transition-all shadow-sm"
+              >
+                <Video className="w-3.5 h-3.5 mr-1.5 text-cyan-400" />
+                <span>TikTok Shop</span>
+              </a>
+              <a
+                href="https://wa.me/9779868089892"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center px-3 py-1.5 rounded-lg bg-green-600 text-white hover:bg-green-700 font-semibold transition-all shadow-sm"
+              >
+                <MessageSquare className="w-3.5 h-3.5 mr-1.5" />
+                <span>WhatsApp</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -78,8 +106,7 @@ export const Footer: React.FC = () => {
             <li><Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">Hair Straighteners & Crimpers</Link></li>
             <li><Link href="/c/hair-dryers" className="hover:text-gold transition-colors">Professional Blow Dryers</Link></li>
             <li><Link href="/c/hair-curlers" className="hover:text-gold transition-colors">Curling Wands & Tongs</Link></li>
-            <li><Link href="/c/hair-trimmers" className="hover:text-gold transition-colors">Clippers & Trimmers</Link></li>
-            <li><Link href="/c/styling-accessories" className="hover:text-gold transition-colors">Brushes, Combs & Scissors</Link></li>
+            <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Barber Chairs & Spa Beds</Link></li>
           </ul>
         </div>
 
@@ -89,7 +116,7 @@ export const Footer: React.FC = () => {
             <li><Link href="/salon/portal" className="hover:text-gold transition-colors font-semibold text-on-surface">Salon Partner Portal Login</Link></li>
             <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
             <li><Link href="/c/salon-furniture-equipment" className="hover:text-gold transition-colors">Shampoo Basins & Pedicure Tubs</Link></li>
-            <li><Link href="/salon" className="hover:text-gold transition-colors">Apply for B2B Wholesale Tier</Link></li>
+            <li><Link href="/contact" className="hover:text-gold transition-colors">Concierge Support & Head Office</Link></li>
             <li><Link href="/admin" className="hover:text-gold transition-colors text-outline">Staff Operations Admin</Link></li>
           </ul>
         </div>
