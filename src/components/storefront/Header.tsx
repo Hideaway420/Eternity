@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, ShieldCheck, Menu, X, Building2, PhoneCall } from "lucide-react";
+import { Search, ShoppingBag, ShieldCheck, Menu, X, Building2, PhoneCall, Footprints } from "lucide-react";
 import { SearchModal } from "@/components/storefront/SearchModal";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 
@@ -42,8 +42,8 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
               <span className="truncate hidden xs:inline">
                 {isNp
-                  ? "🚚 काठमाडौँ र नेपालभरि ओपन-बक्स क्यास अन डेलिभरी"
-                  : "🚚 Open-Box Cash on Delivery Across Nepal"}
+                  ? "🚚 काठमाडौँ र नेपालभरि ओपन-बक्स क्यास अन डेलिभरी र स्पा बुकिङ"
+                  : "🚚 Open-Box Cash on Delivery & Luxury Spa Deposit Booking Across Nepal"}
               </span>
             </div>
 
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Main Glass Header (Featuring Official Gold EP Infinity Logo) */}
+        {/* Main Glass Header */}
         <nav className="glass-header border-b border-outline-variant/50 px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
           <div className="container mx-auto flex items-center justify-between gap-3">
             {/* Official Brand Logo */}
@@ -92,17 +92,18 @@ export const Header: React.FC<HeaderProps> = ({
               <Link href="/" className="hover:text-gold transition-colors">
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
+              <Link href="/c/spa" className="hover:text-gold transition-colors font-bold text-gold flex items-center">
+                <Footprints className="w-4 h-4 mr-1 text-gold" />
+                {isNp ? "स्पा संकलन" : "SPA"}
+              </Link>
+              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface">
+                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
+              </Link>
               <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
               </Link>
               <Link href="/c/hair-dryers" className="hover:text-gold transition-colors">
                 {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
-              </Link>
-              <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-semibold text-on-surface">
-                {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
-              </Link>
-              <Link href="/c/manicure-pedicure-equipment" className="hover:text-gold transition-colors font-semibold text-on-surface">
-                {isNp ? "पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
               </Link>
               <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
@@ -119,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Search className="w-3.5 h-3.5 text-gold" />
                 <span className="font-medium">
-                  {isNp ? "लग्जरी कुर्सी, पेडिक्योर स्पा खोज्नुहोस्..." : "Search luxury chairs, pedicure spa..."}
+                  {isNp ? "स्पा कुर्सी, पेडीक्योर खोज्नुहोस्..." : "Search spa chairs, pedicure..."}
                 </span>
                 <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-surface-lowest border border-outline-variant rounded text-outline">
                   ⌘K
@@ -180,25 +181,25 @@ export const Header: React.FC<HeaderProps> = ({
                 {isNp ? "गृहपृष्ठ" : "Home"}
               </Link>
               <Link
+                href="/c/spa"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
+              >
+                {isNp ? "स्पा संकलन" : "SPA Collection"}
+              </Link>
+              <Link
+                href="/c/luxury-salon-chairs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-3.5 py-2.5 text-sm font-semibold hover:bg-surface-low rounded-xl"
+              >
+                {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
+              </Link>
+              <Link
                 href="/c/hair-straighteners"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3.5 py-2.5 text-sm font-medium hover:bg-surface-low rounded-xl"
               >
                 {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
-              </Link>
-              <Link
-                href="/c/luxury-salon-chairs"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-bold text-gold hover:bg-surface-low rounded-xl"
-              >
-                {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
-              </Link>
-              <Link
-                href="/c/manicure-pedicure-equipment"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3.5 py-2.5 text-sm font-bold text-spa-blue hover:bg-surface-low rounded-xl"
-              >
-                {isNp ? "लग्जरी पेडिक्योर स्पा कुर्सीहरू" : "Luxury Pedicure Spa Chairs"}
               </Link>
               <Link
                 href="/warranty"
@@ -207,13 +208,6 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <ShieldCheck className="w-4 h-4 inline mr-2 text-gold" />
                 {isNp ? "असली उत्पादन वारेन्टी" : "Authenticity Guarantee"}
-              </Link>
-              <Link
-                href="/salon/portal"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-bold bg-surface-container text-on-surface rounded-xl border border-outline-variant"
-              >
-                ✨ {isNp ? "सलोन पोर्टलम लग्न इन् गर्नुहोस्" : "B2B Salon Portal Log In"}
               </Link>
             </div>
           )}

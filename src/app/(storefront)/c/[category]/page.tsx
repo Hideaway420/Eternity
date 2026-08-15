@@ -7,7 +7,7 @@ import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { SlidersHorizontal, ShieldCheck, Palette, Tag } from "lucide-react";
+import { SlidersHorizontal, ShieldCheck, Palette, Tag, Footprints, Lock } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -28,8 +28,65 @@ const CATEGORY_PRODUCTS_MAP: Record<
     compare_at_npr?: number | null;
     line: string;
     imageUrl: string;
+    priceRange?: string;
+    badge?: string;
+    isSpaCategory?: boolean;
   }>
 > = {
+  spa: [
+    {
+      id: "prod-etp-spa-01",
+      sku: "ETP-SPA-01",
+      slug: "classic-eternity-spa-chair",
+      name: "Classic Eternity Spa Chair",
+      price_npr: 12000000,
+      compare_at_npr: 13000000,
+      priceRange: "NPR 115,000 - NPR 130,000",
+      line: "profit",
+      imageUrl: "/products/spa_chair_classic.jpg",
+      badge: "15% Upfront Booking Deposit",
+      isSpaCategory: true,
+    },
+    {
+      id: "prod-etp-spa-02",
+      sku: "ETP-SPA-02",
+      slug: "eternity-elegance-pedicure-station",
+      name: "Eternity Elegance Pedicure Station",
+      price_npr: 12800000,
+      compare_at_npr: 13900000,
+      priceRange: "NPR 125,000 - NPR 135,000",
+      line: "profit",
+      imageUrl: "/products/spa_chair_elegance.jpg",
+      badge: "8% OFF Deal (Aug 31st)",
+      isSpaCategory: true,
+    },
+    {
+      id: "prod-etp-spa-03",
+      sku: "ETP-SPA-03",
+      slug: "eternity-luxe-spa-recliner",
+      name: "Eternity Luxe Spa Recliner",
+      price_npr: 13500000,
+      compare_at_npr: 14650000,
+      priceRange: "NPR 130,000 - NPR 140,000",
+      line: "profit",
+      imageUrl: "/products/spa_chair_pink_recliner.jpg",
+      badge: "8% OFF Deal (Sept 3rd)",
+      isSpaCategory: true,
+    },
+    {
+      id: "prod-etp-spa-04",
+      sku: "ETP-SPA-04",
+      slug: "eternity-signature-series-limited-edition",
+      name: "Eternity Signature Series (Limited Edition)",
+      price_npr: 14000000,
+      compare_at_npr: 14500000,
+      priceRange: "NPR 135,000 - NPR 145,000",
+      line: "profit",
+      imageUrl: "/products/spa_chair_signature.jpg",
+      badge: "Strictly Limited Stock",
+      isSpaCategory: true,
+    },
+  ],
   "hair-straighteners": [
     {
       id: "prod-etp-066",
@@ -48,26 +105,6 @@ const CATEGORY_PRODUCTS_MAP: Record<
       name: "Ikonic Professional Gleam Pro Hair Straightener",
       price_npr: 1376000,
       compare_at_npr: 1500000,
-      line: "traffic",
-      imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-    {
-      id: "prod-etp-072",
-      sku: "ETP-072",
-      slug: "ikonic-professional-s3-ceramic-straightener",
-      name: "Ikonic Professional S3+ Ceramic Hair Straightener",
-      price_npr: 1150000,
-      compare_at_npr: 1300000,
-      line: "traffic",
-      imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
-    },
-    {
-      id: "prod-etp-075",
-      sku: "ETP-075",
-      slug: "ikonic-professional-vibe-touch-straightener",
-      name: "Ikonic Professional Vibe Touch Titanium Straightener",
-      price_npr: 1420000,
-      compare_at_npr: 1600000,
       line: "traffic",
       imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
     },
@@ -93,16 +130,6 @@ const CATEGORY_PRODUCTS_MAP: Record<
       line: "traffic",
       imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231093140_1_6594bc6f-a625-47f5-863b-04f017f8c9a8.jpg",
     },
-    {
-      id: "prod-etp-098",
-      sku: "ETP-098",
-      slug: "ikonic-professional-conical-curling-wand",
-      name: "Ikonic Professional Conical Curling Wand 25mm",
-      price_npr: 1180000,
-      compare_at_npr: 1350000,
-      line: "traffic",
-      imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
   ],
   "luxury-salon-chairs": [
     {
@@ -110,7 +137,7 @@ const CATEGORY_PRODUCTS_MAP: Record<
       sku: "ETP-LSC-01",
       slug: "eternity-emerald-royal-luxury-salon-chair",
       name: "Eternity Emerald Royal Luxury Salon Chair",
-      price_npr: 3500000, // NPR 35,000 (5% OFF)
+      price_npr: 3500000,
       compare_at_npr: 3685000,
       line: "profit",
       imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
@@ -120,42 +147,38 @@ const CATEGORY_PRODUCTS_MAP: Record<
       sku: "ETP-LSC-02",
       slug: "eternity-espresso-vintage-luxury-salon-chair",
       name: "Eternity Espresso Vintage Luxury Salon Chair",
-      price_npr: 3750000, // NPR 37,500 (5% OFF)
+      price_npr: 3750000,
       compare_at_npr: 3950000,
       line: "profit",
       imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
     },
-    {
-      id: "prod-etp-chair-03",
-      sku: "ETP-LSC-03",
-      slug: "eternity-burgundy-regal-luxury-salon-chair",
-      name: "Eternity Burgundy Regal Luxury Salon Chair",
-      price_npr: 3850000, // NPR 38,500 (5% OFF)
-      compare_at_npr: 4050000,
-      line: "profit",
-      imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
-    },
   ],
   "manicure-pedicure-equipment": [
     {
-      id: "prod-etp-mp-01",
-      sku: "ETP-MP-01",
-      slug: "ikonic-pedicure-foot-spa-manicure-suite",
-      name: "Eternity Luxury Pedicure Spa Chair Suite",
-      price_npr: 3850000, // NPR 38,500 (5% OFF)
-      compare_at_npr: 4050000,
+      id: "prod-etp-spa-01",
+      sku: "ETP-SPA-01",
+      slug: "classic-eternity-spa-chair",
+      name: "Classic Eternity Spa Chair",
+      price_npr: 12000000,
+      compare_at_npr: 13000000,
+      priceRange: "NPR 115,000 - NPR 130,000",
       line: "profit",
-      imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
+      imageUrl: "/products/spa_chair_classic.jpg",
+      badge: "15% Upfront Booking Deposit",
+      isSpaCategory: true,
     },
     {
-      id: "prod-etp-mp-02",
-      sku: "ETP-MP-02",
-      slug: "ikonic-electric-hydromassage-pedicure-foot-basin",
-      name: "Ikonic Electric Hydromassage Pedicure Foot Basin",
-      price_npr: 3250000, // NPR 32,500 (5% OFF)
-      compare_at_npr: 3450000,
+      id: "prod-etp-spa-02",
+      sku: "ETP-SPA-02",
+      slug: "eternity-elegance-pedicure-station",
+      name: "Eternity Elegance Pedicure Station",
+      price_npr: 12800000,
+      compare_at_npr: 13900000,
+      priceRange: "NPR 125,000 - NPR 135,000",
       line: "profit",
-      imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-1254_Ikonic.jpg",
+      imageUrl: "/products/spa_chair_elegance.jpg",
+      badge: "8% OFF Deal (Aug 31st)",
+      isSpaCategory: true,
     },
   ],
 };
@@ -167,10 +190,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const categorySlug = resolvedParams.category;
   const lineFilter = resolvedSearchParams.line;
-  const selectedColor = resolvedSearchParams.color;
 
-  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || CATEGORY_PRODUCTS_MAP["luxury-salon-chairs"];
-  let title = categorySlug.replace(/-/g, " ").toUpperCase();
+  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || CATEGORY_PRODUCTS_MAP["spa"];
+  let title = categorySlug === "spa" ? "SPA & Pedicure Chair Sanctuary" : categorySlug.replace(/-/g, " ").toUpperCase();
 
   try {
     const cat = await db.select().from(categories).where(eq(categories.slug, categorySlug)).get();
@@ -202,7 +224,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     }
 
     if (fetched && fetched.length > 0) {
-      categoryProducts = fetched as typeof CATEGORY_PRODUCTS_MAP["luxury-salon-chairs"];
+      categoryProducts = fetched as typeof CATEGORY_PRODUCTS_MAP["spa"];
     }
   } catch (err) {
     console.warn("⚠️ Category DB query fallback active:", err);
@@ -224,53 +246,28 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           <span className="text-on-surface font-semibold capitalize">{title}</span>
         </div>
 
-        {/* Category Header with 5% Discount Promo */}
+        {/* Category Header with 10%-15% Upfront Deposit Note */}
         <div className="bg-surface-container-low rounded-2xl p-5 sm:p-8 mb-6 sm:mb-10 border border-gold/40 relative overflow-hidden">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <span className="text-[10px] sm:text-xs uppercase font-bold text-gold tracking-widest block">Authorized Distributor Catalogue</span>
+              <span className="text-[10px] sm:text-xs uppercase font-bold text-gold tracking-widest block flex items-center">
+                <Footprints className="w-3.5 h-3.5 mr-1" /> Eternity Luxury Spa Collection
+              </span>
               <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize mt-1">
                 {title}
               </h1>
               <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
-                Explore genuine products in this category. Direct import with guaranteed 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery across Nepal.
+                {categorySlug === "spa"
+                  ? "Transform your salon into a sanctuary of relaxation. Secured with a convenient 10% - 15% upfront booking deposit. Custom Salon Color Match available (+NPR 6,000)."
+                  : "Explore genuine professional tools. Direct import with 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery."}
               </p>
             </div>
-            <div className="px-4 py-2 bg-red-600/10 border border-red-600/30 text-red-700 rounded-xl text-xs font-bold flex items-center space-x-2 flex-shrink-0">
-              <Tag className="w-4 h-4 text-red-600" />
-              <span>5% OFF Limited Offer</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Color Swatch Filter Strip */}
-        <div className="mb-6 p-3 sm:p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-outline">
-            <Palette className="w-4 h-4 text-gold" />
-            <span>Finish / Leather Filter:</span>
-          </div>
-
-          <div className="flex flex-wrap gap-2 text-[11px] sm:text-xs">
-            <Link
-              href={`/c/${categorySlug}`}
-              className={`px-2.5 py-1 rounded-lg border font-semibold transition-colors ${!selectedColor ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
-            >
-              All Colors
-            </Link>
-            <Link
-              href={`/c/${categorySlug}?color=emerald`}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "emerald" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
-            >
-              <span className="w-3 h-3 rounded-full bg-[#1B4D3E]" />
-              <span>Emerald Green</span>
-            </Link>
-            <Link
-              href={`/c/${categorySlug}?color=brown`}
-              className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-lg border font-semibold transition-colors ${selectedColor === "brown" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"}`}
-            >
-              <span className="w-3 h-3 rounded-full bg-[#4A2E1B]" />
-              <span>Espresso Brown</span>
-            </Link>
+            {categorySlug === "spa" && (
+              <div className="px-4 py-2.5 bg-gold/15 border border-gold/40 text-on-surface rounded-xl text-xs font-bold flex items-center space-x-2 flex-shrink-0">
+                <Lock className="w-4 h-4 text-gold" />
+                <span>10% - 15% Upfront Booking Deposit</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -291,28 +288,28 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Category Catalogue</h4>
                 <div className="space-y-1.5 text-xs">
                   <Link
-                    href="/c/hair-straighteners"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/spa"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "spa" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low text-gold"}`}
                   >
-                    Hair Straighteners
-                  </Link>
-                  <Link
-                    href="/c/hair-dryers"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low"}`}
-                  >
-                    Hair Dryers & Curlers
+                    SPA Collection (10-15% Deposit)
                   </Link>
                   <Link
                     href="/c/luxury-salon-chairs"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low text-gold"}`}
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    Luxury Salon Chairs
+                    Luxury Salon Chairs (COD)
                   </Link>
                   <Link
-                    href="/c/manicure-pedicure-equipment"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "manicure-pedicure-equipment" ? "bg-spa-blue/30 text-on-surface border border-spa-blue" : "hover:bg-surface-low text-spa-blue"}`}
+                    href="/c/hair-straighteners"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
                   >
-                    Luxury Pedicure Spa Chairs
+                    Hair Straighteners (COD)
+                  </Link>
+                  <Link
+                    href="/c/hair-dryers"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                  >
+                    Hair Dryers & Curlers (COD)
                   </Link>
                 </div>
               </div>
@@ -323,13 +320,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> 100% Genuine Import
                 </div>
                 <p className="text-outline text-[11px]">
-                  All tools are imported with verified serial numbers.
+                  Direct import with serialized warranty card included.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Main Products Grid (EVERY IMAGE AND CARD IS CLICKABLE) */}
+          {/* Main Products Grid */}
           <div className="lg:col-span-9 space-y-6">
             {categoryProducts.length === 0 ? (
               <div className="text-center py-16 bg-surface-lowest rounded-2xl border border-outline-variant">
@@ -339,54 +336,55 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
                 {categoryProducts.map((p) => {
-                  const hasDarazAnchor = !!p.compare_at_npr;
-
                   return (
                     <div
                       key={p.id}
-                      className="group rounded-2xl bg-surface-lowest border border-outline-variant p-3 sm:p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
+                      className="group rounded-2xl bg-surface-lowest border border-outline-variant p-4 sm:p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
                     >
                       <div>
                         {/* CLICKABLE PRODUCT IMAGE */}
-                        <Link href={`/p/${p.slug}`} className="block relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3 group cursor-pointer">
+                        <Link href={`/p/${p.slug}`} className="block relative aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3 group cursor-pointer">
                           <img
-                            src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
+                            src={p.imageUrl || "/products/spa_chair_classic.jpg"}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
-                          <span className="absolute top-1.5 left-1.5 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-sm">
-                            5% OFF OFFER
-                          </span>
+                          {p.badge && (
+                            <span className="absolute top-2 left-2 bg-gold text-on-surface text-[9px] font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
+                              {p.badge}
+                            </span>
+                          )}
                         </Link>
                         
                         <span className="text-[9px] sm:text-[11px] font-mono text-outline uppercase tracking-wider block">
                           SKU: {p.sku}
                         </span>
                         {/* CLICKABLE PRODUCT TITLE */}
-                        <h3 className="font-serif font-bold text-xs sm:text-base text-on-surface group-hover:text-gold transition-colors mt-1 line-clamp-2 leading-tight">
+                        <h3 className="font-serif font-bold text-base text-on-surface group-hover:text-gold transition-colors mt-1 leading-snug">
                           <Link href={`/p/${p.slug}`}>{p.name}</Link>
                         </h3>
+                        {p.priceRange && (
+                          <p className="text-xs text-outline mt-0.5">Range: {p.priceRange}</p>
+                        )}
                       </div>
 
-                      <div className="mt-3 sm:mt-6 pt-3 sm:pt-4 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+                      <div className="mt-4 pt-3 border-t border-outline-variant/60 flex items-center justify-between gap-2">
                         <div>
-                          {hasDarazAnchor && (
-                            <div className="text-[10px] sm:text-xs text-outline line-through font-mono">
-                              Original: {formatNpr(p.compare_at_npr!)}
-                            </div>
-                          )}
-                          <div className="text-xs sm:text-base font-bold text-on-surface font-sans">
+                          <div className="text-base sm:text-lg font-bold text-on-surface font-sans">
                             {formatNpr(p.price_npr)}
                           </div>
+                          <span className="text-[10px] text-green-700 font-bold block">
+                            {p.isSpaCategory ? "15% Upfront Deposit" : "Open-Box COD"}
+                          </span>
                         </div>
                         {/* CLICKABLE ORDER BUTTON */}
                         <Link
                           href={`/p/${p.slug}`}
-                          className="w-full sm:w-auto text-center px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gold text-on-surface hover:bg-gold-hover text-[10px] sm:text-xs font-bold transition-colors shadow-soft"
+                          className="px-4 py-2.5 rounded-xl bg-gold text-on-surface hover:bg-gold-hover text-xs font-bold transition-colors shadow-soft"
                         >
-                          View Item
+                          View Details & Reserve
                         </Link>
                       </div>
                     </div>

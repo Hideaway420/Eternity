@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
-import { ShieldCheck, Truck, CreditCard, CheckCircle2, Phone, Sparkles, MapPin, Building, PackageCheck } from "lucide-react";
+import { ShieldCheck, CreditCard, Phone, MapPin, PackageCheck, Lock, Footprints } from "lucide-react";
 import { formatNpr } from "@/lib/money";
 
 const NEPAL_DISTRICTS = [
@@ -19,14 +19,21 @@ export default function CheckoutPage() {
   const [district, setDistrict] = useState("Kathmandu");
   const [city, setCity] = useState("");
   const [landmark, setLandmark] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "esewa" | "khalti" | "bank">("cod");
+  const [isSpaOrder, setIsSpaOrder] = useState<boolean>(true); // Toggle to simulate Spa Chair Order vs Normal Order
+  const [paymentMethod, setPaymentMethod] = useState<"esewa" | "khalti" | "bank" | "cod">("esewa");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrderNum, setPlacedOrderNum] = useState("");
 
   const isValley = district === "Kathmandu" || district === "Lalitpur" || district === "Bhaktapur";
-  const deliveryNpr = isValley ? 15000 : 35000; // Paisa (NPR 150 vs NPR 350)
-  const itemSubtotalNpr = 1292000; // Paisa (NPR 12,920 sample straightener)
+  const deliveryNpr = isValley ? 0 : 50000; // Free delivery in Kathmandu Valley for Spa Equipment
+
+  // Sample Spa Chair price: NPR 120,000 (Paisa: 12000000)
+  const itemSubtotalNpr = isSpaOrder ? 12000000 : 1292000;
   const totalNpr = itemSubtotalNpr + deliveryNpr;
+
+  // 15% Upfront Deposit calculation for Spa Chairs
+  const upfrontDepositNpr = Math.round(totalNpr * 0.15);
+  const remainingBalanceNpr = totalNpr - upfrontDepositNpr;
 
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,17 +54,21 @@ export default function CheckoutPage() {
               ✓
             </div>
             <div className="space-y-2">
-              <span className="text-xs font-mono text-gold font-bold uppercase tracking-widest block">Order Placed Successfully</span>
+              <span className="text-xs font-mono text-gold font-bold uppercase tracking-widest block">
+                {isSpaOrder ? "Spa Chair Deposit Booking Received" : "Order Placed Successfully"}
+              </span>
               <h1 className="font-serif text-3xl font-bold">Thank You, {recipient}!</h1>
               <p className="text-sm text-outline">Order Number: <strong className="text-on-surface font-mono">{placedOrderNum}</strong></p>
             </div>
 
             <div className="p-6 rounded-2xl bg-surface-low border border-outline-variant/60 max-w-md mx-auto text-left text-xs space-y-3">
               <div className="flex items-center text-gold font-bold text-sm">
-                <Phone className="w-4 h-4 mr-2" /> What Happens Next?
+                <Phone className="w-4 h-4 mr-2" /> {isSpaOrder ? "Upfront Booking Verification" : "What Happens Next?"}
               </div>
               <p className="text-on-surface-variant leading-relaxed">
-                Our sales team will call your phone (<strong className="text-on-surface font-mono">{phone}</strong>) within 30 minutes to confirm your shipping address and COD order.
+                {isSpaOrder
+                  ? `Our concierge manager will call your phone (${phone}) to verify your 15% upfront booking deposit of ${formatNpr(upfrontDepositNpr)} and schedule custom color matching & floor delivery.`
+                  : `Our sales team will call your phone (${phone}) within 30 minutes to confirm your shipping address and COD order.`}
               </p>
               <div className="pt-2 border-t border-outline-variant flex items-center space-x-2 text-green-700 font-semibold">
                 <PackageCheck className="w-4 h-4" />
@@ -80,8 +91,30 @@ export default function CheckoutPage() {
             {/* Form Column */}
             <div className="lg:col-span-7 space-y-8">
               <div>
-                <h1 className="font-serif text-3xl font-bold tracking-tight">Express Checkout</h1>
-                <p className="text-xs text-outline mt-1">Single page fast checkout with Open-Box Cash on Delivery</p>
+                <h1 className="font-serif text-3xl font-bold tracking-tight">Eternity Express Checkout</h1>
+                <p className="text-xs text-outline mt-1">
+                  {isSpaOrder
+                    ? "Luxury Spa Chairs require a 10% - 15% upfront booking deposit. Remaining balance on delivery."
+                    : "Other product categories set strictly to 100% Open-Box Cash on Delivery (COD)."}
+                </p>
+              </div>
+
+              {/* Toggle to Simulate Spa Product vs Hair Tools */}
+              <div className="p-4 rounded-2xl bg-surface-low border border-gold/40 flex items-center justify-between">
+                <span className="text-xs font-bold text-on-surface flex items-center">
+                  <Footprints className="w-4 h-4 mr-1.5 text-gold" /> Simulating Cart Product Type:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextSpa = !isSpaOrder;
+                    setIsSpaOrder(nextSpa);
+                    setPaymentMethod(nextSpa ? "esewa" : "cod");
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-gold/15 border border-gold/40 text-gold text-xs font-bold hover:bg-gold/30 transition-colors"
+                >
+                  {isSpaOrder ? "Luxury Spa Product (15% Deposit)" : "Standard Category (100% COD)"}
+                </button>
               </div>
 
               <form onSubmit={handlePlaceOrder} className="space-y-6">
@@ -91,7 +124,7 @@ export default function CheckoutPage() {
                     <Phone className="w-4 h-4 mr-2 text-gold" /> Primary Customer Identity
                   </h3>
                   <div>
-                    <label className="block text-xs font-semibold text-outline mb-1">Phone Number (Required for COD Call)</label>
+                    <label className="block text-xs font-semibold text-outline mb-1">Phone Number (Required for Call & Booking)</label>
                     <input
                       type="tel"
                       required
@@ -102,7 +135,7 @@ export default function CheckoutPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-outline mb-1">Recipient Name</label>
+                    <label className="block text-xs font-semibold text-outline mb-1">Recipient / Salon Owner Name</label>
                     <input
                       type="text"
                       required
@@ -156,62 +189,91 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment Method */}
+                {/* Payment Method Rules */}
                 <div className="p-6 rounded-2xl bg-surface-lowest border border-outline-variant space-y-4">
-                  <h3 className="font-serif font-bold text-base flex items-center">
-                    <CreditCard className="w-4 h-4 mr-2 text-gold" /> Payment Method
+                  <h3 className="font-serif font-bold text-base flex items-center justify-between">
+                    <span className="flex items-center"><CreditCard className="w-4 h-4 mr-2 text-gold" /> Payment Rules</span>
+                    {isSpaOrder && (
+                      <span className="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200">
+                        15% Deposit Required
+                      </span>
+                    )}
                   </h3>
                   
-                  <div className="space-y-3">
-                    <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "cod" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
-                      <input
-                        type="radio"
-                        name="pm"
-                        checked={paymentMethod === "cod"}
-                        onChange={() => setPaymentMethod("cod")}
-                        className="mt-1 accent-gold"
-                      />
-                      <div className="ml-3">
-                        <span className="font-bold text-sm text-on-surface block">Cash on Delivery (COD) — Default</span>
-                        <span className="text-xs text-outline block mt-0.5">Pay cash after opening and inspecting the product box.</span>
+                  {isSpaOrder ? (
+                    <div className="space-y-3">
+                      <div className="p-3.5 rounded-xl bg-gold/15 border border-gold/40 text-xs font-bold text-on-surface">
+                        🔒 Luxury Spa Product Rule: A 10% - 15% upfront booking deposit ({formatNpr(upfrontDepositNpr)}) is required via eSewa, Khalti, or Bank Transfer to confirm manufacturing & floor delivery.
                       </div>
-                    </label>
 
-                    <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "esewa" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
-                      <input
-                        type="radio"
-                        name="pm"
-                        checked={paymentMethod === "esewa"}
-                        onChange={() => setPaymentMethod("esewa")}
-                        className="mt-1 accent-gold"
-                      />
-                      <div className="ml-3">
-                        <span className="font-bold text-sm text-green-700 block">eSewa Mobile Wallet</span>
-                        <span className="text-xs text-outline block mt-0.5">Instant online payment via eSewa app.</span>
-                      </div>
-                    </label>
+                      <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "esewa" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
+                        <input
+                          type="radio"
+                          name="pm"
+                          checked={paymentMethod === "esewa"}
+                          onChange={() => setPaymentMethod("esewa")}
+                          className="mt-1 accent-gold"
+                        />
+                        <div className="ml-3">
+                          <span className="font-bold text-sm text-green-700 block">eSewa Mobile Wallet (15% Deposit)</span>
+                          <span className="text-xs text-outline block mt-0.5">Pay upfront deposit {formatNpr(upfrontDepositNpr)} via eSewa app.</span>
+                        </div>
+                      </label>
 
-                    <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "khalti" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
-                      <input
-                        type="radio"
-                        name="pm"
-                        checked={paymentMethod === "khalti"}
-                        onChange={() => setPaymentMethod("khalti")}
-                        className="mt-1 accent-gold"
-                      />
-                      <div className="ml-3">
-                        <span className="font-bold text-sm text-purple-700 block">Khalti Wallet</span>
-                        <span className="text-xs text-outline block mt-0.5">Pay via Khalti web or mobile app.</span>
-                      </div>
-                    </label>
-                  </div>
+                      <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "khalti" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
+                        <input
+                          type="radio"
+                          name="pm"
+                          checked={paymentMethod === "khalti"}
+                          onChange={() => setPaymentMethod("khalti")}
+                          className="mt-1 accent-gold"
+                        />
+                        <div className="ml-3">
+                          <span className="font-bold text-sm text-purple-700 block">Khalti Wallet (15% Deposit)</span>
+                          <span className="text-xs text-outline block mt-0.5">Pay upfront deposit {formatNpr(upfrontDepositNpr)} via Khalti app.</span>
+                        </div>
+                      </label>
+
+                      <label className={`flex items-start p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === "bank" ? "border-gold bg-gold/10" : "border-outline-variant bg-surface-low"}`}>
+                        <input
+                          type="radio"
+                          name="pm"
+                          checked={paymentMethod === "bank"}
+                          onChange={() => setPaymentMethod("bank")}
+                          className="mt-1 accent-gold"
+                        />
+                        <div className="ml-3">
+                          <span className="font-bold text-sm text-blue-700 block">Direct Nepal Bank Transfer (15% Deposit)</span>
+                          <span className="text-xs text-outline block mt-0.5">Pay deposit to Eternity Products Nabil Bank A/C.</span>
+                        </div>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <label className="flex items-start p-4 rounded-xl border border-gold bg-gold/10 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="pm"
+                          checked={true}
+                          readOnly
+                          className="mt-1 accent-gold"
+                        />
+                        <div className="ml-3">
+                          <span className="font-bold text-sm text-on-surface block">Strict Cash on Delivery (COD)</span>
+                          <span className="text-xs text-outline block mt-0.5">Pay 100% cash after opening and inspecting the product box upon delivery.</span>
+                        </div>
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 <button
                   type="submit"
                   className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-base shadow-gold transition-colors"
                 >
-                  Confirm Order ({formatNpr(totalNpr)})
+                  {isSpaOrder
+                    ? `Pay 15% Upfront Deposit (${formatNpr(upfrontDepositNpr)}) & Reserve Chair`
+                    : `Confirm Cash on Delivery Order (${formatNpr(totalNpr)})`}
                 </button>
               </form>
             </div>
@@ -222,12 +284,18 @@ export default function CheckoutPage() {
                 <h3 className="font-serif font-bold text-base border-b border-outline-variant pb-3">Order Summary</h3>
                 
                 <div className="flex items-center space-x-3 text-xs py-2">
-                  <div className="w-12 h-12 rounded-lg bg-surface-low overflow-hidden flex-shrink-0">
-                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80" alt="Item" className="w-full h-full object-cover" />
+                  <div className="w-14 h-14 rounded-lg bg-surface-low overflow-hidden flex-shrink-0">
+                    <img
+                      src={isSpaOrder ? "/products/spa_chair_classic.jpg" : "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg"}
+                      alt="Item"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="flex-1">
-                    <h5 className="font-serif font-bold">Ikonic Pro Hair Straightener</h5>
-                    <span className="text-outline">Qty: 1</span>
+                    <h5 className="font-serif font-bold">
+                      {isSpaOrder ? "Classic Eternity Spa Chair" : "Ikonic Pro Hair Straightener"}
+                    </h5>
+                    <span className="text-outline">Qty: 1 • Custom Color Match</span>
                   </div>
                   <span className="font-bold font-mono">{formatNpr(itemSubtotalNpr)}</span>
                 </div>
@@ -238,23 +306,37 @@ export default function CheckoutPage() {
                     <span className="font-mono text-on-surface">{formatNpr(itemSubtotalNpr)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Delivery Charge ({isValley ? "Kathmandu Valley" : "Outside Valley"})</span>
-                    <span className="font-mono text-on-surface">{formatNpr(deliveryNpr)}</span>
+                    <span>Delivery Charge</span>
+                    <span className="font-mono text-on-surface">{deliveryNpr === 0 ? "FREE" : formatNpr(deliveryNpr)}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-sm text-on-surface pt-2 border-t border-outline-variant">
-                    <span>Total Amount</span>
-                    <span className="font-mono text-gold text-base">{formatNpr(totalNpr)}</span>
-                  </div>
+
+                  {isSpaOrder ? (
+                    <>
+                      <div className="flex justify-between font-bold text-gold pt-2 border-t border-outline-variant">
+                        <span>15% Upfront Booking Deposit</span>
+                        <span className="font-mono text-base">{formatNpr(upfrontDepositNpr)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs text-outline">
+                        <span>Balance Payable Upon Delivery</span>
+                        <span className="font-mono">{formatNpr(remainingBalanceNpr)}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between font-bold text-sm text-on-surface pt-2 border-t border-outline-variant">
+                      <span>Total Amount (COD)</span>
+                      <span className="font-mono text-gold text-base">{formatNpr(totalNpr)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Open-the-box COD Guarantee Box */}
               <div className="p-5 rounded-2xl bg-gold/15 border-2 border-gold/40 text-xs space-y-2">
                 <div className="flex items-center text-gold font-bold text-sm">
-                  <ShieldCheck className="w-5 h-5 mr-2" /> Open The Box Before You Pay
+                  <ShieldCheck className="w-5 h-5 mr-2" /> Authenticity & Open-Box Promise
                 </div>
                 <p className="text-on-surface-variant leading-relaxed">
-                  Our delivery rider will let you open and inspect your Ikonic package before paying cash. If the seal or product is damaged, reject it on the spot with zero penalty!
+                  Our delivery rider will let you open and inspect your Eternity package before paying the remaining balance. Serial hologram verification card included!
                 </p>
               </div>
             </div>

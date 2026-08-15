@@ -10,51 +10,62 @@ import { db, initTables } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Check, Footprints, Armchair, Tag } from "lucide-react";
+import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Check, Footprints, Armchair, Tag, Calendar, Lock } from "lucide-react";
 
 export const revalidate = 0; // Dynamic rendering
 
-// 3 Unique Eternity Luxury Salon Chairs Catalogue (NPR 30k-40k Range with 5% Discount)
-const FALLBACK_PROFIT_PRODUCTS = [
+// 4 New Eternity Luxury Spa & Pedicure Chairs Catalogue
+const SPA_PRODUCTS = [
   {
-    id: "prod-etp-chair-01",
-    sku: "ETP-LSC-01",
-    slug: "eternity-emerald-royal-luxury-salon-chair",
-    name: "Eternity Emerald Royal Luxury Salon Chair",
-    price_npr: 3500000, // NPR 35,000 (5% OFF)
-    compare_at_npr: 3685000,
+    id: "prod-etp-spa-01",
+    sku: "ETP-SPA-01",
+    slug: "classic-eternity-spa-chair",
+    name: "Classic Eternity Spa Chair",
+    price_npr: 12000000, // NPR 120,000
+    compare_at_npr: 13000000,
+    priceRange: "NPR 115,000 - NPR 130,000",
     line: "profit",
-    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
+    imageUrl: "/products/spa_chair_classic.jpg",
+    badge: "15% Upfront Booking Deposit",
   },
   {
-    id: "prod-etp-chair-02",
-    sku: "ETP-LSC-02",
-    slug: "eternity-espresso-vintage-luxury-salon-chair",
-    name: "Eternity Espresso Vintage Luxury Salon Chair",
-    price_npr: 3750000, // NPR 37,500 (5% OFF)
-    compare_at_npr: 3950000,
+    id: "prod-etp-spa-02",
+    sku: "ETP-SPA-02",
+    slug: "eternity-elegance-pedicure-station",
+    name: "Eternity Elegance Pedicure Station",
+    price_npr: 12800000, // NPR 128,000
+    compare_at_npr: 13900000,
+    priceRange: "NPR 125,000 - NPR 135,000",
+    offerText: "8% OFF (Until Aug 31st)",
     line: "profit",
-    imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
+    imageUrl: "/products/spa_chair_elegance.jpg",
+    badge: "8% OFF Deal",
   },
   {
-    id: "prod-etp-chair-03",
-    sku: "ETP-LSC-03",
-    slug: "eternity-burgundy-regal-luxury-salon-chair",
-    name: "Eternity Burgundy Regal Luxury Salon Chair",
-    price_npr: 3850000, // NPR 38,500 (5% OFF)
-    compare_at_npr: 4050000,
+    id: "prod-etp-spa-03",
+    sku: "ETP-SPA-03",
+    slug: "eternity-luxe-spa-recliner",
+    name: "Eternity Luxe Spa Recliner",
+    price_npr: 13500000, // NPR 135,000
+    compare_at_npr: 14650000,
+    priceRange: "NPR 130,000 - NPR 140,000",
+    offerText: "8% OFF (Until Sept 3rd)",
     line: "profit",
-    imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
+    imageUrl: "/products/spa_chair_pink_recliner.jpg",
+    badge: "VIP Spa Recliner",
   },
   {
-    id: "prod-etp-mani-pedi-01",
-    sku: "ETP-MP-01",
-    slug: "ikonic-pedicure-foot-spa-manicure-suite",
-    name: "Eternity Luxury Pedicure Spa Chair Suite",
-    price_npr: 3850000, // NPR 38,500 (5% OFF)
-    compare_at_npr: 4050000,
+    id: "prod-etp-spa-04",
+    sku: "ETP-SPA-04",
+    slug: "eternity-signature-series-limited-edition",
+    name: "Eternity Signature Series (Limited Edition)",
+    price_npr: 14000000, // NPR 140,000
+    compare_at_npr: 14500000,
+    priceRange: "NPR 135,000 - NPR 145,000",
+    isLimitedEdition: true,
     line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
+    imageUrl: "/products/spa_chair_signature.jpg",
+    badge: "Strictly Limited Stock",
   },
 ];
 
@@ -105,7 +116,6 @@ export default async function HomePage() {
   await initTables();
 
   let trafficProducts = FALLBACK_TRAFFIC_PRODUCTS;
-  let profitProducts = FALLBACK_PROFIT_PRODUCTS;
 
   try {
     const activeProducts = await db
@@ -127,9 +137,7 @@ export default async function HomePage() {
 
     if (activeProducts.length > 0) {
       const fetchedTraffic = activeProducts.filter((p) => p.line === "traffic").slice(0, 4);
-      const fetchedProfit = activeProducts.filter((p) => p.line === "profit").slice(0, 4);
       if (fetchedTraffic.length > 0) trafficProducts = fetchedTraffic as typeof FALLBACK_TRAFFIC_PRODUCTS;
-      if (fetchedProfit.length > 0) profitProducts = fetchedProfit as typeof FALLBACK_PROFIT_PRODUCTS;
     }
   } catch (err) {
     console.warn("⚠️ Home page DB fetch fallback active:", err);
@@ -151,25 +159,26 @@ export default async function HomePage() {
                 <span>Nepal&apos;s Authorized Ikonic & Eternity Importer</span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-on-surface leading-[1.15]">
-                Serene Opulence in Hair Styling & Salon Excellence
+                Serene Opulence in Hair Styling & Luxury Spa Excellence
               </h1>
               <p className="text-sm sm:text-lg text-on-surface-variant font-light leading-relaxed max-w-2xl">
-                Elevate your personal styling routine or beauty parlour floor with Ikonic titanium straighteners, high-velocity blow dryers, Eternity luxury chairs, and pedicure spa stations.
+                Transform your salon into a sanctuary of relaxation with Ikonic titanium straighteners, blow dryers, Eternity luxury chairs, and our new bespoke Luxury Spa & Pedicure Collection.
               </p>
               <div className="pt-2 flex flex-wrap gap-3 sm:gap-4 items-center">
                 <Link
-                  href="/p/eternity-emerald-royal-luxury-salon-chair"
+                  href="/c/spa"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm shadow-gold transition-all flex items-center space-x-2"
                 >
-                  <span>View Eternity Luxury Chairs</span>
+                  <Footprints className="w-4 h-4 text-on-surface" />
+                  <span>Explore New SPA Collection</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/c/manicure-pedicure-equipment"
+                  href="/c/luxury-salon-chairs"
                   className="px-5 py-3.5 sm:px-6 sm:py-4 rounded-xl bg-inverse-surface text-white hover:bg-neutral-800 font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 shadow-soft"
                 >
-                  <Footprints className="w-4 h-4 text-gold" />
-                  <span className="text-white font-bold">Pedicure Spa Chairs</span>
+                  <Armchair className="w-4 h-4 text-gold" />
+                  <span className="text-white font-bold">Luxury Salon Chairs</span>
                 </Link>
               </div>
 
@@ -179,8 +188,8 @@ export default async function HomePage() {
                   <span>100% Genuine Seal</span>
                 </div>
                 <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span>Open-Box COD</span>
+                  <Lock className="w-3.5 h-3.5 text-gold flex-shrink-0" />
+                  <span>10-15% Spa Booking Deposit</span>
                 </div>
                 <div className="flex items-center space-x-1.5">
                   <CheckCircle2 className="w-3.5 h-3.5 text-gold flex-shrink-0" />
@@ -189,34 +198,34 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase (CLICKABLE TO ETERNITY EMERALD CHAIR PRODUCT PAGE WITH 5% DISCOUNT) */}
+            {/* Hero Image Showcase */}
             <div className="lg:col-span-5 relative">
               <Link
-                href="/p/eternity-emerald-royal-luxury-salon-chair"
+                href="/p/classic-eternity-spa-chair"
                 className="block relative rounded-3xl overflow-hidden shadow-elevated border-2 border-gold/60 bg-surface-lowest group hover:ring-4 hover:ring-gold/30 transition-all cursor-pointer"
               >
                 <img
-                  src="/products/chair_emerald_green_1786235658712.jpg"
-                  alt="Eternity Emerald Royal Luxury Salon Chair"
+                  src="/products/spa_chair_classic.jpg"
+                  alt="Classic Eternity Spa Chair"
                   className="w-full h-[280px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 
-                {/* 5% OFF Badge */}
-                <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 animate-pulse">
-                  <Tag className="w-3 h-3" />
-                  <span>5% OFF OFFER</span>
+                {/* Badge */}
+                <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1">
+                  <Sparkles className="w-3 h-3" />
+                  <span>NEW SPA COLLECTION</span>
                 </div>
 
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60">
                   <div className="flex justify-between items-center">
                     <div>
-                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Eternity Salon Collection</span>
-                      <h4 className="font-serif font-bold text-xs sm:text-base group-hover:text-gold transition-colors">Eternity Emerald Royal Luxury Salon Chair</h4>
-                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Hydraulic Reclining • Emerald Green</span>
+                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-gold tracking-widest block">Featured Spa Sanctuary</span>
+                      <h4 className="font-serif font-bold text-xs sm:text-base group-hover:text-gold transition-colors">Classic Eternity Spa Chair</h4>
+                      <span className="text-[10px] sm:text-xs text-outline font-semibold">Custom Color Match (+NPR 6,000)</span>
                     </div>
                     <div className="text-right">
-                      <span className="text-xs sm:text-base font-bold text-on-surface font-sans block">NPR 35,000</span>
-                      <span className="text-[9px] text-red-600 font-bold block">Save 5% Today!</span>
+                      <span className="text-xs sm:text-base font-bold text-on-surface font-sans block">NPR 120,000</span>
+                      <span className="text-[9px] text-green-700 font-bold block">15% Upfront Deposit</span>
                     </div>
                   </div>
                 </div>
@@ -237,26 +246,26 @@ export default async function HomePage() {
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold">Catalogue</span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Explore By Category</h2>
             </div>
-            <Link href="/c/luxury-salon-chairs" className="text-xs font-bold text-gold hover:underline flex items-center">
+            <Link href="/c/spa" className="text-xs font-bold text-gold hover:underline flex items-center">
               View All Categories <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-            <Link href="/c/luxury-salon-chairs" className="group p-4 sm:p-6 rounded-2xl bg-gold/15 hover:bg-gold/30 border border-gold/40 transition-all">
+            <Link href="/c/spa" className="group p-4 sm:p-6 rounded-2xl bg-gold/15 hover:bg-gold/30 border border-gold/40 transition-all">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
+                <Footprints className="w-6 h-6 text-gold" />
+              </div>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">SPA Collection</h3>
+              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">4 Luxury Spa Chairs (10-15% Deposit)</p>
+            </Link>
+
+            <Link href="/c/luxury-salon-chairs" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
                 <Armchair className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Luxury Salon Chairs</h3>
-              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">Eternity Royal Collection</p>
-            </Link>
-
-            <Link href="/c/manicure-pedicure-equipment" className="group p-4 sm:p-6 rounded-2xl bg-spa-blue/40 hover:bg-spa-blue/70 border border-secondary-container transition-all">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
-                <Footprints className="w-6 h-6 text-spa-blue" />
-              </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Luxury Pedicure Spa Chairs</h3>
-              <p className="text-[11px] sm:text-xs text-secondary-on-container font-semibold mt-1">Tables, basins & foot spa</p>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Luxury Salon Chairs</h3>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Hydraulic Reclining • COD</p>
             </Link>
 
             <Link href="/c/hair-straighteners" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
@@ -264,7 +273,7 @@ export default async function HomePage() {
                 ✨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Straighteners</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Keratin & Titanium plates</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Titanium Shine 3.0 • COD</p>
             </Link>
 
             <Link href="/c/hair-dryers" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
@@ -272,31 +281,29 @@ export default async function HomePage() {
                 💨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Dryers & Curlers</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">High wattage AC motors</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Pro 2500+ AC Motors • COD</p>
             </Link>
           </div>
         </section>
 
-        {/* Section 4: 3 UNIQUE ETERNITY LUXURY SALON CHAIRS SHOWCASE (NPR 30k-40k WITH 5% DISCOUNT) */}
+        {/* NEW SECTION: DEDICATED "SPA" SECTION SHOWCASING THE 4 NEW LUXURY SPA CHAIRS */}
         <section className="bg-inverse-surface text-inverse-on-surface py-12 sm:py-16">
           <div className="container mx-auto px-4 lg:px-8">
-            <div className="max-w-3xl mb-8 sm:mb-12 flex justify-between items-end">
-              <div>
-                <span className="text-xs uppercase tracking-widest text-gold font-bold flex items-center">
-                  <Building2 className="w-4 h-4 mr-1.5" /> Eternity Salon Luxury Line
-                </span>
-                <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight mt-2">
-                  3 Signature Eternity Luxury Salon Chairs
-                </h2>
-                <p className="text-xs sm:text-sm text-neutral-300 mt-2 font-light leading-relaxed">
-                  Hydraulic reclining salon chairs in the NPR 30,000 – NPR 40,000 range with 5% Limited Offer Discount!
-                </p>
-              </div>
+            <div className="max-w-3xl mb-8 sm:mb-12">
+              <span className="text-xs uppercase tracking-widest text-gold font-bold flex items-center">
+                <Footprints className="w-4 h-4 mr-1.5" /> Eternity Luxury Spa Sanctuary
+              </span>
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight mt-2">
+                The Eternity SPA & Pedicure Chair Collection
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-300 mt-2 font-light leading-relaxed">
+                Elevate your salon with our bespoke luxury spa & pedicure chairs. Secured with a 10% - 15% upfront booking deposit. Option for Custom Salon Color Match (+NPR 6,000).
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              {profitProducts.slice(0, 3).map((p) => (
-                <div key={p.id} className="trade-card rounded-2xl p-5 border border-neutral-800 bg-neutral-900/80 flex flex-col justify-between hover:border-gold/50 transition-all group">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {SPA_PRODUCTS.map((p) => (
+                <div key={p.id} className="trade-card rounded-2xl p-5 border border-neutral-800 bg-neutral-900/90 flex flex-col justify-between hover:border-gold/50 transition-all group">
                   <div>
                     <Link href={`/p/${p.slug}`} className="block aspect-[4/3] rounded-xl overflow-hidden mb-4 bg-neutral-950 relative">
                       <img
@@ -304,28 +311,32 @@ export default async function HomePage() {
                         alt={p.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <span className="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
-                        5% OFF
+                      <span className="absolute top-2 left-2 bg-gold text-on-surface text-[9px] font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
+                        {p.badge}
                       </span>
                     </Link>
                     <span className="text-xs font-mono text-gold uppercase">SKU: {p.sku}</span>
                     <h3 className="font-serif font-bold text-base text-white mt-1 leading-snug">
                       <Link href={`/p/${p.slug}`} className="hover:text-gold transition-colors">{p.name}</Link>
                     </h3>
-                    <div className="mt-3 flex items-baseline space-x-2">
-                      <span className="text-lg font-bold text-gold font-sans">{formatNpr(p.price_npr)}</span>
-                      {p.compare_at_npr && (
-                        <span className="text-xs text-neutral-500 line-through font-mono">{formatNpr(p.compare_at_npr)}</span>
-                      )}
+                    <p className="text-[11px] text-neutral-400 mt-1">Range: {p.priceRange}</p>
+
+                    <div className="mt-3 flex items-baseline justify-between border-t border-neutral-800 pt-3">
+                      <div>
+                        <span className="text-lg font-bold text-gold font-sans">{formatNpr(p.price_npr)}</span>
+                        {p.compare_at_npr && (
+                          <span className="text-xs text-neutral-500 line-through font-mono ml-2">{formatNpr(p.compare_at_npr)}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-5">
+                  <div className="mt-5 space-y-2">
                     <Link
                       href={`/p/${p.slug}`}
                       className="w-full block py-2.5 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs text-center transition-colors shadow-gold"
                     >
-                      Order Chair (5% OFF)
+                      Reserve Spa Chair (15% Deposit)
                     </Link>
                   </div>
                 </div>
@@ -341,7 +352,7 @@ export default async function HomePage() {
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold flex items-center">
                 <Flame className="w-3.5 h-3.5 mr-1 text-gold" /> Consumer Best Sellers
               </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Professional Hair Styling Tools</h2>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Professional Hair Styling Tools (COD)</h2>
             </div>
           </div>
 
@@ -351,7 +362,7 @@ export default async function HomePage() {
               return (
                 <div key={p.id} className="group rounded-2xl bg-surface-lowest border border-outline-variant p-3 sm:p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between">
                   <div>
-                    <div className="relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3">
+                    <Link href={`/p/${p.slug}`} className="block relative aspect-square sm:aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3">
                       <img
                         src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                         alt={p.name}
@@ -360,12 +371,12 @@ export default async function HomePage() {
                       <span className="absolute top-1.5 left-1.5 bg-surface-lowest/90 backdrop-blur-md px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold text-on-surface uppercase border border-outline-variant">
                         Genuine Ikonic
                       </span>
-                    </div>
+                    </Link>
                     <span className="text-[9px] sm:text-[11px] font-semibold text-outline uppercase tracking-wider block">
                       SKU: {p.sku}
                     </span>
                     <h3 className="font-serif font-bold text-xs sm:text-base text-on-surface group-hover:text-gold transition-colors mt-1 line-clamp-2 leading-tight">
-                      {p.name}
+                      <Link href={`/p/${p.slug}`}>{p.name}</Link>
                     </h3>
                   </div>
 
@@ -373,7 +384,7 @@ export default async function HomePage() {
                     <div>
                       {hasDarazAnchor && (
                         <div className="text-[10px] sm:text-xs text-outline line-through font-mono">
-                          Daraz: {formatNpr(p.compare_at_npr!)}
+                          Original: {formatNpr(p.compare_at_npr!)}
                         </div>
                       )}
                       <div className="text-xs sm:text-base font-bold text-on-surface font-sans">
@@ -398,54 +409,7 @@ export default async function HomePage() {
           <SalonCalculatorWidget />
         </section>
 
-        {/* Section 7: Salon Membership Tier Matrix */}
-        <section className="container mx-auto px-4 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-2">
-            <span className="text-xs font-bold uppercase tracking-widest text-gold">Wholesale Membership</span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold">Salon Partner Tier Benefits</h2>
-            <p className="text-xs text-outline">Net trade pricing structure for beauty parlours & barber shop accounts across Nepal</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-surface-lowest p-6 rounded-2xl border border-outline-variant space-y-4 shadow-soft">
-              <span className="text-xs font-mono text-outline uppercase tracking-wider block">Tier 1</span>
-              <h3 className="font-serif text-2xl font-bold text-on-surface">Silver Partner</h3>
-              <div className="text-3xl font-bold text-gold font-sans">10% OFF</div>
-              <ul className="space-y-2 text-xs text-on-surface-variant">
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Net trade catalog pricing</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Fast priority dispatch</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Viber stock drop alerts</li>
-              </ul>
-            </div>
-
-            <div className="bg-surface-lowest p-6 rounded-2xl border-2 border-gold space-y-4 shadow-gold relative">
-              <span className="absolute -top-3 right-4 px-3 py-1 bg-gold text-on-surface text-[10px] font-bold uppercase rounded-full">
-                Most Popular
-              </span>
-              <span className="text-xs font-mono text-gold uppercase tracking-wider block">Tier 2</span>
-              <h3 className="font-serif text-2xl font-bold text-on-surface">Gold Partner</h3>
-              <div className="text-3xl font-bold text-gold font-sans">15% OFF</div>
-              <ul className="space-y-2 text-xs text-on-surface-variant">
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Everything in Silver</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> 30-Day credit account (NPR 500K limit)</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Free floor layout consultation</li>
-              </ul>
-            </div>
-
-            <div className="bg-inverse-surface text-inverse-on-surface p-6 rounded-2xl border border-neutral-800 space-y-4 shadow-soft">
-              <span className="text-xs font-mono text-gold uppercase tracking-wider block">Tier 3</span>
-              <h3 className="font-serif text-2xl font-bold text-white">Platinum Partner</h3>
-              <div className="text-3xl font-bold text-gold font-sans">25% OFF</div>
-              <ul className="space-y-2 text-xs text-neutral-300">
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Maximum distributor margin</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Custom upholstery color setting</li>
-                <li className="flex items-center"><Check className="w-4 h-4 text-gold mr-2" /> Dedicated account manager</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 8: Authenticity Guarantee */}
+        {/* Section 7: Authenticity Guarantee */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="rounded-3xl bg-surface-container-low border border-gold/30 p-6 sm:p-8 lg:p-12 relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
@@ -458,7 +422,7 @@ export default async function HomePage() {
                   Open The Box & Verify Serial Before Paying
                 </h3>
                 <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                  We believe trust is built on transparency. Our riders will allow you to open the outer box and verify your Ikonic product, serial hologram, and Eternity warranty card before handing over cash on delivery.
+                  We believe trust is built on transparency. Our riders will allow you to open the outer box and verify your product serial hologram and Eternity warranty card.
                 </p>
               </div>
               <div className="lg:col-span-4 flex justify-start lg:justify-end">

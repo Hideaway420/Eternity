@@ -14,7 +14,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Unique Eternity Salon Luxury Chair Catalogue (NPR 30,000 - 40,000 Range with 5% Limited Offer)
+// Master Catalogue Mapping for All Eternity Products (Including 4 New Luxury Spa Chairs)
 const CATALOG_DICTIONARY: Record<
   string,
   {
@@ -26,44 +26,94 @@ const CATALOG_DICTIONARY: Record<
     compare_at_npr?: number | null;
     line: string;
     imageUrl: string;
+    description?: string;
+    priceRange?: string;
+    offerText?: string;
+    offerExpiry?: string;
+    isLimitedEdition?: boolean;
+    isSpaCategory?: boolean;
   }
 > = {
+  // --- 4 NEW SPA & PEDICURE CHAIRS ---
+  "classic-eternity-spa-chair": {
+    id: "prod-etp-spa-01",
+    sku: "ETP-SPA-01",
+    slug: "classic-eternity-spa-chair",
+    name: "Classic Eternity Spa Chair",
+    price_npr: 12000000, // NPR 120,000
+    compare_at_npr: 13000000,
+    line: "profit",
+    imageUrl: "/products/spa_chair_classic.jpg",
+    priceRange: "NPR 115,000 - NPR 130,000",
+    isSpaCategory: true,
+    description:
+      "Transform your salon into a sanctuary of relaxation with the Classic Eternity Spa Chair. Designed with both the technician's convenience and the client's ultimate comfort in mind, this chair features plush, ergonomic cushioning wrapped in premium, spill-resistant upholstery. Its sleek silhouette effortlessly elevates your salon’s aesthetic, promising every guest a serene, five-star pampering experience from the moment they sit down.",
+  },
+  "eternity-elegance-pedicure-station": {
+    id: "prod-etp-spa-02",
+    sku: "ETP-SPA-02",
+    slug: "eternity-elegance-pedicure-station",
+    name: "Eternity Elegance Pedicure Station",
+    price_npr: 12800000, // NPR 128,000
+    compare_at_npr: 13900000,
+    line: "profit",
+    imageUrl: "/products/spa_chair_elegance.jpg",
+    priceRange: "NPR 125,000 - NPR 135,000",
+    offerText: "8% OFF Special Offer",
+    offerExpiry: "August 31st",
+    isSpaCategory: true,
+    description:
+      "Offer your clients the gold standard of foot care with the Eternity Elegance Pedicure Station. This unit combines whisper-quiet massage mechanics with a deep, luxurious soaking basin, creating an immersive oasis for tired feet. The elegantly contoured backrest provides full lumbar support, ensuring that your clients drift into total tranquility while you perform your artistry.",
+  },
+  "eternity-luxe-spa-recliner": {
+    id: "prod-etp-spa-03",
+    sku: "ETP-SPA-03",
+    slug: "eternity-luxe-spa-recliner",
+    name: "Eternity Luxe Spa Recliner",
+    price_npr: 13500000, // NPR 135,000
+    compare_at_npr: 14650000,
+    line: "profit",
+    imageUrl: "/products/spa_chair_pink_recliner.jpg",
+    priceRange: "NPR 130,000 - NPR 140,000",
+    offerText: "8% OFF Special Offer",
+    offerExpiry: "September 3rd",
+    isSpaCategory: true,
+    description:
+      "Step into the future of luxury wellness with the Eternity Luxe Spa Recliner. Engineered for high-end spas and VIP salon suites, this recliner envelopes your clients in cloud-like softness. With meticulously crafted armrests and a modern, minimalist base, it acts as a striking centerpiece for your space while delivering an unparalleled, restorative spa experience.",
+  },
+  "eternity-signature-series-limited-edition": {
+    id: "prod-etp-spa-04",
+    sku: "ETP-SPA-04",
+    slug: "eternity-signature-series-limited-edition",
+    name: "Eternity Signature Series (Limited Edition)",
+    price_npr: 14000000, // NPR 140,000
+    compare_at_npr: 14500000,
+    line: "profit",
+    imageUrl: "/products/spa_chair_signature.jpg",
+    priceRange: "NPR 135,000 - NPR 145,000",
+    isLimitedEdition: true,
+    isSpaCategory: true,
+    description:
+      "The absolute pinnacle of salon luxury. The Eternity Signature Series is a masterclass in design, exclusively crafted for establishments that refuse to compromise on quality. Featuring hand-stitched detailing, ultra-premium memory foam, and state-of-the-art spa technology, this chair doesn't just offer a service—it offers an unforgettable escape. Due to the meticulous craftsmanship required, production is strictly limited.",
+  },
+
+  // --- LUXURY SALON CHAIRS & OTHER PRODUCTS ---
   "eternity-emerald-royal-luxury-salon-chair": {
     id: "prod-etp-chair-01",
     sku: "ETP-LSC-01",
     slug: "eternity-emerald-royal-luxury-salon-chair",
     name: "Eternity Emerald Royal Luxury Salon Chair",
-    price_npr: 3500000, // NPR 35,000 (after 5% Limited Offer)
-    compare_at_npr: 3685000, // Original NPR 36,850
+    price_npr: 3500000,
+    compare_at_npr: 3685000,
     line: "profit",
     imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-  },
-  "eternity-espresso-vintage-luxury-salon-chair": {
-    id: "prod-etp-chair-02",
-    sku: "ETP-LSC-02",
-    slug: "eternity-espresso-vintage-luxury-salon-chair",
-    name: "Eternity Espresso Vintage Luxury Salon Chair",
-    price_npr: 3750000, // NPR 37,500
-    compare_at_npr: 3950000, // Original NPR 39,500
-    line: "profit",
-    imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
-  },
-  "eternity-burgundy-regal-luxury-salon-chair": {
-    id: "prod-etp-chair-03",
-    sku: "ETP-LSC-03",
-    slug: "eternity-burgundy-regal-luxury-salon-chair",
-    name: "Eternity Burgundy Regal Luxury Salon Chair",
-    price_npr: 3850000, // NPR 38,500
-    compare_at_npr: 4050000, // Original NPR 40,500
-    line: "profit",
-    imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
   },
   "ikonic-barber-chair-felix": {
     id: "prod-etp-005",
     sku: "ETP-005",
     slug: "ikonic-barber-chair-felix",
     name: "Eternity Emerald Royal Luxury Salon Chair",
-    price_npr: 3500000, // NPR 35,000
+    price_npr: 3500000,
     compare_at_npr: 3685000,
     line: "profit",
     imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
@@ -87,16 +137,6 @@ const CATALOG_DICTIONARY: Record<
     compare_at_npr: 1120000,
     line: "traffic",
     imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-  },
-  "ikonic-pedicure-foot-spa-manicure-suite": {
-    id: "prod-etp-mp-01",
-    sku: "ETP-MP-01",
-    slug: "ikonic-pedicure-foot-spa-manicure-suite",
-    name: "Eternity Luxury Pedicure Spa Chair Suite",
-    price_npr: 3850000, // NPR 38,500
-    compare_at_npr: 4050000,
-    line: "profit",
-    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
   },
 };
 
@@ -128,12 +168,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
     if (fetchedProd) {
       product = fetchedProd;
-      // Apply clean overrides for luxury salon chairs
-      if (product.slug === "ikonic-barber-chair-felix" || product.slug === "eternity-emerald-royal-luxury-salon-chair") {
-        product.name = "Eternity Emerald Royal Luxury Salon Chair";
-        product.price_npr = 3500000; // NPR 35,000
-        product.compare_at_npr = 3685000;
-        product.imageUrl = "/products/chair_emerald_green_1786235658712.jpg";
+      const matched = CATALOG_DICTIONARY[slug];
+      if (matched) {
+        product = { ...product, ...matched };
       }
       if (product.id) {
         const prodRecord = await db.select().from(products).where(eq(products.slug, slug)).get();
@@ -153,16 +190,16 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       product = matched;
     } else {
       const isFurniture =
-        slug.includes("chair") || slug.includes("bed") || slug.includes("basin") || slug.includes("station") || slug.includes("trolley");
+        slug.includes("chair") || slug.includes("spa") || slug.includes("pedicure") || slug.includes("recliner");
       product = {
         id: `prod-${slug}`,
         sku: `ETP-${slug.slice(0, 4).toUpperCase()}`,
         slug: slug,
-        name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()).replace(/Barber/g, "Luxury Salon"),
-        price_npr: isFurniture ? 3500000 : 1150000,
-        compare_at_npr: isFurniture ? 3685000 : 1350000,
+        name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        price_npr: isFurniture ? 12000000 : 1150000,
+        compare_at_npr: isFurniture ? 13000000 : 1350000,
         line: isFurniture ? "profit" : "traffic",
-        imageUrl: isFurniture ? "/products/chair_emerald_green_1786235658712.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
+        imageUrl: isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
       };
     }
   }
@@ -176,17 +213,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <div className="text-xs text-outline mb-8 flex items-center space-x-2">
           <Link href="/" className="hover:underline">Home</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
-          {category && (
-            <>
-              <Link href={`/c/${category.slug}`} className="hover:underline capitalize">{category.name}</Link>
-              <ChevronRight className="w-3 h-3 text-outline" />
-            </>
-          )}
+          <Link href="/c/spa" className="hover:underline capitalize">{category?.name || "SPA"}</Link>
+          <ChevronRight className="w-3 h-3 text-outline" />
           <span className="text-on-surface font-semibold truncate max-w-xs">{product.name}</span>
         </div>
 
         {/* Product Color Selection & Interactive Showcase */}
-        <ProductColorSelector product={product} categoryName={category?.name} />
+        <ProductColorSelector product={product} categoryName={category?.name || "SPA"} />
       </main>
 
       <Footer />

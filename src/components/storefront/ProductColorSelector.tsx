@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus, Tag } from "lucide-react";
+import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus, Tag, Check, Calendar, Lock } from "lucide-react";
 import { formatNpr } from "@/lib/money";
 
 interface ColorVariant {
@@ -24,6 +24,12 @@ interface ProductColorSelectorProps {
     line: string;
     specs?: string | null;
     imageUrl?: string | null;
+    description?: string | null;
+    priceRange?: string | null;
+    offerText?: string | null;
+    offerExpiry?: string | null;
+    isLimitedEdition?: boolean;
+    isSpaCategory?: boolean;
   };
   categoryName?: string;
 }
@@ -31,22 +37,62 @@ interface ProductColorSelectorProps {
 export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   product,
 }) => {
+  const isSpaCategory =
+    product.isSpaCategory ||
+    product.slug.includes("spa") ||
+    product.slug.includes("pedicure") ||
+    product.slug.includes("recliner") ||
+    product.slug.includes("signature-series");
+
   const isFurniture =
+    isSpaCategory ||
     product.line === "profit" ||
     product.name.toLowerCase().includes("chair") ||
     product.name.toLowerCase().includes("bed") ||
-    product.name.toLowerCase().includes("basin") ||
-    product.name.toLowerCase().includes("station") ||
-    product.name.toLowerCase().includes("trolley");
+    product.name.toLowerCase().includes("basin");
 
-  // Calculate 5% Limited Offer Discount
-  const originalComparePrice = product.compare_at_npr || Math.round(product.price_npr * 1.0526);
+  // Custom Color Match Add-On (+NPR 6,000)
+  const [hasCustomColorMatch, setHasCustomColorMatch] = useState<boolean>(false);
+  const CUSTOM_COLOR_ADDON_NPR = 600000; // 6,000 NPR in Paisa
+
+  const basePriceNpr = product.price_npr;
+  const currentUnitPriceNpr = basePriceNpr + (hasCustomColorMatch ? CUSTOM_COLOR_ADDON_NPR : 0);
+
+  // Calculate 15% Upfront Booking Deposit for Spa Chairs
+  const depositPercentage = 15;
+  const depositAmountNpr = Math.round(currentUnitPriceNpr * (depositPercentage / 100));
+
+  const originalComparePrice = product.compare_at_npr || Math.round(product.price_npr * 1.087);
   const savingsNpr = Math.round((originalComparePrice - product.price_npr) / 100);
 
-  const primaryImg = product.imageUrl || (isFurniture ? "/products/chair_emerald_green_1786235658712.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
+  const primaryImg = product.imageUrl || (isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
 
-  // 3 Real Studio Color Swatches
-  const colorVariants: ColorVariant[] = isFurniture
+  // Real Color Swatches
+  const colorVariants: ColorVariant[] = isSpaCategory
+    ? [
+        {
+          name: "Signature Obsidian Black",
+          hex: "#1A1A1A",
+          image: primaryImg,
+          inStock: true,
+          stockCount: 3,
+        },
+        {
+          name: "Blush Pink Velvet",
+          hex: "#E8C5C8",
+          image: "/products/spa_chair_pink_recliner.jpg",
+          inStock: true,
+          stockCount: 2,
+        },
+        {
+          name: "Imperial White & Gold",
+          hex: "#F5F5F0",
+          image: "/products/spa_chair_signature.jpg",
+          inStock: true,
+          stockCount: 2,
+        },
+      ]
+    : isFurniture
     ? [
         {
           name: "Emerald Green & Gold",
@@ -72,7 +118,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
       ]
     : [
         {
-          name: "Rose Gold Titanium Edition",
+          name: "Rose Gold Titanium",
           hex: "#B76E79",
           image: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
           inStock: true,
@@ -85,17 +131,10 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           inStock: true,
           stockCount: 10,
         },
-        {
-          name: "Pearl White Blow Dryer",
-          hex: "#F5F5F5",
-          image: "/products/ikonic_blow_dryer_1786231888743.jpg",
-          inStock: true,
-          stockCount: 8,
-        },
       ];
 
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(colorVariants[0]);
-  const [selectedImage, setSelectedImage] = useState<string>(colorVariants[0].image);
+  const [selectedImage, setSelectedImage] = useState<string>(primaryImg);
   const [quantity, setQuantity] = useState<number>(1);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
 
@@ -106,16 +145,19 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
     setTimeout(() => setImageLoading(false), 200);
   };
 
+  const totalOrderNpr = currentUnitPriceNpr * quantity;
+  const totalDepositNpr = depositAmountNpr * quantity;
+
   const whatsappMessage = encodeURIComponent(
-    `Hi Eternity Products Nepal! I would like to order ${quantity}x "${product.name}" (${selectedColor.name}) with 5% Limited Offer Discount (NPR 30k-40k range) for NPR ${formatNpr(
-      product.price_npr * quantity
-    )} with Open-Box Cash on Delivery.`
+    `Hi Eternity Products Nepal! I would like to reserve ${quantity}x "${product.name}" (${selectedColor.name})${
+      hasCustomColorMatch ? " with Custom Color Match (+NPR 6,000)" : ""
+    } for Total ${formatNpr(totalOrderNpr)} (Upfront 15% Booking Deposit: ${formatNpr(totalDepositNpr)}).`
   );
   const whatsappUrl = `https://wa.me/9779868089892?text=${whatsappMessage}`;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-      {/* Dynamic Gallery Showcase with Real Color Photos */}
+      {/* Dynamic Gallery Showcase with Real Photo */}
       <div className="lg:col-span-6 space-y-4">
         <div className="relative aspect-square rounded-3xl overflow-hidden bg-surface-lowest border-2 border-gold/40 shadow-elevated group">
           <img
@@ -130,17 +172,26 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           {/* Active Color Badge Overlay */}
           <div className="absolute top-4 left-4 glass-card px-3.5 py-1.5 rounded-full text-xs font-bold text-on-surface border border-outline-variant flex items-center space-x-2 shadow-soft">
             <span className="w-3.5 h-3.5 rounded-full border border-white shadow-sm" style={{ backgroundColor: selectedColor.hex }} />
-            <span>Real Color: <strong className="text-gold font-serif">{selectedColor.name}</strong></span>
+            <span>Finish: <strong className="text-gold font-serif">{selectedColor.name}</strong></span>
           </div>
 
-          {/* 5% Limited Offer Badge Overlay */}
-          <div className="absolute top-4 right-4 bg-red-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center space-x-1.5 animate-pulse">
-            <Tag className="w-3.5 h-3.5" />
-            <span>5% OFF LIMITED OFFER</span>
-          </div>
+          {/* Offer / Limited Stock Badges Overlay */}
+          {product.offerText && (
+            <div className="absolute top-4 right-4 bg-red-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center space-x-1.5 animate-pulse">
+              <Tag className="w-3.5 h-3.5" />
+              <span>{product.offerText}</span>
+            </div>
+          )}
+
+          {product.isLimitedEdition && (
+            <div className="absolute top-4 right-4 bg-amber-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md flex items-center space-x-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>STRICTLY LIMITED STOCK</span>
+            </div>
+          )}
         </div>
 
-        {/* 3 Real Color Thumbnails */}
+        {/* Real Color Thumbnails */}
         <div className="grid grid-cols-3 gap-3 pt-2">
           {colorVariants.map((v) => (
             <button
@@ -159,74 +210,106 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
         </div>
       </div>
 
-      {/* Product Purchasing & CRO Conversion Panel */}
+      {/* Product Purchasing & High-Converting Conversion Panel */}
       <div className="lg:col-span-6 space-y-6">
         <div>
-          {isFurniture && (
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gold/15 text-gold border border-gold/40 text-xs font-bold mb-2">
+          {isSpaCategory && (
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-gold/15 text-gold border border-gold/40 text-xs font-bold mb-2">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Category Price Range: NPR 30,000 – NPR 40,000</span>
+              <span>Category Price Range: {product.priceRange || "NPR 115,000 – NPR 145,000"}</span>
             </div>
           )}
           <span className="text-xs font-mono text-outline uppercase tracking-widest block mb-1">
-            Eternity Salon Line • SKU: {product.sku}
+            Eternity Luxury Spa Collection • SKU: {product.sku}
           </span>
           <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface">
             {product.name}
           </h1>
         </div>
 
-        {/* Price & 5% Discount Offer Block */}
-        <div className="p-5 rounded-2xl bg-surface-container-low border-2 border-gold/50 space-y-3 relative overflow-hidden shadow-soft">
-          <div className="flex justify-between items-center">
-            <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center">
-              <Tag className="w-3.5 h-3.5 mr-1 text-red-600" /> Limited Time 5% Discount Offer
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider shadow-sm">
-              5% OFF
-            </span>
+        {/* Product Rich Description */}
+        {product.description && (
+          <div className="p-4 rounded-2xl bg-surface-low border border-outline-variant/60 text-xs sm:text-sm text-on-surface-variant leading-relaxed font-light">
+            {product.description}
           </div>
+        )}
+
+        {/* Pricing Block with Upfront Deposit Highlight */}
+        <div className="p-5 rounded-2xl bg-surface-container-low border-2 border-gold/50 space-y-3 relative overflow-hidden shadow-soft">
+          {product.offerText ? (
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold text-gold uppercase tracking-wider flex items-center">
+                <Tag className="w-3.5 h-3.5 mr-1 text-red-600" /> {product.offerText}
+              </span>
+              {product.offerExpiry && (
+                <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider flex items-center">
+                  <Calendar className="w-3 h-3 mr-1" /> Valid until {product.offerExpiry}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="text-xs font-bold text-gold uppercase tracking-wider">
+              Bespoke Salon Fit-Out Pricing
+            </div>
+          )}
 
           <div className="flex items-baseline space-x-3">
             <span className="text-3xl sm:text-4xl font-bold font-sans text-on-surface">
-              {formatNpr(product.price_npr * quantity)}
+              {formatNpr(totalOrderNpr)}
             </span>
-            <span className="text-sm sm:text-base font-mono text-outline line-through">
-              {formatNpr(originalComparePrice * quantity)}
-            </span>
+            {product.compare_at_npr && (
+              <span className="text-sm sm:text-base font-mono text-outline line-through">
+                {formatNpr(product.compare_at_npr * quantity)}
+              </span>
+            )}
           </div>
 
-          <div className="text-xs text-green-700 font-bold flex items-center">
-            <CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />
-            Special Deal: You Save NPR {savingsNpr.toLocaleString()} today! (VAT 13% Inclusive)
+          {/* 10% - 15% Upfront Booking Deposit Callout */}
+          {isSpaCategory && (
+            <div className="pt-2 border-t border-gold/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+              <div className="text-xs font-bold text-on-surface flex items-center">
+                <Lock className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                <span>15% Upfront Booking Deposit:</span>
+              </div>
+              <span className="text-sm font-bold text-gold font-sans bg-gold/15 px-3 py-1 rounded-xl border border-gold/40">
+                {formatNpr(totalDepositNpr)}
+              </span>
+            </div>
+          )}
+
+          <div className="text-[11px] text-green-700 font-semibold flex items-center">
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-green-600" />
+            100% Guaranteed Official Eternity Nepal Delivery & 1-Year Replacement Warranty
           </div>
         </div>
 
-        {/* Color Swatch Picker */}
-        <div className="p-5 rounded-2xl bg-surface-lowest border border-outline-variant space-y-4 shadow-soft">
-          <div className="flex justify-between items-center text-xs">
+        {/* CUSTOM SALON COLOR MATCH ADD-ON (+NPR 6,000) */}
+        <div className="p-5 rounded-2xl bg-surface-lowest border-2 border-gold/40 space-y-3 shadow-soft">
+          <div className="flex justify-between items-center">
             <span className="font-serif font-bold text-xs sm:text-sm text-on-surface uppercase tracking-wider">
-              {isFurniture ? "1. Select Real Upholstery Color:" : "1. Select Real Finish Color:"}
+              Bespoke Customization Add-On:
             </span>
-            <span className="font-bold text-gold font-mono">{selectedColor.name}</span>
+            <span className="text-xs font-bold text-gold font-mono">+NPR 6,000</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-            {colorVariants.map((v) => (
-              <button
-                key={v.name}
-                onClick={() => handleColorChange(v)}
-                className={`flex items-center space-x-2.5 px-3 py-2.5 rounded-xl border text-xs font-bold transition-all ${
-                  selectedColor.name === v.name
-                    ? "border-gold bg-gold/15 text-on-surface shadow-gold ring-2 ring-gold scale-[1.02]"
-                    : "border-outline-variant bg-surface-low text-on-surface-variant hover:border-gold/60"
-                }`}
-              >
-                <span className="w-4 h-4 rounded-full border border-white shadow-sm flex-shrink-0" style={{ backgroundColor: v.hex }} />
-                <span className="truncate">{v.name}</span>
-              </button>
-            ))}
-          </div>
+          <label
+            onClick={() => setHasCustomColorMatch(!hasCustomColorMatch)}
+            className={`flex items-center space-x-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+              hasCustomColorMatch
+                ? "border-gold bg-gold/15 text-on-surface shadow-gold ring-2 ring-gold"
+                : "border-outline-variant bg-surface-low text-on-surface-variant hover:border-gold/60"
+            }`}
+          >
+            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+              hasCustomColorMatch ? "bg-gold border-gold text-on-surface" : "border-outline-variant bg-surface-lowest"
+            }`}>
+              {hasCustomColorMatch && <Check className="w-3.5 h-3.5 text-on-surface stroke-[3]" />}
+            </div>
+            <div>
+              <span className="font-bold text-xs sm:text-sm block">Custom Salon Color Match (+NPR 6,000)</span>
+              <span className="text-[11px] text-outline block">Align upholstery color perfectly with your salon&apos;s interior brand palette.</span>
+            </div>
+          </label>
         </div>
 
         {/* Interactive Quantity Selector */}
@@ -257,14 +340,16 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           <span>High Demand: {selectedColor.stockCount} units remaining in Kathmandu warehouse for instant dispatch!</span>
         </div>
 
-        {/* Authenticity Guarantee Box */}
+        {/* Booking Terms Box */}
         <div className="rounded-2xl bg-gold/10 border-2 border-gold/40 p-5 space-y-2 relative overflow-hidden">
           <div className="flex items-center space-x-2 text-gold font-bold text-xs sm:text-sm uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
-            <span>असली उत्पादन Promise (Open-Box Inspection)</span>
+            <span>Booking & Payment Terms</span>
           </div>
           <p className="text-xs text-on-surface-variant leading-relaxed">
-            Direct import by Eternity Products. Serialized box seal + Eternity warranty card included. Open outer box to inspect before paying cash on delivery.
+            {isSpaCategory
+              ? `Secure your order today with a convenient 10% - 15% upfront booking payment (${formatNpr(totalDepositNpr)} deposit). The remaining balance is payable upon delivery inspection.`
+              : "100% Cash on Delivery (COD) across Kathmandu Valley and all 77 districts of Nepal."}
           </p>
         </div>
 
@@ -275,10 +360,14 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
           >
             <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>Order Chair Now with 5% Offer — Open-Box COD</span>
+            <span>
+              {isSpaCategory
+                ? `Pay 15% Deposit (${formatNpr(totalDepositNpr)}) & Reserve Chair`
+                : "Buy Now — Open-Box Cash on Delivery"}
+            </span>
           </Link>
 
-          {/* WhatsApp Direct Order Button */}
+          {/* WhatsApp Direct Booking Button */}
           <a
             href={whatsappUrl}
             target="_blank"
@@ -286,25 +375,25 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             className="w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Order via WhatsApp (+977 9868089892) — Claim 5% OFF</span>
+            <span>Reserve via WhatsApp (+977 9868089892)</span>
           </a>
         </div>
 
         {/* Delivery Estimator */}
         <div className="p-4 sm:p-5 rounded-2xl bg-surface-low border border-outline-variant/60 space-y-3 text-xs">
           <h4 className="font-serif font-bold text-sm flex items-center">
-            <Truck className="w-4 h-4 mr-2 text-gold" /> Nepal Nationwide Fast Delivery
+            <Truck className="w-4 h-4 mr-2 text-gold" /> Nepal Nationwide Delivery
           </h4>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div className="p-3 bg-surface-lowest rounded-xl border border-outline-variant/60">
               <span className="font-bold block text-on-surface">Kathmandu Valley</span>
               <span className="text-outline block text-[11px]">1-2 Business Days</span>
-              <span className="font-semibold text-green-700 block mt-1">NPR 150 (Free &gt; 5,000)</span>
+              <span className="font-semibold text-green-700 block mt-1">Free Delivery</span>
             </div>
             <div className="p-3 bg-surface-lowest rounded-xl border border-outline-variant/60">
               <span className="font-bold block text-on-surface">Outside Valley</span>
               <span className="text-outline block text-[11px]">3-5 Business Days</span>
-              <span className="font-semibold text-on-surface block mt-1">NPR 350 Courier</span>
+              <span className="font-semibold text-on-surface block mt-1">Courier Service</span>
             </div>
           </div>
         </div>
