@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus } from "lucide-react";
+import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus, Tag } from "lucide-react";
 import { formatNpr } from "@/lib/money";
 
 interface ColorVariant {
@@ -39,10 +39,13 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
     product.name.toLowerCase().includes("station") ||
     product.name.toLowerCase().includes("trolley");
 
-  const hasDarazAnchor = !!product.compare_at_npr;
+  // Calculate 5% Limited Offer Discount
+  const originalComparePrice = product.compare_at_npr || Math.round(product.price_npr * 1.0526);
+  const savingsNpr = Math.round((originalComparePrice - product.price_npr) / 100);
+
   const primaryImg = product.imageUrl || (isFurniture ? "/products/chair_emerald_green_1786235658712.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
 
-  // Exactly 3 Distinct Real Photo Swatches per Product Type (No fallback to black for everything!)
+  // 3 Real Studio Color Swatches
   const colorVariants: ColorVariant[] = isFurniture
     ? [
         {
@@ -104,7 +107,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hi Eternity Products Nepal! I would like to order ${quantity}x "${product.name}" (${selectedColor.name}) for NPR ${formatNpr(
+    `Hi Eternity Products Nepal! I would like to order ${quantity}x "${product.name}" (${selectedColor.name}) with 5% Limited Offer Discount for NPR ${formatNpr(
       product.price_npr * quantity
     )} with Open-Box Cash on Delivery.`
   );
@@ -130,9 +133,10 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             <span>Real Color: <strong className="text-gold font-serif">{selectedColor.name}</strong></span>
           </div>
 
-          <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center space-x-1">
-            <Sparkles className="w-3 h-3" />
-            <span>Official Ikonic Nepal</span>
+          {/* 5% Limited Offer Badge Overlay */}
+          <div className="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 animate-pulse">
+            <Tag className="w-3 h-3" />
+            <span>5% OFF Limited Offer</span>
           </div>
         </div>
 
@@ -166,25 +170,32 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           </h1>
         </div>
 
-        {/* Price & Savings Anchor Block */}
-        <div className="p-5 rounded-2xl bg-surface-container-low border border-outline-variant/60 space-y-2">
+        {/* Price & 5% Discount Anchor Block */}
+        <div className="p-5 rounded-2xl bg-surface-container-low border border-gold/40 space-y-2 relative overflow-hidden">
           <div className="flex items-baseline space-x-3">
             <span className="text-2xl sm:text-3xl font-bold font-sans text-on-surface">
               {formatNpr(product.price_npr * quantity)}
             </span>
-            {hasDarazAnchor && (
-              <span className="text-xs sm:text-sm font-mono text-outline line-through">
-                Daraz: {formatNpr(product.compare_at_npr! * quantity)}
-              </span>
-            )}
-            <span className="text-xs text-outline">(VAT 13% Inclusive)</span>
+            <span className="text-xs sm:text-sm font-mono text-outline line-through">
+              {formatNpr(originalComparePrice * quantity)}
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-red-600/10 text-red-700 text-xs font-bold border border-red-600/30">
+              5% OFF
+            </span>
           </div>
-          {hasDarazAnchor && (
-            <div className="text-xs text-green-700 font-semibold flex items-center">
-              <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-green-600" />
-              Save up to 15% vs Daraz price with 1-Year Local Replacement Guarantee!
-            </div>
-          )}
+          <div className="text-xs text-green-700 font-semibold flex items-center">
+            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-green-600" />
+            Limited Offer: Save NPR {savingsNpr.toLocaleString()} today! (VAT 13% Inclusive)
+          </div>
+        </div>
+
+        {/* 5% Limited Offer Banner Box */}
+        <div className="p-4 rounded-2xl bg-gold/15 border border-gold/50 flex items-center space-x-3 text-xs font-bold text-on-surface">
+          <Sparkles className="w-5 h-5 text-gold flex-shrink-0" />
+          <div>
+            <span className="text-gold uppercase tracking-wider block text-[10px]">Eternity Nepal Special Promo</span>
+            <span>🔥 Limited Time Offer: Extra 5% Discount Applied Automatically!</span>
+          </div>
         </div>
 
         {/* Color Swatch Picker (3 Distinct Real Colors) */}
@@ -257,11 +268,11 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
         <div className="space-y-3 pt-1">
           {isFurniture ? (
             <Link
-              href="/salon/portal"
-              className="w-full py-4 rounded-xl bg-inverse-surface text-white font-bold text-xs sm:text-sm hover:bg-neutral-800 transition-colors flex justify-center items-center space-x-2 shadow-soft"
+              href="/checkout"
+              className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
             >
-              <Building2 className="w-4 h-4 text-gold" />
-              <span className="text-white font-bold">Request Custom B2B Quote for {selectedColor.name}</span>
+              <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              <span className="font-bold">Buy Now with 5% Discount — Open-Box COD</span>
             </Link>
           ) : (
             <Link
@@ -281,7 +292,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
             className="w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
           >
             <MessageSquare className="w-4 h-4" />
-            <span>Order Directly via WhatsApp (+977 9868089892)</span>
+            <span>Claim 5% Discount & Order via WhatsApp (+977 9868089892)</span>
           </a>
         </div>
 
