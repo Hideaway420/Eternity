@@ -10,28 +10,106 @@ import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Calculator,
 
 export const revalidate = 0; // Dynamic rendering
 
+// Resilient Fallback Data for Vercel Serverless
+const FALLBACK_TRAFFIC_PRODUCTS = [
+  {
+    id: "prod-etp-066",
+    sku: "ETP-066",
+    slug: "ikonic-professional-pro-titanium-shine-3-0-hair-straightener",
+    name: "Ikonic Professional Pro Titanium Shine 3.0 Hair Straightener",
+    price_npr: 1292000,
+    compare_at_npr: 1450000,
+    line: "traffic",
+    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
+  },
+  {
+    id: "prod-etp-095",
+    sku: "ETP-095",
+    slug: "ikonic-professional-pro-2500-advanced-hair-dryer",
+    name: "Ikonic Professional Pro 2500+ Advanced Hair Dryer",
+    price_npr: 1000000,
+    compare_at_npr: 1120000,
+    line: "traffic",
+    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
+  },
+  {
+    id: "prod-etp-067",
+    sku: "ETP-067",
+    slug: "ikonic-professional-gleam-pro-hair-straightener",
+    name: "Ikonic Professional Gleam Pro Hair Straightener",
+    price_npr: 1376000,
+    compare_at_npr: 1500000,
+    line: "traffic",
+    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
+  },
+  {
+    id: "prod-etp-089",
+    sku: "ETP-089",
+    slug: "ikonic-professional-id-2-0-hair-dryer",
+    name: "Ikonic Professional Id 2.0 Hair Dryer",
+    price_npr: 2622000,
+    compare_at_npr: 2800000,
+    line: "traffic",
+    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/8904231093140_1_6594bc6f-a625-47f5-863b-04f017f8c9a8.jpg",
+  },
+];
+
+const FALLBACK_PROFIT_PRODUCTS = [
+  {
+    id: "prod-etp-005",
+    sku: "ETP-005",
+    slug: "ikonic-barber-chair-felix",
+    name: "Ikonic Barber Chair Felix",
+    price_npr: 19515000,
+    compare_at_npr: null,
+    line: "profit",
+    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/Felix-IK-8781_1.jpg",
+  },
+  {
+    id: "prod-etp-002",
+    sku: "ETP-002",
+    slug: "autumn-electric-bed",
+    name: "Autumn Electric Spa Bed",
+    price_npr: 18800000,
+    compare_at_npr: null,
+    line: "profit",
+    imageUrl: "https://www.ikonicworld.com/cdn/shop/files/IK-3818ELECTRICALBEDBLACK_CHALET.jpg",
+  },
+];
+
 export default async function HomePage() {
   await initTables();
 
-  const activeProducts = await db
-    .select({
-      id: products.id,
-      sku: products.sku,
-      slug: products.slug,
-      name: products.name,
-      price_npr: products.price_npr,
-      compare_at_npr: products.compare_at_npr,
-      line: products.line,
-      imageUrl: productImages.url,
-    })
-    .from(products)
-    .leftJoin(productImages, eq(products.id, productImages.product_id))
-    .where(eq(products.status, "active"))
-    .limit(16)
-    .all();
+  let trafficProducts = FALLBACK_TRAFFIC_PRODUCTS;
+  let profitProducts = FALLBACK_PROFIT_PRODUCTS;
 
-  const trafficProducts = activeProducts.filter((p) => p.line === "traffic").slice(0, 4);
-  const profitProducts = activeProducts.filter((p) => p.line === "profit").slice(0, 4);
+  try {
+    const activeProducts = await db
+      .select({
+        id: products.id,
+        sku: products.sku,
+        slug: products.slug,
+        name: products.name,
+        price_npr: products.price_npr,
+        compare_at_npr: products.compare_at_npr,
+        line: products.line,
+        imageUrl: productImages.url,
+      })
+      .from(products)
+      .leftJoin(productImages, eq(products.id, productImages.product_id))
+      .where(eq(products.status, "active"))
+      .limit(16)
+      .all();
+
+    if (activeProducts.length > 0) {
+      const fetchedTraffic = activeProducts.filter((p) => p.line === "traffic").slice(0, 4);
+      const fetchedProfit = activeProducts.filter((p) => p.line === "profit").slice(0, 4);
+      if (fetchedTraffic.length > 0) trafficProducts = fetchedTraffic as typeof FALLBACK_TRAFFIC_PRODUCTS;
+      if (fetchedProfit.length > 0) profitProducts = fetchedProfit as typeof FALLBACK_PROFIT_PRODUCTS;
+    }
+  } catch (err) {
+    console.warn("⚠️ Home page DB fetch fallback active:", err);
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
