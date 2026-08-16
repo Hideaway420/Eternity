@@ -272,22 +272,21 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
       .from(products)
       .leftJoin(productImages, eq(products.id, productImages.product_id));
 
-    let fetched;
     if (cat) {
-      fetched = await baseQuery
-        .where(and(eq(products.status, "active"), eq(products.category_id, cat.id)))
+      const fetched = await baseQuery
+        .where(eq(products.category_id, cat.id))
         .all();
-    } else {
-      fetched = await baseQuery
-        .where(eq(products.status, "active"))
-        .all();
-    }
 
-    if (fetched && fetched.length > 0) {
-      categoryProducts = fetched as typeof CATEGORY_PRODUCTS_MAP["spa"];
+      if (fetched && fetched.length > 0) {
+        categoryProducts = fetched as typeof CATEGORY_PRODUCTS_MAP["spa"];
+      }
+    } else {
+      // Strict Silo: No fallback to all products or spa category
+      categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || [];
     }
   } catch (err) {
     console.warn("⚠️ Category DB query fallback active:", err);
+    categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || [];
   }
 
   if (lineFilter) {
