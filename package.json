@@ -10,7 +10,8 @@
     "seed": "tsx src/db/seed.ts",
     "seed:premium": "tsx scripts/seedPremiumProducts.ts",
     "audit:categories": "tsx scripts/auditCategories.ts",
-    "purge:reset": "tsx scripts/purgeAndResetTaxonomy.ts"
+    "purge:reset": "tsx scripts/purgeAndResetTaxonomy.ts",
+    "restore:premium": "tsx scripts/restorePremiumProducts.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
