@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Grid, ShoppingBag, User } from "lucide-react";
+import { Home, Grid, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 
 export const MobileBottomBar: React.FC = () => {
@@ -20,7 +20,7 @@ export const MobileBottomBar: React.FC = () => {
     : 0;
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F8F3EC]/95 backdrop-blur-xl border-t border-[#E8E1D7] py-2 px-4 shadow-elevated">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F8F3EC]/95 backdrop-blur-xl border-t border-[#E8E1D7] py-2 px-6 shadow-elevated">
       <div className="flex justify-around items-center text-center">
         {/* Home */}
         <Link
@@ -35,7 +35,7 @@ export const MobileBottomBar: React.FC = () => {
 
         {/* Categories */}
         <Link
-          href="/c/hair-straighteners"
+          href="/c/spa"
           className={`flex flex-col items-center space-y-1 transition-colors ${
             pathname.startsWith("/c/") ? "text-gold font-bold" : "text-outline hover:text-on-surface"
           }`}
@@ -60,17 +60,6 @@ export const MobileBottomBar: React.FC = () => {
             )}
           </div>
           <span className="text-[10px] font-medium">Cart</span>
-        </Link>
-
-        {/* Account / Admin */}
-        <Link
-          href="/admin/login"
-          className={`flex flex-col items-center space-y-1 transition-colors ${
-            pathname.startsWith("/admin") ? "text-gold font-bold" : "text-outline hover:text-on-surface"
-          }`}
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Account</span>
         </Link>
       </div>
     </div>

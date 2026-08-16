@@ -110,7 +110,7 @@ export async function initTables() {
       -- Categories
       INSERT OR IGNORE INTO categories (id, name, slug, sort_order)
       VALUES 
-        ('cat-spa', 'Luxury Pedicure & Spa Chairs', 'spa', 1),
+        ('cat-spa', 'Manicure & Pedicure Spa Furniture', 'spa', 1),
         ('cat-chairs', 'Luxury Salon Chairs', 'luxury-salon-chairs', 2),
         ('cat-straighteners', 'Hair Straighteners', 'hair-straighteners', 3),
         ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers', 4);
@@ -130,6 +130,27 @@ export async function initTables() {
         ('prod-etp-chair-02', 'ETP-LSC-02', 'eternity-espresso-vintage-luxury-salon-chair', 'Eternity Espresso Vintage Luxury Salon Chair', 'Vintage Espresso Brown leather hydraulic styling chair with heavy-duty chrome hydraulic pump.', 'cat-chairs', 'profit', 3750000, 3950000, 2350000, 'active', datetime('now'), datetime('now')),
         ('prod-etp-chair-03', 'ETP-LSC-03', 'eternity-burgundy-regal-luxury-salon-chair', 'Eternity Burgundy Regal Luxury Salon Chair', 'Regal Burgundy Red leather reclining chair with adjustable headrest and stainless steel footrest.', 'cat-chairs', 'profit', 3850000, 4050000, 2400000, 'active', datetime('now'), datetime('now'));
 
+      -- STEP A: CLEAN UP ANY MISMATCHED SPA PRODUCTS ASSIGNED TO HAIR TOOL CATEGORIES
+      DELETE FROM products WHERE (slug LIKE '%spa%' OR slug LIKE '%pedicure%') AND category_id IN ('cat-straighteners', 'cat-dryers');
+
+      -- STEP B: INSERT EXACTLY 5 PLACEHOLDER PRODUCTS INTO HAIR-STRAIGHTENERS CATEGORY
+      INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
+      VALUES
+        ('prod-str-ph-01', 'ETP-STR-01', 'eternity-pro-straightener-1-coming-soon', 'Eternity Pro Straightener 1 - Coming Soon', 'Next-generation professional titanium hair straightener. Coming soon to Eternity Nepal.', 'cat-straighteners', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-str-ph-02', 'ETP-STR-02', 'eternity-pro-straightener-2-coming-soon', 'Eternity Pro Straightener 2 - Coming Soon', 'Next-generation professional titanium hair straightener. Coming soon to Eternity Nepal.', 'cat-straighteners', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-str-ph-03', 'ETP-STR-03', 'eternity-pro-straightener-3-coming-soon', 'Eternity Pro Straightener 3 - Coming Soon', 'Next-generation professional titanium hair straightener. Coming soon to Eternity Nepal.', 'cat-straighteners', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-str-ph-04', 'ETP-STR-04', 'eternity-pro-straightener-4-coming-soon', 'Eternity Pro Straightener 4 - Coming Soon', 'Next-generation professional titanium hair straightener. Coming soon to Eternity Nepal.', 'cat-straighteners', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-str-ph-05', 'ETP-STR-05', 'eternity-pro-straightener-5-coming-soon', 'Eternity Pro Straightener 5 - Coming Soon', 'Next-generation professional titanium hair straightener. Coming soon to Eternity Nepal.', 'cat-straighteners', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now'));
+
+      -- STEP C: INSERT EXACTLY 5 PLACEHOLDER PRODUCTS INTO HAIR-DRYERS CATEGORY
+      INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
+      VALUES
+        ('prod-dry-ph-01', 'ETP-DRY-01', 'eternity-salon-dryer-1-coming-soon', 'Eternity Salon Dryer 1 - Coming Soon', 'High-velocity professional salon blow dryer with AC motor. Coming soon to Eternity Nepal.', 'cat-dryers', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-dry-ph-02', 'ETP-DRY-02', 'eternity-salon-dryer-2-coming-soon', 'Eternity Salon Dryer 2 - Coming Soon', 'High-velocity professional salon blow dryer with AC motor. Coming soon to Eternity Nepal.', 'cat-dryers', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-dry-ph-03', 'ETP-DRY-03', 'eternity-salon-dryer-3-coming-soon', 'Eternity Salon Dryer 3 - Coming Soon', 'High-velocity professional salon blow dryer with AC motor. Coming soon to Eternity Nepal.', 'cat-dryers', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-dry-ph-04', 'ETP-DRY-04', 'eternity-salon-dryer-4-coming-soon', 'Eternity Salon Dryer 4 - Coming Soon', 'High-velocity professional salon blow dryer with AC motor. Coming soon to Eternity Nepal.', 'cat-dryers', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-dry-ph-05', 'ETP-DRY-05', 'eternity-salon-dryer-5-coming-soon', 'Eternity Salon Dryer 5 - Coming Soon', 'High-velocity professional salon blow dryer with AC motor. Coming soon to Eternity Nepal.', 'cat-dryers', 'traffic', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now'));
+
       -- PRODUCT IMAGES SEED
       INSERT OR IGNORE INTO product_images (id, product_id, url, alt, is_primary)
       VALUES
@@ -139,18 +160,17 @@ export async function initTables() {
         ('img-spa-04', 'prod-etp-spa-04', '/products/spa_chair_signature.jpg', 'Eternity Signature Series', 1),
         ('img-chair-01', 'prod-etp-chair-01', '/products/chair_emerald_green_1786235658712.jpg', 'Emerald Royal Salon Chair', 1),
         ('img-chair-02', 'prod-etp-chair-02', '/products/chair_espresso_brown_1786235685819.jpg', 'Espresso Vintage Salon Chair', 1),
-        ('img-chair-03', 'prod-etp-chair-03', '/products/chair_burgundy_red_1786235698852.jpg', 'Burgundy Regal Salon Chair', 1);
-
-      -- WAREHOUSE INVENTORY QUANTITIES SEED
-      INSERT OR IGNORE INTO inventory (id, product_id, warehouse_id, qty_on_hand, qty_reserved, qty_incoming, reorder_point, safety_stock)
-      VALUES
-        ('inv-spa-01', 'prod-etp-spa-01', 'wh-main', 5, 1, 2, 2, 1),
-        ('inv-spa-02', 'prod-etp-spa-02', 'wh-main', 4, 0, 2, 2, 1),
-        ('inv-spa-03', 'prod-etp-spa-03', 'wh-main', 3, 1, 3, 2, 1),
-        ('inv-spa-04', 'prod-etp-spa-04', 'wh-main', 2, 0, 1, 1, 1),
-        ('inv-chair-01', 'prod-etp-chair-01', 'wh-main', 8, 2, 5, 3, 2),
-        ('inv-chair-02', 'prod-etp-chair-02', 'wh-main', 6, 1, 4, 3, 2),
-        ('inv-chair-03', 'prod-etp-chair-03', 'wh-main', 7, 0, 5, 3, 2);
+        ('img-chair-03', 'prod-etp-chair-03', '/products/chair_burgundy_red_1786235698852.jpg', 'Burgundy Regal Salon Chair', 1),
+        ('img-str-ph-01', 'prod-str-ph-01', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 1', 1),
+        ('img-str-ph-02', 'prod-str-ph-02', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 2', 1),
+        ('img-str-ph-03', 'prod-str-ph-03', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 3', 1),
+        ('img-str-ph-04', 'prod-str-ph-04', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 4', 1),
+        ('img-str-ph-05', 'prod-str-ph-05', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 5', 1),
+        ('img-dry-ph-01', 'prod-dry-ph-01', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 1', 1),
+        ('img-dry-ph-02', 'prod-dry-ph-02', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 2', 1),
+        ('img-dry-ph-03', 'prod-dry-ph-03', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 3', 1),
+        ('img-dry-ph-04', 'prod-dry-ph-04', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 4', 1),
+        ('img-dry-ph-05', 'prod-dry-ph-05', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 5', 1);
     `);
   } catch (err) {
     console.warn("⚠️ initTables warning (likely read-only environment or missing Turso env):", err);
