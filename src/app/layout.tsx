@@ -51,6 +51,19 @@ export const metadata: Metadata = {
   verification: {
     google: "0ahB6Zbvm8IrToCcYC_CsFlziYMvb31S2a-VkEkXj0U",
   },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
     description:

@@ -164,9 +164,32 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         {/* Results List */}
         <div className="max-h-[60vh] overflow-y-auto divide-y divide-outline-variant/60 p-2">
           {results.length === 0 ? (
-            <div className="py-12 text-center text-xs text-outline space-y-2">
-              <p>No products found matching &quot;{query}&quot;.</p>
-              <p className="text-[11px]">Try searching for &quot;Straightener&quot;, &quot;Dryer&quot;, or &quot;Chair&quot;.</p>
+            <div className="py-8 text-center text-xs text-outline space-y-4 px-4">
+              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center text-gold mx-auto border border-gold/30">
+                <Search className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-on-surface">No exact matches found for &quot;{query}&quot;</p>
+                <p className="text-xs text-outline font-light max-w-sm mx-auto">
+                  We might not carry that specific model name yet, but explore our bestselling Ikonic hair tools and Eternity spa chairs below!
+                </p>
+              </div>
+              <div className="pt-2 flex flex-wrap justify-center gap-2">
+                <Link
+                  href="/c/spa"
+                  onClick={onClose}
+                  className="px-4 py-2 bg-gold hover:bg-gold-hover text-on-surface font-bold rounded-xl text-xs shadow-gold transition-colors"
+                >
+                  Explore Spa Chairs
+                </Link>
+                <Link
+                  href="/c/hair-straighteners"
+                  onClick={onClose}
+                  className="px-4 py-2 bg-surface-low border border-outline-variant hover:border-gold font-bold text-on-surface rounded-xl text-xs transition-colors"
+                >
+                  View Hair Straighteners
+                </Link>
+              </div>
             </div>
           ) : (
             results.map((item) => (
