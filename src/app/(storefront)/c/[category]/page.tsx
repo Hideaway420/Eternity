@@ -437,58 +437,52 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6">
                 {categoryProducts.map((p) => {
                   return (
-                    <div
+                    <Link
                       key={p.id}
-                      className="group rounded-2xl bg-surface-lowest border border-outline-variant p-4 sm:p-5 shadow-soft hover:shadow-elevated transition-all flex flex-col justify-between"
+                      href={`/p/${p.slug}`}
+                      className="group rounded-2xl md:rounded-3xl bg-surface-lowest border border-outline-variant p-2.5 md:p-4 shadow-soft hover:shadow-elevated transition-all duration-150 active:scale-[0.98] flex flex-col justify-between hover:border-gold/60 cursor-pointer"
                     >
                       <div>
-                        {/* CLICKABLE PRODUCT IMAGE */}
-                        <Link href={`/p/${p.slug}`} className="block relative aspect-[4/3] rounded-xl overflow-hidden bg-surface-low mb-3 group cursor-pointer">
+                        {/* PRODUCT IMAGE */}
+                        <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-low mb-2.5">
                           <img
                             src={p.imageUrl || "/products/spa_chair_classic.jpg"}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {p.badge && (
-                            <span className="absolute top-2 left-2 bg-gold text-on-surface text-[9px] font-bold px-2 py-0.5 rounded-full uppercase shadow-md">
+                            <span className="absolute top-1.5 left-1.5 bg-gold text-on-surface text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase shadow-md truncate max-w-[90%]">
                               {p.badge}
                             </span>
                           )}
-                        </Link>
+                        </div>
                         
-                        <span className="text-[9px] sm:text-[11px] font-mono text-outline uppercase tracking-wider block">
-                          SKU: {p.sku}
+                        <span className="text-[8px] md:text-xs font-mono text-outline uppercase tracking-wider block">
+                          {p.sku}
                         </span>
-                        {/* CLICKABLE PRODUCT TITLE */}
-                        <h3 className="font-serif font-bold text-base text-on-surface group-hover:text-gold transition-colors mt-1 leading-snug">
-                          <Link href={`/p/${p.slug}`}>{p.name}</Link>
+                        {/* PRODUCT TITLE */}
+                        <h3 className="font-serif font-bold text-xs sm:text-sm md:text-base text-on-surface group-hover:text-gold transition-colors mt-0.5 leading-snug line-clamp-2">
+                          {p.name}
                         </h3>
-                        {p.priceRange && (
-                          <p className="text-xs text-outline mt-0.5">Range: {p.priceRange}</p>
-                        )}
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-outline-variant/60 flex items-center justify-between gap-2">
+                      <div className="mt-2.5 pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                         <div>
-                          <div className="text-base sm:text-lg font-bold text-on-surface font-sans">
+                          <div className="text-xs sm:text-sm md:text-base font-bold text-on-surface font-sans">
                             {formatNpr(p.price_npr)}
                           </div>
-                          <span className="text-[10px] text-green-700 font-bold block">
-                            {p.isSpaCategory ? "15% Upfront Deposit" : "Open-Box Cash on Delivery"}
+                          <span className="text-[8px] md:text-[10px] text-green-700 font-bold block">
+                            {p.isSpaCategory ? "15% Upfront Deposit" : "Cash on Delivery"}
                           </span>
                         </div>
-                        {/* CLICKABLE ORDER BUTTON */}
-                        <Link
-                          href={`/p/${p.slug}`}
-                          className="px-4 py-2.5 rounded-xl bg-gold text-on-surface hover:bg-gold-hover text-xs font-bold transition-colors shadow-soft"
-                        >
-                          View Details & Reserve
-                        </Link>
+                        <span className="w-full sm:w-auto text-center px-2.5 py-1.5 rounded-xl bg-gold/15 group-hover:bg-gold text-on-surface text-[10px] md:text-xs font-bold transition-colors shadow-xs">
+                          Reserve
+                        </span>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>

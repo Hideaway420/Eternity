@@ -348,38 +348,41 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6">
             {featuredProducts.map((p) => (
               <Link
                 key={p.id}
                 href={`/p/${p.slug}`}
-                className="group rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-4 transition-all duration-300 hover:shadow-elevated flex flex-col justify-between"
+                className="group rounded-2xl md:rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-2.5 md:p-4 transition-all duration-150 active:scale-[0.98] hover:shadow-elevated flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-surface-lowest mb-4">
+                  <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
                     <img
                       src={p.imageUrl || "/products/spa_chair_classic.jpg"}
                       alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <span className="absolute top-3 right-3 bg-inverse-surface/80 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-[10px] font-bold font-mono">
+                    <span className="absolute top-2 right-2 md:top-3 md:right-3 bg-inverse-surface/80 backdrop-blur-md text-white px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold font-mono">
                       {p.sku}
                     </span>
                   </div>
 
-                  <h3 className="font-serif font-bold text-base sm:text-lg text-on-surface group-hover:text-gold transition-colors line-clamp-1 mb-2">
+                  <span className="text-[9px] md:text-xs font-mono text-outline uppercase tracking-wider block mb-0.5">
+                    Official Eternity
+                  </span>
+                  <h3 className="font-serif font-bold text-xs sm:text-sm md:text-base text-on-surface group-hover:text-gold transition-colors line-clamp-2 mb-1">
                     {p.name}
                   </h3>
                 </div>
 
-                <div className="pt-4 border-t border-outline-variant/60 flex items-center justify-between">
+                <div className="pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2">
                   <div>
-                    <span className="text-xs text-outline block">Direct Importer Price</span>
-                    <span className="font-bold text-base text-gold font-sans">{formatNpr(p.price_npr)}</span>
+                    <span className="text-[9px] md:text-xs text-outline block">Direct Importer Price</span>
+                    <span className="font-bold text-xs md:text-base text-gold font-sans">{formatNpr(p.price_npr)}</span>
                   </div>
-                  <span className="px-3 py-1.5 rounded-xl bg-gold/15 text-on-surface font-bold text-xs group-hover:bg-gold transition-colors flex items-center space-x-1">
+                  <span className="w-full sm:w-auto text-center px-2.5 py-1.5 rounded-xl bg-gold/15 text-on-surface font-bold text-[10px] md:text-xs group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">
                     <span>View Item</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
               </Link>
@@ -387,7 +390,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 5: Professional Hair Dryers & Curlers Row (Tasks 2 & 3) */}
+        {/* Section 5: Professional Hair Dryers & Curlers Row */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -406,38 +409,41 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">
             {stylingTools.map((tool) => (
               <Link
                 key={tool.id}
                 href={`/p/${tool.slug}`}
-                className="group rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-4 transition-all duration-300 hover:shadow-elevated flex flex-col justify-between"
+                className="group rounded-2xl md:rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-2.5 md:p-4 transition-all duration-150 active:scale-[0.98] hover:shadow-elevated flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-surface-lowest mb-3.5">
+                  <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
                     <img
                       src={tool.imageUrl || "/products/ikonic_blow_dryer_1786231888743.jpg"}
                       alt={tool.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <span className="absolute top-2.5 right-2.5 bg-gold text-on-surface px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono uppercase tracking-wider">
+                    <span className="absolute top-2 right-2 md:top-2.5 md:right-2.5 bg-gold text-on-surface px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[8px] md:text-[10px] font-bold font-mono uppercase tracking-wider">
                       {tool.sku}
                     </span>
                   </div>
 
-                  <h3 className="font-serif font-bold text-xs sm:text-sm text-on-surface group-hover:text-gold transition-colors line-clamp-1 mb-1">
+                  <span className="text-[9px] md:text-xs font-mono text-outline uppercase tracking-wider block mb-0.5">
+                    Ikonic Professional
+                  </span>
+                  <h3 className="font-serif font-bold text-xs sm:text-sm md:text-base text-on-surface group-hover:text-gold transition-colors line-clamp-2 mb-1">
                     {tool.name}
                   </h3>
                 </div>
 
-                <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between mt-2">
+                <div className="pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2">
                   <div>
-                    <span className="text-[10px] text-outline block font-medium">Status</span>
+                    <span className="text-[9px] md:text-[10px] text-outline block font-medium">Status</span>
                     <span className="font-bold text-xs text-gold font-mono">
                       {tool.price_npr > 0 ? formatNpr(tool.price_npr) : "Coming Soon"}
                     </span>
                   </div>
-                  <span className="px-2.5 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[11px] group-hover:bg-gold transition-colors flex items-center space-x-1">
+                  <span className="w-full sm:w-auto text-center px-2 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[10px] md:text-[11px] group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">
                     <span>Details</span>
                     <ArrowRight className="w-3 h-3" />
                   </span>
