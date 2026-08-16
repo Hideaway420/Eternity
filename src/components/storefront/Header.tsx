@@ -139,7 +139,7 @@ export const Header: React.FC = () => {
             
             <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center whitespace-nowrap">
               <Footprints className="w-4 h-4 mr-1 text-gold" />
-              {isNp ? "लग्जरी पेडिक्योर र स्पा कुर्सीहरू" : "Luxury Pedicure & Spa Chairs"}
+              {isNp ? "म्यानिक्योर र पेडिक्योर स्पा फर्निचर" : "Manicure & Pedicure Spa Furniture"}
             </Link>
 
             <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-[#2C2A29] whitespace-nowrap">
@@ -237,7 +237,7 @@ export const Header: React.FC = () => {
               className="block p-2.5 rounded-xl font-black text-xs text-gold hover:bg-white flex items-center"
             >
               <Footprints className="w-4 h-4 mr-2 text-gold" />
-              {isNp ? "लग्जरी पेडिक्योर र स्पा कुर्सीहरू" : "Luxury Pedicure & Spa Chairs"}
+              {isNp ? "म्यानिक्योर र पेडिक्योर स्पा फर्निचर" : "Manicure & Pedicure Spa Furniture"}
             </Link>
             <Link
               href="/c/luxury-salon-chairs"

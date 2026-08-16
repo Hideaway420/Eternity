@@ -4,7 +4,7 @@ import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
 import { db, initTables } from "@/db";
-import { products, categories, productImages } from "@/db/schema";
+import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { ProductColorSelector } from "@/components/storefront/ProductColorSelector";
 import { ChevronRight } from "lucide-react";
@@ -16,7 +16,7 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Master Catalogue Mapping for All Eternity Products (Including 4 New Luxury Spa Chairs)
+// Master Catalogue Mapping for All Eternity Products
 const CATALOG_DICTIONARY: Record<
   string,
   {
@@ -36,13 +36,13 @@ const CATALOG_DICTIONARY: Record<
     isSpaCategory?: boolean;
   }
 > = {
-  // --- 4 NEW SPA & PEDICURE CHAIRS ---
+  // --- MANICURE & PEDICURE SPA FURNITURE ---
   "classic-eternity-spa-chair": {
     id: "prod-etp-spa-01",
     sku: "ETP-SPA-01",
     slug: "classic-eternity-spa-chair",
     name: "Classic Eternity Spa Chair",
-    price_npr: 12000000, // NPR 120,000
+    price_npr: 12000000,
     compare_at_npr: 13000000,
     line: "profit",
     imageUrl: "/products/spa_chair_classic.jpg",
@@ -56,7 +56,7 @@ const CATALOG_DICTIONARY: Record<
     sku: "ETP-SPA-02",
     slug: "eternity-elegance-pedicure-station",
     name: "Eternity Elegance Pedicure Station",
-    price_npr: 12800000, // NPR 128,000
+    price_npr: 12800000,
     compare_at_npr: 13900000,
     line: "profit",
     imageUrl: "/products/spa_chair_elegance.jpg",
@@ -72,7 +72,7 @@ const CATALOG_DICTIONARY: Record<
     sku: "ETP-SPA-03",
     slug: "eternity-luxe-spa-recliner",
     name: "Eternity Luxe Spa Recliner",
-    price_npr: 13500000, // NPR 135,000
+    price_npr: 13500000,
     compare_at_npr: 14650000,
     line: "profit",
     imageUrl: "/products/spa_chair_pink_recliner.jpg",
@@ -88,7 +88,7 @@ const CATALOG_DICTIONARY: Record<
     sku: "ETP-SPA-04",
     slug: "eternity-signature-series-limited-edition",
     name: "Eternity Signature Series (Limited Edition)",
-    price_npr: 14000000, // NPR 140,000
+    price_npr: 14000000,
     compare_at_npr: 14500000,
     line: "profit",
     imageUrl: "/products/spa_chair_signature.jpg",
@@ -110,28 +110,38 @@ const CATALOG_DICTIONARY: Record<
   },
 };
 
-// Generate Dynamic SEO Metadata for Product Page
+// Task 2: Generate Dynamic Localized SEO Metadata for Product Page
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const matched = CATALOG_DICTIONARY[slug];
   
-  const title = matched ? matched.name : slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-  const description = matched?.description || `Buy ${title} from Eternity Products Nepal. Official warranty, VAT invoice, and Cash on Delivery across Nepal.`;
+  const productName = matched ? matched.name : slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  const title = `${productName} | Luxury Manicure & Pedicure Furniture Nepal`;
+  const description = `Buy the authentic ${productName} from Eternity Products Nepal. Upgrade your salon with premium manicure tables, pedicure spa chairs, and beauty parlour equipment. Open-box cash on delivery available.`;
   const image = matched?.imageUrl ? `https://eternityproducts.online${matched.imageUrl}` : "https://eternityproducts.online/logo.png";
+  const keywords = [
+    "Manicure table Nepal",
+    "Pedicure spa chair Kathmandu",
+    "Salon furniture Nepal",
+    "Eternity products Nepal",
+    "Nail salon equipment",
+    productName,
+  ];
 
   return {
-    title: `${title} | Price in Nepal`,
+    title,
     description,
+    keywords,
     openGraph: {
-      title: `${title} | Eternity Products Nepal`,
+      title,
       description,
       url: `https://eternityproducts.online/p/${slug}`,
-      images: [{ url: image, alt: title }],
+      images: [{ url: image, alt: `${productName} - Luxury Manicure and Pedicure Spa Furniture imported to Nepal` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | Eternity Products Nepal`,
+      title,
       description,
       images: [image],
     },
@@ -197,17 +207,17 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   const priceNprNum = product.price_npr / 100;
 
-  // JSON-LD Product & Offer Schema for Google Rich Snippets
-  const productJsonLd = {
+  // Task 4: JSON-LD Product & Offer Schema Injection (Strict Brand: Eternity)
+  const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.name,
     image: `https://eternityproducts.online${product.imageUrl}`,
-    description: (product as { description?: string }).description || `Official ${product.name} from Eternity Products Nepal. Genuine seal, 1-year replacement warranty, and Cash on Delivery.`,
+    description: (product as { description?: string }).description || `Buy authentic ${product.name} from Eternity Products Nepal. Premium manicure & pedicure spa furniture with 1-year replacement warranty.`,
     sku: product.sku,
     brand: {
       "@type": "Brand",
-      name: product.slug.includes("ikonic") ? "Ikonic Professional" : "Eternity Products",
+      name: "Eternity",
     },
     offers: {
       "@type": "Offer",
@@ -237,7 +247,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       {
         "@type": "ListItem",
         position: 2,
-        name: (category as { name?: string } | null)?.name || "Equipment & Products",
+        name: (category as { name?: string } | null)?.name || "Manicure & Pedicure Spa Furniture",
         item: "https://eternityproducts.online/c/spa",
       },
       {
@@ -253,7 +263,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     <div className="min-h-screen flex flex-col bg-surface text-on-surface">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
       <script
         type="application/ld+json"
@@ -266,15 +276,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         <div className="text-xs text-outline flex items-center space-x-2">
           <Link href="/" className="hover:underline">Home</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
-          <Link href="/c/spa" className="hover:underline capitalize">{(category as any)?.name || "SPA"}</Link>
+          <Link href="/c/spa" className="hover:underline font-semibold">Manicure & Pedicure Spa Furniture</Link>
           <ChevronRight className="w-3 h-3 text-outline" />
           <span className="text-on-surface font-semibold truncate max-w-xs">{product.name}</span>
         </div>
 
         {/* Product Color Selection & Interactive Showcase */}
-        <ProductColorSelector product={product} categoryName={(category as any)?.name || "SPA"} />
+        <ProductColorSelector product={product} categoryName="Manicure & Pedicure Spa Furniture" />
 
-        {/* Live Interactive B2B ROI Calculator Section (Featured right above footer on product pages) */}
+        {/* Live Interactive B2B ROI Calculator Section */}
         <div className="pt-8 border-t border-outline-variant/60">
           <SalonCalculatorWidget
             defaultChairPriceNpr={Math.round(product.price_npr / 100)}

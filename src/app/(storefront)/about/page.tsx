@@ -26,8 +26,8 @@ const FAQ_ITEMS = [
     a: "We offer Open-Box Cash on Delivery across Kathmandu Valley and all 77 districts of Nepal. Our delivery rider will allow you to open the package and inspect your item to verify serial authenticity before you pay cash.",
   },
   {
-    q: "What are the payment terms for the Luxury Spa & Pedicure Chair Collection?",
-    a: "Because our Luxury Spa & Pedicure Chairs feature bespoke upholstery, hydromassage basins, and optional Custom Salon Color Matching (+NPR 6,000), we require a 10% - 15% upfront booking deposit via eSewa, Khalti, or Bank Transfer. The remaining balance is payable upon delivery inspection.",
+    q: "What are the payment terms for the Manicure & Pedicure Spa Furniture Collection?",
+    a: "Because our Manicure & Pedicure Spa Furniture features bespoke upholstery, hydromassage basins, and optional Custom Salon Color Matching (+NPR 6,000), we require a 10% - 15% upfront booking deposit via eSewa, Khalti, or Bank Transfer. The remaining balance is payable upon delivery inspection.",
   },
   {
     q: "Are prices on eternityproducts.online inclusive of 13% VAT?",

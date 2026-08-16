@@ -325,7 +325,7 @@ export default async function HomePage() {
                 <Footprints className="w-4 h-4 mr-1.5" /> Eternity Luxury Spa Sanctuary
               </span>
               <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight mt-2">
-                The Eternity SPA & Pedicure Chair Collection
+                The Eternity Manicure & Pedicure Spa Furniture Collection
               </h2>
               <p className="text-xs sm:text-sm text-neutral-300 mt-2 font-light leading-relaxed">
                 Elevate your salon with our bespoke luxury spa & pedicure chairs. Secured with a 10% - 15% upfront booking deposit. Option for Custom Salon Color Match (+NPR 6,000).
