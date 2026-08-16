@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export const TopLoadingBar: React.FC = () => {
+const TopLoadingBarContent: React.FC = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -38,5 +38,13 @@ export const TopLoadingBar: React.FC = () => {
         style={{ width: `${progress}%` }}
       />
     </div>
+  );
+};
+
+export const TopLoadingBar: React.FC = () => {
+  return (
+    <Suspense fallback={null}>
+      <TopLoadingBarContent />
+    </Suspense>
   );
 };

@@ -65,6 +65,8 @@ export async function initTables() {
         hs_code TEXT,
         specs TEXT,
         authenticity_note TEXT,
+        is_hero INTEGER DEFAULT 0,
+        is_featured INTEGER DEFAULT 0,
         status TEXT NOT NULL DEFAULT 'active',
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
@@ -172,6 +174,17 @@ export async function initTables() {
         ('img-dry-ph-04', 'prod-dry-ph-04', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 4', 1),
         ('img-dry-ph-05', 'prod-dry-ph-05', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Eternity Salon Dryer 5', 1);
     `);
+
+    try {
+      await client.execute(`ALTER TABLE products ADD COLUMN is_hero INTEGER DEFAULT 0;`);
+    } catch (_) {}
+    try {
+      await client.execute(`ALTER TABLE products ADD COLUMN is_featured INTEGER DEFAULT 0;`);
+    } catch (_) {}
+    try {
+      await client.execute(`UPDATE products SET is_hero = 1 WHERE sku = 'ETP-SPA-01';`);
+      await client.execute(`UPDATE products SET is_featured = 1 WHERE sku IN ('ETP-SPA-02', 'ETP-SPA-03', 'ETP-SPA-04', 'ETP-LSC-01', 'ETP-LSC-02', 'ETP-LSC-03');`);
+    } catch (_) {}
   } catch (err) {
     console.warn("⚠️ initTables warning (likely read-only environment or missing Turso env):", err);
   }

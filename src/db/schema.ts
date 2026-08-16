@@ -38,6 +38,8 @@ export const products = sqliteTable("products", {
   hs_code: text("hs_code"),
   specs: text("specs"), // JSON string
   authenticity_note: text("authenticity_note"),
+  is_hero: integer("is_hero", { mode: "boolean" }).default(false),
+  is_featured: integer("is_featured", { mode: "boolean" }).default(false),
   status: text("status").notNull().default("active"), // 'draft' | 'active' | 'archived'
   created_at: text("created_at").notNull(),
   updated_at: text("updated_at").notNull(),
