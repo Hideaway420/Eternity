@@ -72,20 +72,24 @@
     animation: goldShimmer 3.5s infinite linear;
   }
 
-  /* Task 3: Continuous Marquee Scrolling Effect (Left to Right) */
-  @keyframes marqueeLeftToRight {
+  /* Smooth Top Announcement Bar Marquee Animation */
+  @keyframes marqueeTopScroll {
     0% {
-      transform: translateX(-100%);
+      transform: translateX(0%);
     }
     100% {
-      transform: translateX(100%);
+      transform: translateX(-50%);
     }
   }
 
-  .animate-marquee-ltr {
-    display: flex;
+  .animate-marquee-top {
+    display: inline-flex;
     white-space: nowrap;
-    animation: marqueeLeftToRight 18s linear infinite;
+    animation: marqueeTopScroll 24s linear infinite;
     will-change: transform;
+  }
+
+  .animate-marquee-top:hover {
+    animation-play-state: paused;
   }
 }

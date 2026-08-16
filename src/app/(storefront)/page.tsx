@@ -229,7 +229,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Image Showcase with Task 3 Marquee Scrolling Text Overlay */}
+            {/* Hero Image Showcase */}
             <div className="lg:col-span-5 relative">
               <Link
                 href="/p/classic-eternity-spa-chair"
@@ -241,21 +241,8 @@ export default async function HomePage() {
                   className="w-full h-[320px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 
-                {/* Task 3: Continuous Marquee Scrolling Text Animation Layered Over Image Container */}
-                <div className="absolute top-0 left-0 right-0 overflow-hidden bg-black/60 backdrop-blur-md py-1.5 border-b border-gold/40 z-20">
-                  <div className="animate-marquee-ltr text-[10px] sm:text-xs font-bold text-gold uppercase tracking-widest flex items-center space-x-6">
-                    <span>✨ NEPAL&apos;S AUTHORIZED IMPORTER OF IKONIC & ETERNITY</span>
-                    <span>•</span>
-                    <span>🚚 OPEN-BOX CASH ON DELIVERY NATIONWIDE</span>
-                    <span>•</span>
-                    <span>🔒 10%-15% UPFRONT BOOKING DEPOSIT ON SPA CHAIRS</span>
-                    <span>•</span>
-                    <span>🛡️ 1-YEAR FULL REPLACEMENT WARRANTY</span>
-                  </div>
-                </div>
-
                 {/* Badge */}
-                <div className="absolute top-10 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 z-20">
+                <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 z-20">
                   <Sparkles className="w-3 h-3" />
                   <span>NEW SPA COLLECTION</span>
                 </div>

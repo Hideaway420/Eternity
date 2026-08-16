@@ -38,47 +38,70 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full">
-      {/* Top Center-Aligned Announcement Bar */}
-      <div className="bg-[#1E2224] text-white py-2 px-2 sm:px-4 text-[10px] sm:text-xs font-semibold border-b border-neutral-800">
-        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 sm:gap-2">
-          {/* Left: Official Brand Badge */}
-          <div className="hidden md:flex items-center space-x-2">
-            <span className="px-2 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/40 text-[9px] uppercase font-bold tracking-wider">
-              🇳🇵 OFFICIAL ETERNITY
-            </span>
+      {/* Top Announcement Bar: Container B (Animated Left/Center) & Container A (Static Right) */}
+      <div className="bg-[#1E2224] text-white py-2 px-3 text-[11px] font-semibold border-b border-neutral-800 overflow-hidden">
+        <div className="container mx-auto flex items-center justify-between gap-4">
+          {/* CONTAINER B (Animated Marquee Zone - Left & Center) */}
+          <div className="flex-1 overflow-hidden min-w-0 relative">
+            <div className="animate-marquee-top items-center space-x-8 text-[11px]">
+              {/* Loop Chunk 1 */}
+              <div className="inline-flex items-center space-x-6 whitespace-nowrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/40 text-[10px] uppercase font-bold tracking-wider">
+                  🇳🇵 OFFICIAL ETERNITY PRODUCTS NEPAL
+                </span>
+                <Link
+                  href="/c/spa"
+                  className="hover:text-gold transition-colors font-bold inline-flex items-center space-x-1 text-white"
+                >
+                  <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
+                  <span>
+                    {isNp
+                      ? "🔥 सीमित समयको अफर: लग्जरी स्पा कुर्सीहरूमा ५% छूट र १०%-१५% पेश्की बुकिङ!"
+                      : "Limited Offer: 5% OFF & 10%-15% Upfront Deposit on Luxury Spa Chairs!"}
+                  </span>
+                </Link>
+                <span className="text-neutral-300">🚚 OPEN-BOX CASH ON DELIVERY NATIONWIDE</span>
+                <span className="text-neutral-300">🛡️ 1-YEAR FULL REPLACEMENT WARRANTY</span>
+              </div>
+
+              {/* Loop Chunk 2 for Seamless Infinite Loop */}
+              <div className="inline-flex items-center space-x-6 whitespace-nowrap">
+                <span className="px-2.5 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/40 text-[10px] uppercase font-bold tracking-wider">
+                  🇳🇵 OFFICIAL ETERNITY PRODUCTS NEPAL
+                </span>
+                <Link
+                  href="/c/spa"
+                  className="hover:text-gold transition-colors font-bold inline-flex items-center space-x-1 text-white"
+                >
+                  <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
+                  <span>
+                    {isNp
+                      ? "🔥 सीमित समयको अफर: लग्जरी स्पा कुर्सीहरूमा ५% छूट र १०%-१५% पेश्की बुकिङ!"
+                      : "Limited Offer: 5% OFF & 10%-15% Upfront Deposit on Luxury Spa Chairs!"}
+                  </span>
+                </Link>
+                <span className="text-neutral-300">🚚 OPEN-BOX CASH ON DELIVERY NATIONWIDE</span>
+                <span className="text-neutral-300">🛡️ 1-YEAR FULL REPLACEMENT WARRANTY</span>
+              </div>
+            </div>
           </div>
 
-          {/* Center: Main Offer Link (Centered Alignment) */}
-          <div className="text-center flex-1 min-w-0">
-            <Link
-              href="/c/spa"
-              className="hover:text-gold transition-colors font-bold truncate inline-flex items-center space-x-1.5 text-[11px] sm:text-xs"
-            >
-              <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
-              <span className="truncate">
-                {isNp
-                  ? "🔥 सीमित समयको अफर: लग्जरी स्पा कुर्सीहरूमा ५% छूट र १०%-१५% पेश्की बुकिङ!"
-                  : "Limited Offer: 5% OFF & 10%-15% Upfront Deposit on Luxury Spa Chairs!"}
-              </span>
-            </Link>
-          </div>
-
-          {/* Right: Phone & Language Switcher */}
-          <div className="flex items-center space-x-3 flex-shrink-0">
+          {/* CONTAINER A (Static Zone - Right Side, Completely Pinned & Non-Moving) */}
+          <div className="flex items-center space-x-3 flex-shrink-0 z-10 bg-[#1E2224] pl-2 border-l border-neutral-800">
             <a
               href="https://wa.me/9779868089892"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center hover:underline font-bold text-gold text-[11px]"
+              className="flex items-center hover:underline font-bold text-gold text-[11px] whitespace-nowrap"
             >
-              <PhoneCall className="w-3 h-3 mr-1 text-gold" />
-              <span className="hidden sm:inline">Viber / WhatsApp: </span>
+              <PhoneCall className="w-3.5 h-3.5 mr-1 text-gold flex-shrink-0" />
+              <span className="hidden md:inline">Viber / WhatsApp: </span>
               <span>+977 9868089892</span>
             </a>
             <span className="opacity-40">|</span>
             <button
               onClick={toggleLanguage}
-              className="font-bold hover:text-gold transition-colors underline flex items-center space-x-1"
+              className="font-bold hover:text-gold transition-colors underline flex items-center space-x-1 text-[11px] whitespace-nowrap"
             >
               <span>{isNp ? "🇬🇧 EN" : "🇳🇵 NP"}</span>
             </button>
