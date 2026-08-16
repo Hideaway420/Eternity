@@ -7,7 +7,7 @@ import { TopLoadingBar } from "@/components/storefront/TopLoadingBar";
 import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
 import { InteractiveColorSection } from "@/components/storefront/InteractiveColorSection";
 import { db, initTables } from "@/db";
-import { products, productImages } from "@/db/schema";
+import { products, productImages, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
 import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Check, Footprints, Armchair, Tag, Lock } from "lucide-react";
@@ -139,9 +139,54 @@ async function getFeaturedProducts() {
   ];
 }
 
+// Task 1: Fetch Styling Tools (category_slug = 'hair-dryers-curlers' LIMIT 4)
+async function getStylingTools() {
+  try {
+    await initTables();
+    const res = await db
+      .select({
+        id: products.id,
+        sku: products.sku,
+        slug: products.slug,
+        name: products.name,
+        price_npr: products.price_npr,
+        status: products.status,
+        imageUrl: productImages.url,
+      })
+      .from(products)
+      .leftJoin(productImages, eq(products.id, productImages.product_id))
+      .leftJoin(categories, eq(products.category_id, categories.id))
+      .where(eq(categories.slug, "hair-dryers-curlers"))
+      .limit(4)
+      .all();
+
+    if (res && res.length > 0) return res;
+  } catch (err) {
+    console.warn("⚠️ getStylingTools DB fetch fallback active:", err);
+  }
+
+  return Array.from({ length: 4 }).map((_, idx) => {
+    const num = idx + 1;
+    const numStr = num < 10 ? `0${num}` : `${num}`;
+    return {
+      id: `prod-dry-ph-${numStr}`,
+      sku: `ETP-DRY-${numStr}`,
+      slug: `eternity-salon-dryer-${num}-coming-soon`,
+      name: `Eternity Salon Dryer ${num} - Coming Soon`,
+      price_npr: 0,
+      status: "out_of_stock",
+      imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
+    };
+  });
+}
+
 export default async function HomePage() {
-  const heroProduct = await getHeroProduct();
-  const featuredProducts = await getFeaturedProducts();
+  // Task 1: Concurrent database queries via Promise.all for peak performance
+  const [heroProduct, featuredProducts, stylingTools] = await Promise.all([
+    getHeroProduct(),
+    getFeaturedProducts(),
+    getStylingTools(),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface pb-16 md:pb-0">
@@ -149,7 +194,7 @@ export default async function HomePage() {
       <Header />
 
       <main className="flex-1 space-y-12 sm:space-y-20 pb-16">
-        {/* Section 1: Dynamic Hero Banner (Task 3) */}
+        {/* Section 1: Dynamic Hero Banner */}
         <section className="relative bg-surface-container-low border-b border-outline-variant/60 overflow-hidden py-10 sm:py-16 lg:py-24">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gold/15 via-spa-blue/20 to-transparent pointer-events-none" />
           <div className="container mx-auto px-4 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -291,7 +336,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 4: Dynamic Featured Products Showcase (Task 3) */}
+        {/* Section 4: Dynamic Featured Products Showcase */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -342,7 +387,67 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 5: B2B Salon Profit Calculator */}
+        {/* Section 5: Professional Hair Dryers & Curlers Row (Tasks 2 & 3) */}
+        <section className="container mx-auto px-4 lg:px-8">
+          <div className="flex justify-between items-end mb-6 sm:mb-8">
+            <div>
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold flex items-center">
+                <Sparkles className="w-3.5 h-3.5 mr-1" /> Ikonic Professional Tools
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-on-surface mt-1">
+                Professional Hair Dryers & Curlers
+              </h2>
+            </div>
+            <Link
+              href="/c/hair-dryers-curlers"
+              className="text-xs font-bold text-gold hover:underline flex items-center"
+            >
+              View All Styling Tools <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {stylingTools.map((tool) => (
+              <Link
+                key={tool.id}
+                href={`/p/${tool.slug}`}
+                className="group rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-4 transition-all duration-300 hover:shadow-elevated flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-surface-lowest mb-3.5">
+                    <img
+                      src={tool.imageUrl || "/products/ikonic_blow_dryer_1786231888743.jpg"}
+                      alt={tool.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-2.5 right-2.5 bg-gold text-on-surface px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono uppercase tracking-wider">
+                      {tool.sku}
+                    </span>
+                  </div>
+
+                  <h3 className="font-serif font-bold text-xs sm:text-sm text-on-surface group-hover:text-gold transition-colors line-clamp-1 mb-1">
+                    {tool.name}
+                  </h3>
+                </div>
+
+                <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between mt-2">
+                  <div>
+                    <span className="text-[10px] text-outline block font-medium">Status</span>
+                    <span className="font-bold text-xs text-gold font-mono">
+                      {tool.price_npr > 0 ? formatNpr(tool.price_npr) : "Coming Soon"}
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[11px] group-hover:bg-gold transition-colors flex items-center space-x-1">
+                    <span>Details</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 6: B2B Salon Profit Calculator */}
         <section className="container mx-auto px-4 lg:px-8">
           <SalonCalculatorWidget />
         </section>
