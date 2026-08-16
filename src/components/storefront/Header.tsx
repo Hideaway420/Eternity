@@ -137,21 +137,21 @@ export const Header: React.FC = () => {
               {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
             
-            <Link href="/c/spa" className="hover:text-gold transition-colors font-black text-gold flex items-center whitespace-nowrap">
+            <Link href="/c/manicure-pedicure-spa-furniture" className="hover:text-gold transition-colors font-black text-gold flex items-center whitespace-nowrap">
               <Footprints className="w-4 h-4 mr-1 text-gold" />
               {isNp ? "म्यानिक्योर र पेडिक्योर स्पा फर्निचर" : "Manicure & Pedicure Spa Furniture"}
             </Link>
 
-            <Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-[#2C2A29] whitespace-nowrap">
-              {isNp ? "लग्जरी सलोन कुर्सीहरू" : "Luxury Salon Chairs"}
+            <Link href="/c/luxury-chairs" className="hover:text-gold transition-colors font-bold text-[#2C2A29] whitespace-nowrap">
+              {isNp ? "लग्जरी कुर्सीहरू" : "Luxury Chairs"}
             </Link>
 
             <Link href="/c/hair-straighteners" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
-              {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
+              {isNp ? "स्ट्रेटरहरू" : "Hair Straighteners"}
             </Link>
 
-            <Link href="/c/hair-dryers" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
-              {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
+            <Link href="/c/hair-dryers-curlers" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
+              {isNp ? "ड्रायर र कर्लर" : "Hair Dryers & Curlers"}
             </Link>
 
             <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold whitespace-nowrap">

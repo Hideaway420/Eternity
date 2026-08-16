@@ -277,26 +277,26 @@ export default async function HomePage() {
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold">Catalogue</span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Explore By Category</h2>
             </div>
-            <Link href="/c/spa" className="text-xs font-bold text-gold hover:underline flex items-center">
+            <Link href="/c/manicure-pedicure-spa-furniture" className="text-xs font-bold text-gold hover:underline flex items-center">
               View All Categories <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-            <Link href="/c/spa" className="group p-4 sm:p-6 rounded-2xl bg-gold/15 hover:bg-gold/30 border border-gold/40 transition-all">
+            <Link href="/c/manicure-pedicure-spa-furniture" className="group p-4 sm:p-6 rounded-2xl bg-gold/15 hover:bg-gold/30 border border-gold/40 transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
                 <Footprints className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">SPA Collection</h3>
-              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">4 Luxury Spa Chairs (10-15% Deposit)</p>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg text-on-surface group-hover:text-gold transition-colors">Spa Furniture</h3>
+              <p className="text-[11px] sm:text-xs text-gold font-bold mt-1">Manicure & Pedicure Stations (15% Deposit)</p>
             </Link>
 
-            <Link href="/c/luxury-salon-chairs" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
+            <Link href="/c/luxury-chairs" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
                 <Armchair className="w-6 h-6 text-gold" />
               </div>
-              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Luxury Salon Chairs</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Hydraulic Reclining (NPR 30k-40k)</p>
+              <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Luxury Chairs</h3>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">Hydraulic Reclining Styling Chairs</p>
             </Link>
 
             <Link href="/c/hair-straighteners" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
@@ -304,15 +304,15 @@ export default async function HomePage() {
                 ✨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Straighteners</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Titanium Shine 3.0 • Cash on Delivery</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">10 Placeholder Products • Cash on Delivery</p>
             </Link>
 
-            <Link href="/c/hair-dryers" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
+            <Link href="/c/hair-dryers-curlers" className="group p-4 sm:p-6 rounded-2xl bg-surface-container hover:bg-gold-light/40 border border-outline-variant transition-all">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-surface-lowest flex items-center justify-center text-gold mb-3 sm:mb-4 group-hover:scale-110 transition-transform text-lg sm:text-xl font-bold">
                 💨
               </div>
               <h3 className="font-serif font-semibold text-sm sm:text-lg group-hover:text-gold transition-colors">Hair Dryers & Curlers</h3>
-              <p className="text-[11px] sm:text-xs text-outline mt-1">Pro 2500+ AC Motors • Cash on Delivery</p>
+              <p className="text-[11px] sm:text-xs text-outline mt-1">10 Placeholder Products • Cash on Delivery</p>
             </Link>
           </div>
         </section>

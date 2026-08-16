@@ -33,214 +33,66 @@ const CATEGORY_PRODUCTS_MAP: Record<
     isSpaCategory?: boolean;
   }>
 > = {
-  spa: [
-    {
-      id: "prod-etp-spa-01",
-      sku: "ETP-SPA-01",
-      slug: "classic-eternity-spa-chair",
-      name: "Classic Eternity Spa Chair",
-      price_npr: 12000000,
-      compare_at_npr: 13000000,
-      priceRange: "NPR 115,000 - NPR 130,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_classic.jpg",
-      badge: "15% Upfront Booking Deposit",
-      isSpaCategory: true,
-    },
-    {
-      id: "prod-etp-spa-02",
-      sku: "ETP-SPA-02",
-      slug: "eternity-elegance-pedicure-station",
-      name: "Eternity Elegance Pedicure Station",
-      price_npr: 12800000,
-      compare_at_npr: 13900000,
-      priceRange: "NPR 125,000 - NPR 135,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_elegance.jpg",
-      badge: "8% OFF Deal (Aug 31st)",
-      isSpaCategory: true,
-    },
-    {
-      id: "prod-etp-spa-03",
-      sku: "ETP-SPA-03",
-      slug: "eternity-luxe-spa-recliner",
-      name: "Eternity Luxe Spa Recliner",
-      price_npr: 13500000,
-      compare_at_npr: 14650000,
-      priceRange: "NPR 130,000 - NPR 140,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_pink_recliner.jpg",
-      badge: "8% OFF Deal (Sept 3rd)",
-      isSpaCategory: true,
-    },
-    {
-      id: "prod-etp-spa-04",
-      sku: "ETP-SPA-04",
-      slug: "eternity-signature-series-limited-edition",
-      name: "Eternity Signature Series (Limited Edition)",
-      price_npr: 14000000,
-      compare_at_npr: 14500000,
-      priceRange: "NPR 135,000 - NPR 145,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_signature.jpg",
-      badge: "Strictly Limited Stock",
-      isSpaCategory: true,
-    },
-  ],
-  "hair-straighteners": [
-    {
-      id: "prod-str-ph-01",
-      sku: "ETP-STR-01",
-      slug: "eternity-pro-straightener-1-coming-soon",
-      name: "Eternity Pro Straightener 1 - Coming Soon",
+  "manicure-pedicure-spa-furniture": [],
+  spa: [],
+  "luxury-chairs": [],
+  "luxury-salon-chairs": [],
+  "hair-straighteners": Array.from({ length: 10 }).map((_, idx) => {
+    const num = idx + 1;
+    const numStr = num < 10 ? `0${num}` : `${num}`;
+    return {
+      id: `prod-str-ph-${numStr}`,
+      sku: `ETP-STR-${numStr}`,
+      slug: `eternity-pro-straightener-${num}-coming-soon`,
+      name: `Eternity Pro Straightener ${num} - Coming Soon`,
       price_npr: 0,
       badge: "Out of Stock",
       line: "traffic",
       imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-    {
-      id: "prod-str-ph-02",
-      sku: "ETP-STR-02",
-      slug: "eternity-pro-straightener-2-coming-soon",
-      name: "Eternity Pro Straightener 2 - Coming Soon",
+    };
+  }),
+  straighteners: Array.from({ length: 10 }).map((_, idx) => {
+    const num = idx + 1;
+    const numStr = num < 10 ? `0${num}` : `${num}`;
+    return {
+      id: `prod-str-ph-${numStr}`,
+      sku: `ETP-STR-${numStr}`,
+      slug: `eternity-pro-straightener-${num}-coming-soon`,
+      name: `Eternity Pro Straightener ${num} - Coming Soon`,
       price_npr: 0,
       badge: "Out of Stock",
       line: "traffic",
       imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-    {
-      id: "prod-str-ph-03",
-      sku: "ETP-STR-03",
-      slug: "eternity-pro-straightener-3-coming-soon",
-      name: "Eternity Pro Straightener 3 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-    {
-      id: "prod-str-ph-04",
-      sku: "ETP-STR-04",
-      slug: "eternity-pro-straightener-4-coming-soon",
-      name: "Eternity Pro Straightener 4 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-    {
-      id: "prod-str-ph-05",
-      sku: "ETP-STR-05",
-      slug: "eternity-pro-straightener-5-coming-soon",
-      name: "Eternity Pro Straightener 5 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    },
-  ],
-  "hair-dryers": [
-    {
-      id: "prod-dry-ph-01",
-      sku: "ETP-DRY-01",
-      slug: "eternity-salon-dryer-1-coming-soon",
-      name: "Eternity Salon Dryer 1 - Coming Soon",
+    };
+  }),
+  "hair-dryers-curlers": Array.from({ length: 10 }).map((_, idx) => {
+    const num = idx + 1;
+    const numStr = num < 10 ? `0${num}` : `${num}`;
+    return {
+      id: `prod-dry-ph-${numStr}`,
+      sku: `ETP-DRY-${numStr}`,
+      slug: `eternity-salon-dryer-${num}-coming-soon`,
+      name: `Eternity Salon Dryer ${num} - Coming Soon`,
       price_npr: 0,
       badge: "Out of Stock",
       line: "traffic",
       imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
-    {
-      id: "prod-dry-ph-02",
-      sku: "ETP-DRY-02",
-      slug: "eternity-salon-dryer-2-coming-soon",
-      name: "Eternity Salon Dryer 2 - Coming Soon",
+    };
+  }),
+  "hair-dryers": Array.from({ length: 10 }).map((_, idx) => {
+    const num = idx + 1;
+    const numStr = num < 10 ? `0${num}` : `${num}`;
+    return {
+      id: `prod-dry-ph-${numStr}`,
+      sku: `ETP-DRY-${numStr}`,
+      slug: `eternity-salon-dryer-${num}-coming-soon`,
+      name: `Eternity Salon Dryer ${num} - Coming Soon`,
       price_npr: 0,
       badge: "Out of Stock",
       line: "traffic",
       imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
-    {
-      id: "prod-dry-ph-03",
-      sku: "ETP-DRY-03",
-      slug: "eternity-salon-dryer-3-coming-soon",
-      name: "Eternity Salon Dryer 3 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
-    {
-      id: "prod-dry-ph-04",
-      sku: "ETP-DRY-04",
-      slug: "eternity-salon-dryer-4-coming-soon",
-      name: "Eternity Salon Dryer 4 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
-    {
-      id: "prod-dry-ph-05",
-      sku: "ETP-DRY-05",
-      slug: "eternity-salon-dryer-5-coming-soon",
-      name: "Eternity Salon Dryer 5 - Coming Soon",
-      price_npr: 0,
-      badge: "Out of Stock",
-      line: "traffic",
-      imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    },
-  ],
-  "luxury-salon-chairs": [
-    {
-      id: "prod-etp-chair-01",
-      sku: "ETP-LSC-01",
-      slug: "eternity-emerald-royal-luxury-salon-chair",
-      name: "Eternity Emerald Royal Luxury Salon Chair",
-      price_npr: 3500000,
-      compare_at_npr: 3685000,
-      line: "profit",
-      imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-    },
-    {
-      id: "prod-etp-chair-02",
-      sku: "ETP-LSC-02",
-      slug: "eternity-espresso-vintage-luxury-salon-chair",
-      name: "Eternity Espresso Vintage Luxury Salon Chair",
-      price_npr: 3750000,
-      compare_at_npr: 3950000,
-      line: "profit",
-      imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
-    },
-  ],
-  "manicure-pedicure-equipment": [
-    {
-      id: "prod-etp-spa-01",
-      sku: "ETP-SPA-01",
-      slug: "classic-eternity-spa-chair",
-      name: "Classic Eternity Spa Chair",
-      price_npr: 12000000,
-      compare_at_npr: 13000000,
-      priceRange: "NPR 115,000 - NPR 130,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_classic.jpg",
-      badge: "15% Upfront Booking Deposit",
-      isSpaCategory: true,
-    },
-    {
-      id: "prod-etp-spa-02",
-      sku: "ETP-SPA-02",
-      slug: "eternity-elegance-pedicure-station",
-      name: "Eternity Elegance Pedicure Station",
-      price_npr: 12800000,
-      compare_at_npr: 13900000,
-      priceRange: "NPR 125,000 - NPR 135,000",
-      line: "profit",
-      imageUrl: "/products/spa_chair_elegance.jpg",
-      badge: "8% OFF Deal (Aug 31st)",
-      isSpaCategory: true,
-    },
-  ],
+    };
+  }),
 };
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
@@ -347,28 +199,44 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Category Catalogue</h4>
                 <div className="space-y-1.5 text-xs">
                   <Link
-                    href="/c/spa"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "spa" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low text-gold"}`}
+                    href="/c/manicure-pedicure-spa-furniture"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
+                      categorySlug === "manicure-pedicure-spa-furniture" || categorySlug === "spa"
+                        ? "bg-gold/15 text-on-surface border border-gold/40"
+                        : "hover:bg-surface-low text-gold"
+                    }`}
                   >
-                    SPA Collection (10-15% Deposit)
+                    Manicure & Pedicure Spa Furniture
                   </Link>
                   <Link
-                    href="/c/luxury-salon-chairs"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${categorySlug === "luxury-salon-chairs" ? "bg-gold/15 text-on-surface border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/luxury-chairs"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
+                      categorySlug === "luxury-chairs" || categorySlug === "luxury-salon-chairs"
+                        ? "bg-gold/15 text-on-surface border border-gold/40"
+                        : "hover:bg-surface-low"
+                    }`}
                   >
-                    Luxury Salon Chairs (Cash on Delivery)
+                    Luxury Chairs
                   </Link>
                   <Link
                     href="/c/hair-straighteners"
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-straighteners" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${
+                      categorySlug === "hair-straighteners" || categorySlug === "straighteners"
+                        ? "bg-gold/15 text-on-surface font-bold border border-gold/40"
+                        : "hover:bg-surface-low"
+                    }`}
                   >
-                    Hair Straighteners (Cash on Delivery)
+                    Hair Straighteners
                   </Link>
                   <Link
-                    href="/c/hair-dryers"
-                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${categorySlug === "hair-dryers" ? "bg-gold/15 text-on-surface font-bold border border-gold/40" : "hover:bg-surface-low"}`}
+                    href="/c/hair-dryers-curlers"
+                    className={`block px-3 py-2 rounded-lg font-medium transition-colors ${
+                      categorySlug === "hair-dryers-curlers" || categorySlug === "hair-dryers"
+                        ? "bg-gold/15 text-on-surface font-bold border border-gold/40"
+                        : "hover:bg-surface-low"
+                    }`}
                   >
-                    Hair Dryers & Curlers (Cash on Delivery)
+                    Hair Dryers & Curlers
                   </Link>
                 </div>
               </div>
