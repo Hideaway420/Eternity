@@ -6,6 +6,7 @@ import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { ShieldCheck, CreditCard, Phone, MapPin, PackageCheck, Lock, Footprints } from "lucide-react";
 import { formatNpr } from "@/lib/money";
+import { useCartStore } from "@/store/useCartStore";
 
 const NEPAL_DISTRICTS = [
   "Kathmandu", "Lalitpur", "Bhaktapur", "Pokhara (Kaski)", "Chitwan", "Rupandehi (Butwal)",
@@ -24,6 +25,8 @@ export default function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrderNum, setPlacedOrderNum] = useState("");
 
+  const clearCart = useCartStore((state) => state.clearCart);
+
   const isValley = district === "Kathmandu" || district === "Lalitpur" || district === "Bhaktapur";
   const deliveryNpr = isValley ? 0 : 50000; // Free delivery in Kathmandu Valley for Spa Equipment
 
@@ -40,6 +43,7 @@ export default function CheckoutPage() {
     const newOrderNum = `ETP-${Math.floor(100000 + Math.random() * 900000)}`;
     setPlacedOrderNum(newOrderNum);
     setOrderPlaced(true);
+    clearCart();
   };
 
   return (

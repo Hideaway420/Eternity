@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus, Tag, Check, Calendar, Lock } from "lucide-react";
 import { formatNpr } from "@/lib/money";
+import { useCartStore } from "@/store/useCartStore";
 
 interface ColorVariant {
   name: string;
@@ -137,6 +138,19 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   const [selectedImage, setSelectedImage] = useState<string>(primaryImg);
   const [quantity, setQuantity] = useState<number>(1);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: `cart-${product.id}-${selectedColor.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      sku: product.sku,
+      name: product.name,
+      color: selectedColor.name,
+      price_npr: currentUnitPriceNpr,
+      qty: quantity,
+      imageUrl: selectedImage,
+    });
+  };
 
   const handleColorChange = (variant: ColorVariant) => {
     setImageLoading(true);
@@ -357,6 +371,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
         <div className="space-y-3 pt-1">
           <Link
             href="/checkout"
+            onClick={handleAddToCart}
             className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
           >
             <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />

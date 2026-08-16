@@ -1,6 +1,13 @@
 // Dictionary for Dual Language (English / Nepali)
+import { useState } from "react";
 
 export type Language = "en" | "np";
+
+export function useLanguage() {
+  const [lang, setLang] = useState<Language>("en");
+  const toggleLanguage = () => setLang((prev) => (prev === "en" ? "np" : "en"));
+  return { lang, isNp: lang === "np", toggleLanguage, t: translations[lang] };
+}
 
 export const translations = {
   en: {
