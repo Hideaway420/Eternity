@@ -78,7 +78,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         e.preventDefault();
         if (isOpen) onClose();
         else {
-          // Open
           const btn = document.getElementById("search-modal-trigger");
           if (btn) btn.click();
         }
@@ -103,57 +102,64 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-start justify-center pt-16 sm:pt-24 px-4 animate-in fade-in duration-200">
-      <div className="bg-surface-lowest border border-outline-variant rounded-3xl max-w-2xl w-full overflow-hidden shadow-elevated">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-24 px-4 animate-in fade-in duration-200">
+      {/* Near-White Search Modal Dropdown UI */}
+      <div className="bg-[#FDFBF7] border border-[#E8E1D7] rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl">
         {/* Search Input Header */}
-        <div className="p-4 sm:p-5 border-b border-outline-variant flex items-center space-x-3 bg-surface-low">
-          <Search className="w-5 h-5 text-gold flex-shrink-0" />
+        <div className="p-4 sm:p-5 border-b border-[#E8E1D7] flex items-center space-x-3 bg-[#F8F3EC]">
+          <Search className="w-5 h-5 text-[#B58A18] flex-shrink-0" />
           <input
             type="text"
             autoFocus
             placeholder="Search straighteners, dryers, barber chairs, SKUs..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-sm sm:text-base font-medium text-on-surface focus:outline-none placeholder-outline"
+            className="w-full bg-transparent text-sm sm:text-base font-bold text-[#1B1C1C] focus:outline-none placeholder-[#7A7570]"
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-xs font-bold text-outline hover:text-on-surface">
+            <button
+              onClick={() => setQuery("")}
+              className="text-xs font-bold text-[#524F4A] hover:text-[#1B1C1C] px-2 py-1 rounded hover:bg-[#EFE7DC]"
+            >
               Clear
             </button>
           )}
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-surface-container text-outline hover:text-on-surface">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-[#EFE7DC] text-[#524F4A] hover:text-[#1B1C1C] transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Trending Tags (Shown when input is empty) */}
         {!query && (
-          <div className="p-4 sm:p-5 border-b border-outline-variant bg-surface-container-low/50">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-outline block mb-2 flex items-center">
-              <TrendingUp className="w-3 h-3 mr-1 text-gold" /> Trending Searches
+          <div className="p-4 sm:p-5 border-b border-[#E8E1D7] bg-[#F5F0E8]">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#7A7570] block mb-2 flex items-center">
+              <TrendingUp className="w-3.5 h-3.5 mr-1.5 text-[#B58A18]" /> Trending Searches
             </span>
             <div className="flex flex-wrap gap-2 text-xs">
               <button
                 onClick={() => setQuery("straightener")}
-                className="px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant hover:border-gold text-on-surface transition-colors font-medium"
+                className="px-3 py-1.5 rounded-xl bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] hover:bg-[#EFE7DC] text-[#2C2A29] transition-all font-semibold shadow-xs"
               >
                 Titanium Straightener 3.0
               </button>
               <button
                 onClick={() => setQuery("dryer")}
-                className="px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant hover:border-gold text-on-surface transition-colors font-medium"
+                className="px-3 py-1.5 rounded-xl bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] hover:bg-[#EFE7DC] text-[#2C2A29] transition-all font-semibold shadow-xs"
               >
                 Pro 2500+ Hair Dryer
               </button>
               <button
                 onClick={() => setQuery("felix")}
-                className="px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant hover:border-gold text-on-surface transition-colors font-medium"
+                className="px-3 py-1.5 rounded-xl bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] hover:bg-[#EFE7DC] text-[#2C2A29] transition-all font-semibold shadow-xs"
               >
                 Barber Chair Felix
               </button>
               <button
                 onClick={() => setQuery("shampoo")}
-                className="px-3 py-1.5 rounded-xl bg-surface-low border border-outline-variant hover:border-gold text-on-surface transition-colors font-medium"
+                className="px-3 py-1.5 rounded-xl bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] hover:bg-[#EFE7DC] text-[#2C2A29] transition-all font-semibold shadow-xs"
               >
                 Shampoo Basin IK-1254
               </button>
@@ -162,15 +168,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         )}
 
         {/* Results List */}
-        <div className="max-h-[60vh] overflow-y-auto divide-y divide-outline-variant/60 p-2">
+        <div className="max-h-[60vh] overflow-y-auto divide-y divide-[#E8E1D7]/60 p-2">
           {results.length === 0 ? (
-            <div className="py-8 text-center text-xs text-outline space-y-4 px-4">
-              <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center text-gold mx-auto border border-gold/30">
+            <div className="py-8 text-center text-xs text-[#7A7570] space-y-4 px-4">
+              <div className="w-12 h-12 rounded-full bg-[#B58A18]/15 flex items-center justify-center text-[#B58A18] mx-auto border border-[#B58A18]/30">
                 <Search className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-bold text-on-surface">No exact matches found for &quot;{query}&quot;</p>
-                <p className="text-xs text-outline font-light max-w-sm mx-auto">
+                <p className="text-sm font-bold text-[#1B1C1C]">No exact matches found for &quot;{query}&quot;</p>
+                <p className="text-xs text-[#7A7570] font-light max-w-sm mx-auto">
                   We might not carry that specific model name yet, but explore our bestselling Ikonic hair tools and Eternity spa chairs below!
                 </p>
               </div>
@@ -178,14 +184,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                 <Link
                   href="/c/spa"
                   onClick={onClose}
-                  className="px-4 py-2 bg-gold hover:bg-gold-hover text-on-surface font-bold rounded-xl text-xs shadow-gold transition-colors"
+                  className="px-4 py-2 bg-[#B58A18] hover:bg-[#A37B15] text-[#1B1C1C] font-bold rounded-xl text-xs shadow-md transition-colors"
                 >
                   Explore Spa Chairs
                 </Link>
                 <Link
                   href="/c/hair-straighteners"
                   onClick={onClose}
-                  className="px-4 py-2 bg-surface-low border border-outline-variant hover:border-gold font-bold text-on-surface rounded-xl text-xs transition-colors"
+                  className="px-4 py-2 bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] font-bold text-[#1B1C1C] rounded-xl text-xs transition-colors"
                 >
                   View Hair Straighteners
                 </Link>
@@ -197,22 +203,24 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                 key={item.sku}
                 href={`/p/${item.slug}`}
                 onClick={onClose}
-                className="flex items-center justify-between p-3 rounded-2xl hover:bg-surface-low transition-colors group"
+                className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#F2EBE1] transition-colors group"
               >
                 <div className="flex items-center space-x-3.5">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-surface-low border border-outline-variant flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#F8F3EC] border border-[#E0D8CD] flex-shrink-0">
                     <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-mono text-gold uppercase">{item.category} • {item.sku}</span>
-                    <h4 className="font-serif font-bold text-xs sm:text-sm text-on-surface group-hover:text-gold transition-colors line-clamp-1">
+                    <span className="text-[10px] font-mono text-[#B58A18] font-bold uppercase tracking-wider block">
+                      {item.category} • {item.sku}
+                    </span>
+                    <h4 className="font-serif font-bold text-xs sm:text-sm text-[#1B1C1C] group-hover:text-[#B58A18] transition-colors line-clamp-1">
                       {item.name}
                     </h4>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 text-xs">
-                  <span className="font-bold text-on-surface font-sans">{formatNpr(item.price_npr)}</span>
-                  <ArrowRight className="w-4 h-4 text-outline group-hover:text-gold group-hover:translate-x-1 transition-all" />
+                  <span className="font-bold text-[#1B1C1C] font-sans">{formatNpr(item.price_npr)}</span>
+                  <ArrowRight className="w-4 h-4 text-[#7A7570] group-hover:text-[#B58A18] group-hover:translate-x-1 transition-all" />
                 </div>
               </Link>
             ))
@@ -220,9 +228,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3 bg-surface-low border-t border-outline-variant text-[11px] text-outline flex justify-between items-center">
-          <span>Press <kbd className="px-1.5 py-0.5 bg-surface-container rounded border border-outline-variant font-mono">ESC</kbd> to exit</span>
-          <span className="flex items-center text-gold font-bold"><Sparkles className="w-3 h-3 mr-1" /> Official Ikonic Nepal</span>
+        <div className="p-3.5 bg-[#F8F3EC] border-t border-[#E8E1D7] text-[11px] text-[#7A7570] flex justify-between items-center">
+          <span>
+            Press <kbd className="px-1.5 py-0.5 bg-[#F2EBE1] rounded border border-[#D8CFC3] font-mono text-[#1B1C1C] font-bold">ESC</kbd> to exit
+          </span>
+          <span className="flex items-center text-[#B58A18] font-bold">
+            <Sparkles className="w-3.5 h-3.5 mr-1" /> Official Ikonic Nepal
+          </span>
         </div>
       </div>
     </div>

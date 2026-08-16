@@ -185,15 +185,6 @@ export const Header: React.FC = () => {
               <Search className="w-5 h-5" />
             </button>
 
-            {/* Salon B2B Portal */}
-            <Link
-              href="/salon/portal"
-              className="hidden sm:flex items-center px-3.5 py-1.5 rounded-lg bg-[#EFE8DE] hover:bg-inverse-surface hover:text-inverse-on-surface text-xs font-semibold text-[#2C2A29] transition-all border border-[#DDD4C7]"
-            >
-              <Building2 className="w-3.5 h-3.5 mr-1.5 text-gold" />
-              <span className="font-bold">{isNp ? "सलोन खाता" : "Salon Account"}</span>
-            </Link>
-
             {/* Slide-Over Cart Drawer Trigger Button with Dynamic Derived Badge */}
             <button
               onClick={() => setCartDrawerOpen(true)}
