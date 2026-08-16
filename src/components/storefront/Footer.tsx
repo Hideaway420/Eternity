@@ -58,16 +58,27 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Footer Links with Seamless Full Brand Logo Banner */}
+      {/* Main Footer Links with Seamless Transparent Gold EP Logo */}
       <div className="container mx-auto px-4 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <div className="mb-4">
-            <img
-              src="/logo_full_banner.jpg"
-              alt="Eternity Products Nepal Logo"
-              className="h-12 w-auto object-contain mix-blend-multiply rounded-md"
-            />
-          </div>
+          {/* Task 1: Seamless Transparent Gold EP Logo */}
+          <Link href="/" className="flex items-center space-x-3 mb-4 group inline-flex">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <img
+                src="/logo.png"
+                alt="Eternity Products Nepal Gold Logo"
+                className="w-full h-full object-contain mix-blend-multiply filter drop-shadow-[0_2px_4px_rgba(212,175,55,0.4)]"
+              />
+            </div>
+            <div>
+              <span className="font-serif text-lg sm:text-xl font-black tracking-tight block leading-none gold-motion-text">
+                ETERNITY PRODUCTS
+              </span>
+              <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] block mt-1 gold-sub-motion">
+                AUTHORIZED NEPAL IMPORTER
+              </span>
+            </div>
+          </Link>
 
           <p className="text-xs text-on-surface-variant leading-relaxed">
             Nepal&apos;s leading authorized distributor of Ikonic professional hair styling tools, Eternity luxury chairs, and pedicure spa furniture.
@@ -124,7 +135,6 @@ export const Footer: React.FC = () => {
             <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
             <li><Link href="/c/spa" className="hover:text-gold transition-colors">Pedicure Tubs & Spa Beds</Link></li>
             <li><Link href="/contact" className="hover:text-gold transition-colors">Concierge Support & Head Office</Link></li>
-            <li><Link href="/admin" className="hover:text-gold transition-colors text-outline">Staff Operations Admin</Link></li>
           </ul>
         </div>
 

@@ -4,7 +4,8 @@ import { db, initTables } from "@/db";
 import { orders, inventory, products } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { PhoneCall, AlertTriangle, ArrowRight, PackageCheck } from "lucide-react";
+import { PhoneCall, AlertTriangle, ArrowRight } from "lucide-react";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export const revalidate = 0;
 
@@ -28,32 +29,9 @@ export default async function AdminDashboardPage() {
     .all();
 
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      {/* Admin Header */}
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <span className="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center text-gold text-sm font-bold">
-              ⚙️
-            </span>
-            <span className="font-serif text-xl font-bold">Eternity Staff Operations</span>
-          </div>
-
-          <nav className="flex items-center space-x-6 text-xs font-semibold">
-            <Link href="/admin/products" className="text-gold font-bold flex items-center bg-gold/15 px-3 py-1.5 rounded-lg border border-gold/40">
-              <PackageCheck className="w-3.5 h-3.5 mr-1 text-gold" /> Catalog & Products
-            </Link>
-            <Link href="/admin/cod-queue" className="hover:text-gold transition-colors flex items-center">
-              <PhoneCall className="w-3.5 h-3.5 mr-1" /> COD Queue ({pendingCodOrders.length})
-            </Link>
-            <Link href="/admin/inventory" className="hover:text-gold transition-colors">Inventory</Link>
-            <Link href="/admin/purchase-orders" className="hover:text-gold transition-colors">Purchase Orders</Link>
-            <Link href="/admin/broadcasts" className="hover:text-gold transition-colors">Broadcasts</Link>
-            <Link href="/admin/reports" className="hover:text-gold transition-colors">Reports (Gated)</Link>
-            <Link href="/" className="text-outline hover:text-on-surface">Storefront</Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader pendingCodCount={pendingCodOrders.length} />
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-10">
         <div>

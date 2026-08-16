@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { db, initTables } from "@/db";
 import { purchaseOrders } from "@/db/schema";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { ShoppingCart, Plus } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -11,27 +13,23 @@ export default async function AdminPurchaseOrdersPage() {
   const pos = await db.select().from(purchaseOrders).all();
 
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Link href="/admin" className="font-serif text-xl font-bold hover:text-gold transition-colors">
-              ← Staff Operations
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-gold">Purchase Orders & Landed Cost Allocation</span>
-          </div>
-
-          <button className="px-4 py-2 bg-gold text-on-surface text-xs font-bold rounded-xl hover:bg-gold-hover">
-            + New Ikonic India PO
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader />
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-8">
-        <div>
-          <h1 className="font-serif text-3xl font-bold">Purchase Orders & Imports</h1>
-          <p className="text-xs text-outline mt-1">Landed cost allocation engine (proportional freight + duty + inland distribution)</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="font-serif text-3xl font-bold flex items-center">
+              <ShoppingCart className="w-7 h-7 text-gold mr-3" /> Purchase Orders & Imports
+            </h1>
+            <p className="text-xs text-outline mt-1">Landed cost allocation engine (proportional freight + duty + inland distribution)</p>
+          </div>
+
+          <button className="px-5 py-3 bg-gold text-on-surface text-xs font-bold rounded-xl hover:bg-gold-hover shadow-gold flex items-center space-x-2">
+            <Plus className="w-4 h-4" />
+            <span>New Ikonic India PO</span>
+          </button>
         </div>
 
         {/* PO List */}

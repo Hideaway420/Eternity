@@ -3,7 +3,8 @@ import Link from "next/link";
 import { db, initTables } from "@/db";
 import { products } from "@/db/schema";
 import { formatNpr } from "@/lib/money";
-import { Lock, AlertTriangle } from "lucide-react";
+import { Lock, AlertTriangle, FileBarChart } from "lucide-react";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export const revalidate = 0;
 
@@ -21,26 +22,24 @@ export default async function AdminReportsPage() {
   const avgMarginPct = totalRetailValuePaisa > 0 ? Math.round((grossProfitPaisa / totalRetailValuePaisa) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Link href="/admin" className="font-serif text-xl font-bold hover:text-gold transition-colors">
-              ← Staff Operations
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-gold flex items-center">
-              <Lock className="w-4 h-4 mr-1 text-red-600" /> Confidential Margin Vault & Analytics
-            </span>
-          </div>
-
-          <span className="text-xs px-3 py-1 bg-red-100 text-red-800 font-bold rounded-full border border-red-300">
-            Owner Role Authenticated
-          </span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader />
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="font-serif text-3xl font-bold flex items-center">
+              <FileBarChart className="w-7 h-7 text-gold mr-3" /> Financial Reports & Margin Vault
+            </h1>
+            <p className="text-xs text-outline mt-1">Gated executive analytics & confidential supplier margin vault</p>
+          </div>
+
+          <span className="text-xs px-3.5 py-1.5 bg-red-100 text-red-800 font-bold rounded-full border border-red-300 shadow-sm flex items-center">
+            <Lock className="w-3.5 h-3.5 mr-1.5 text-red-600" /> Owner Role Authenticated
+          </span>
+        </div>
+
         {/* Security Banner */}
         <div className="p-4 rounded-2xl bg-red-50 text-red-900 border border-red-200 text-xs space-y-1">
           <div className="flex items-center font-bold">
@@ -81,7 +80,7 @@ export default async function AdminReportsPage() {
           </h2>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[500px]">
               <thead className="bg-surface-low text-outline font-semibold uppercase border-b border-outline-variant">
                 <tr>
                   <th className="p-3">District</th>

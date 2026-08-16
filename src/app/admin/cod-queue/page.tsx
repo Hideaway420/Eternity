@@ -5,6 +5,7 @@ import { orders } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
 import { PhoneCall, Check, X, PhoneOff, AlertTriangle } from "lucide-react";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export const revalidate = 0;
 
@@ -25,7 +26,7 @@ export default async function CodQueuePage() {
     .where(eq(orders.payment_method, "cod"))
     .all();
 
-  // Mock priority COD queue rows
+  // Priority COD queue rows
   const queueData = [
     {
       id: "ord-sample-1",
@@ -63,27 +64,15 @@ export default async function CodQueuePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      {/* Header */}
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Link href="/admin" className="font-serif text-xl font-bold hover:text-gold transition-colors">
-              ← Staff Operations
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-gold">COD Confirmation Queue</span>
-          </div>
-
-          <span className="text-xs px-3 py-1 bg-gold/15 text-on-surface font-bold rounded-full border border-gold/40">
-            {queueData.length} Orders Pending Call
-          </span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader pendingCodCount={queueData.length} />
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-6">
         <div>
-          <h1 className="font-serif text-3xl font-bold">COD Confirmation Call Center</h1>
+          <h1 className="font-serif text-3xl font-bold flex items-center">
+            <PhoneCall className="w-7 h-7 text-gold mr-3" /> COD Confirmation Call Center
+          </h1>
           <p className="text-xs text-outline mt-1">
             Calling and confirming COD orders before dispatch reduces Nepal courier refusal rates by 40%.
           </p>

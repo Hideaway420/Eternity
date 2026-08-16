@@ -71,4 +71,21 @@
     background-clip: text;
     animation: goldShimmer 3.5s infinite linear;
   }
+
+  /* Task 3: Continuous Marquee Scrolling Effect (Left to Right) */
+  @keyframes marqueeLeftToRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-marquee-ltr {
+    display: flex;
+    white-space: nowrap;
+    animation: marqueeLeftToRight 18s linear infinite;
+    will-change: transform;
+  }
 }

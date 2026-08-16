@@ -3,7 +3,8 @@ import Link from "next/link";
 import { db, initTables } from "@/db";
 import { broadcasts, salonAccounts } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Send, ShieldAlert } from "lucide-react";
+import { Send, ShieldAlert, Radio } from "lucide-react";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 
 export const revalidate = 0;
 
@@ -19,27 +20,22 @@ export default async function AdminBroadcastsPage() {
   const optedInCount = optedInAccounts.length;
 
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Link href="/admin" className="font-serif text-xl font-bold hover:text-gold transition-colors">
-              ← Staff Operations
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-gold">Salon Community Broadcasts</span>
-          </div>
-
-          <span className="text-xs px-3 py-1 bg-green-50 text-green-700 font-bold rounded-full border border-green-200">
-            {optedInCount} Opted-In Salon Accounts
-          </span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader />
 
       <main className="container mx-auto px-4 lg:px-8 py-10 space-y-8 max-w-4xl">
-        <div>
-          <h1 className="font-serif text-3xl font-bold">Compose Salon Broadcast</h1>
-          <p className="text-xs text-outline mt-1">Broadcast new Ikonic product shipments directly to Viber / SMS opted-in parlours</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="font-serif text-3xl font-bold flex items-center">
+              <Radio className="w-7 h-7 text-gold mr-3" /> Compose Salon Broadcast
+            </h1>
+            <p className="text-xs text-outline mt-1">Broadcast new Ikonic product shipments directly to Viber / SMS opted-in parlours</p>
+          </div>
+
+          <span className="text-xs px-3.5 py-1.5 bg-green-50 text-green-700 font-bold rounded-full border border-green-200 shadow-sm">
+            {optedInCount} Opted-In Salon Accounts
+          </span>
         </div>
 
         {/* Rules Alert */}

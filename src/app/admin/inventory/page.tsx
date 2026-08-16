@@ -1,8 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { db, initTables } from "@/db";
-import { inventory, products, stockMovements } from "@/db/schema";
+import { inventory, products } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { Boxes, Plus } from "lucide-react";
 
 export const revalidate = 0;
 
@@ -24,39 +26,33 @@ export default async function AdminInventoryPage() {
     .innerJoin(products, eq(inventory.product_id, products.id))
     .all();
 
-  const recentMovements = await db.select().from(stockMovements).limit(10).all();
-
   return (
-    <div className="min-h-screen bg-surface-low text-on-surface">
-      <header className="bg-surface-lowest border-b border-outline-variant px-6 py-4 sticky top-0 z-50">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <Link href="/admin" className="font-serif text-xl font-bold hover:text-gold transition-colors">
-              ← Staff Operations
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-gold">Warehouse & Inventory Ledger</span>
+    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+      {/* Near-White Global Backend Admin Navigation Bar */}
+      <AdminHeader />
+
+      <main className="container mx-auto px-4 lg:px-8 py-10 space-y-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="font-serif text-3xl font-bold flex items-center">
+              <Boxes className="w-7 h-7 text-gold mr-3" /> Warehouse Stock Counts & Ledger
+            </h1>
+            <p className="text-xs text-outline mt-1">Kathmandu Central Warehouse Stock Control & Multi-Location Auditing</p>
           </div>
 
-          <button className="px-4 py-2 bg-gold text-on-surface text-xs font-bold rounded-xl hover:bg-gold-hover">
-            + Stock Adjustment
+          <button className="px-5 py-3 bg-gold text-on-surface text-xs font-bold rounded-xl hover:bg-gold-hover shadow-gold flex items-center space-x-2">
+            <Plus className="w-4 h-4" />
+            <span>Stock Adjustment</span>
           </button>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 lg:px-8 py-10 space-y-10">
-        <div>
-          <h1 className="font-serif text-3xl font-bold">Stock Counts & Ledger</h1>
-          <p className="text-xs text-outline mt-1">Kathmandu Central Warehouse Stock Control</p>
         </div>
 
         {/* Stock Counts Table */}
         <div className="bg-surface-lowest rounded-2xl border border-outline-variant overflow-hidden shadow-soft">
           <div className="p-4 bg-surface-low border-b border-outline-variant font-serif font-bold text-sm">
-            Current Inventory Level
+            Current Physical Inventory Level
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-xs min-w-[600px]">
               <thead className="bg-surface-low text-outline font-semibold uppercase tracking-wider border-b border-outline-variant">
                 <tr>
                   <th className="p-3">SKU</th>
