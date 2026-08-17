@@ -9,14 +9,17 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://eternityproducts.online"),
+  metadataBase: new URL("https://www.eternityproducts.online"),
+  applicationName: "Eternity Products",
   title: {
-    default: "Eternity Products Nepal | Official Ikonic Styling Tools & Luxury Spa Chairs",
-    template: "%s | Eternity Products Nepal",
+    default: "Eternity Products | Luxury Salon & Spa Furniture",
+    template: "%s | Eternity Products",
   },
   description:
     "Eternity Products is Nepal's authorized importer of Ikonic professional titanium hair straighteners, blow dryers 2500+, curling wands, luxury salon chairs, and pedicure spa stations. 100% genuine seal, 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery across Kathmandu Valley and nationwide Nepal.",
   keywords: [
+    "Eternity Products",
+    "Eternity Products Nepal",
     "Ikonic Nepal",
     "Ikonic Professional Nepal",
     "Titanium Hair Straightener Kathmandu",
@@ -25,28 +28,28 @@ export const metadata: Metadata = {
     "Luxury Salon Chair Kathmandu",
     "Pedicure Spa Chair Nepal",
     "Beauty Parlour Equipment Distributor Nepal",
-    "Eternity Products Nepal",
     "eternityproducts.online",
     "Open-Box Cash on Delivery Nepal",
     "Ikonic Straightener Price Nepal",
   ],
-  authors: [{ name: "Eternity Products Nepal", url: "https://eternityproducts.online" }],
-  creator: "Eternity Products Nepal",
-  publisher: "Eternity Products Nepal",
+  authors: [{ name: "Eternity Products Nepal", url: "https://www.eternityproducts.online" }],
+  creator: "Eternity Products",
+  publisher: "Eternity Products",
   category: "Beauty & Personal Care / Salon Equipment",
   alternates: {
-    canonical: "https://eternityproducts.online",
+    canonical: "https://www.eternityproducts.online",
     languages: {
-      "en-NP": "https://eternityproducts.online",
-      "ne-NP": "https://eternityproducts.online?lang=np",
+      "en-NP": "https://www.eternityproducts.online",
+      "ne-NP": "https://www.eternityproducts.online?lang=np",
     },
   },
+  // Task 3: Perfect Favicon Configuration for Google Search Results
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/icon.png", type: "image/png" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: [{ url: "/apple-icon.png" }],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   verification: {
     google: "0ahB6Zbvm8IrToCcYC_CsFlziYMvb31S2a-VkEkXj0U",
@@ -65,17 +68,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
+    title: "Eternity Products | Luxury Salon & Spa Furniture",
     description:
       "Nepal's premier supplier of Ikonic titanium straighteners, blow dryers, curling wands, luxury hydraulic salon chairs (NPR 30k-40k range), and pedicure spa equipment. Open-box Cash on Delivery nationwide.",
-    url: "https://eternityproducts.online",
-    siteName: "Eternity Products Nepal",
+    url: "https://www.eternityproducts.online",
+    siteName: "Eternity Products",
     images: [
       {
-        url: "https://eternityproducts.online/logo.png",
+        url: "https://www.eternityproducts.online/logo.png",
         width: 1200,
         height: 630,
-        alt: "Eternity Products Nepal Official Logo",
+        alt: "Eternity Products Official Logo",
       },
     ],
     locale: "en_NP",
@@ -83,9 +86,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Eternity Products Nepal | Official Ikonic Hair Tools & Salon Furniture",
+    title: "Eternity Products | Luxury Salon & Spa Furniture",
     description: "Official authorized importer of Ikonic hair styling tools & Eternity luxury pedicure spa chairs in Nepal.",
-    images: ["https://eternityproducts.online/logo.png"],
+    images: ["https://www.eternityproducts.online/logo.png"],
   },
   other: {
     "geo.region": "NP-P3",
@@ -99,11 +102,11 @@ export const metadata: Metadata = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Eternity Products Nepal",
+  name: "Eternity Products",
   legalName: "Eternity Products Importers & Distributors",
-  url: "https://eternityproducts.online",
-  logo: "https://eternityproducts.online/logo.png",
-  image: "https://eternityproducts.online/logo_full_banner.jpg",
+  url: "https://www.eternityproducts.online",
+  logo: "https://www.eternityproducts.online/logo.png",
+  image: "https://www.eternityproducts.online/logo_full_banner.jpg",
   telephone: "+977-9868089892",
   email: "sales@eternityproducts.com.np",
   address: {
@@ -127,17 +130,18 @@ const organizationJsonLd = {
   ],
 };
 
-// JSON-LD Website & Sitelinks Search Box Schema
+// Task 1: WebSite Structured Data (JSON-LD) for Google Site Name
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Eternity Products Nepal",
-  url: "https://eternityproducts.online",
+  name: "Eternity Products",
+  alternateName: ["Eternity Products Nepal", "Eternity Salon & Spa Nepal"],
+  url: "https://www.eternityproducts.online",
   potentialAction: {
     "@type": "SearchAction",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: "https://eternityproducts.online/c/spa?q={search_term_string}",
+      urlTemplate: "https://www.eternityproducts.online/c/spa?q={search_term_string}",
     },
     "query-input": "required name=search_term_string",
   },
