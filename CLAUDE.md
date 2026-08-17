@@ -17,6 +17,7 @@ Two customer types, two economics:
 
 ## Master Brand & Contact Info
 
+- **Official Domain**: `https://www.eternityproducts.online`
 - **Official Phone / Viber / WhatsApp**: `+977 9868089892` (Direct WhatsApp: `https://wa.me/9779868089892`)
 - **Official TikTok Shop**: `https://www.tiktok.com/@eternity.products?is_from_webapp=1&sender_device=pc`
 - **GitHub Repository**: `https://github.com/Hideaway420/Eternity.git`
@@ -42,12 +43,32 @@ This project's entire value is that its numbers are traceable. Every price was r
 
 ---
 
-## Technical Architecture & Conventions
+## Technical Architecture & Key Systems
 
 - **Framework**: Next.js 15 App Router, TypeScript, Tailwind CSS, Lucide Icons.
 - **Database**: Drizzle ORM + `@libsql/client`.
   - Local: `file:eternity.db`
   - Cloud / Vercel: Turso LibSQL via `TURSO_DATABASE_URL` & `TURSO_AUTH_TOKEN` (Fallback: `file::memory:` to prevent Vercel 500 EROFS errors).
+- **Official 4-Pillar Taxonomy Silos**:
+  1. `hair-straighteners`
+  2. `hair-dryers-curlers`
+  3. `luxury-chairs`
+  4. `manicure-pedicure-spa-furniture`
+- **Dynamic Database-Driven Homepage**:
+  - `is_hero`: Boolean feature flag (1 = Hero Product `ETP-SPA-01`).
+  - `is_featured`: Boolean feature flag (1 = Featured Storefront Collection).
+  - ISR Revalidation: `export const revalidate = 60;` with instant `revalidatePath()` on writes.
+- **Edge Security ("Ghost Route")**:
+  - Edge Middleware (`src/middleware.ts`) rewrites unauthorized `/admin/*` requests to `/not-found` (404 Not Found) if `ADMIN_SESSION` cookie is missing or invalid.
+  - Inventory Studio Ghost Upload UI at `/admin/inventory-studio`.
+- **Mobile UX Grid Standard**:
+  - All storefront product grids enforce `grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6`.
+  - 100% clickable `<Link>` card wrappers with `active:scale-[0.98]` tap feedback.
+  - Product images bound in `aspect-square overflow-hidden`.
+- **Brand Identity SEO**:
+  - WebSite JSON-LD schema injected for Google Search Site Name (`"Eternity Products"`).
+  - Next.js Metadata API configured with `applicationName: "Eternity Products"`.
+  - High-res favicon icons configured (`icon.png` 192x192, `apple-icon.png` 180x180).
 - **Internationalization (i18n)**: English (`en`) & Nepali (`np`) dual language engine (`src/lib/i18n.ts`).
 - **Currency**: NPR only. Format `NPR 12,920` or `रु 12,920`. In code, money is **integer paisa** (NPR × 100) — never floats.
 - **Exchange rate**: NPR is pegged to INR at **1.60**.
