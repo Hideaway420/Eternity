@@ -3,19 +3,19 @@ import { db, initTables } from "@/db";
 import { products } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-const BASE_URL = "https://eternityproducts.online";
+const BASE_URL = "https://www.eternityproducts.online";
 
-// All core static & category routes
+// All core static & official category routes
 const STATIC_ROUTES = [
   "",
   "/about",
   "/contact",
   "/warranty",
   "/checkout",
-  "/c/spa",
-  "/c/luxury-salon-chairs",
   "/c/hair-straighteners",
-  "/c/hair-dryers",
+  "/c/hair-dryers-curlers",
+  "/c/luxury-chairs",
+  "/c/manicure-pedicure-spa-furniture",
 ];
 
 // Fallback product slugs for sitemap indexing
@@ -27,11 +27,6 @@ const FALLBACK_PRODUCT_SLUGS = [
   "eternity-emerald-royal-luxury-salon-chair",
   "eternity-espresso-vintage-luxury-salon-chair",
   "eternity-burgundy-regal-luxury-salon-chair",
-  "ikonic-barber-chair-felix",
-  "ikonic-professional-pro-titanium-shine-3-0-hair-straightener",
-  "ikonic-professional-pro-2500-advanced-hair-dryer",
-  "ikonic-professional-gleam-pro-hair-straightener",
-  "ikonic-professional-id-2-0-hair-dryer",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
