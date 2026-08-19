@@ -267,6 +267,50 @@ const CATEGORY_PRODUCTS_MAP: Record<
       imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
     };
   }),
+  eyewear: [
+    {
+      id: "prod-eye-ph-01",
+      sku: "ETP-EYE-01",
+      slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
+      name: "Ray-Ban Tech Carbon Fiber Polarized - Coming Soon",
+      price_npr: 0,
+      badge: "Coming Soon",
+      line: "profit",
+      imageUrl: "/products/eyewear_placeholder_1.jpg",
+    },
+    {
+      id: "prod-eye-ph-02",
+      sku: "ETP-EYE-02",
+      slug: "oakley-radar-ev-path-prizm-sport-coming-soon",
+      name: "Oakley Radar EV Path Prizm Sport - Coming Soon",
+      price_npr: 0,
+      badge: "Coming Soon",
+      line: "profit",
+      imageUrl: "/products/eyewear_placeholder_2.jpg",
+    },
+  ],
+  "premium-eyewear": [
+    {
+      id: "prod-eye-ph-01",
+      sku: "ETP-EYE-01",
+      slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
+      name: "Ray-Ban Tech Carbon Fiber Polarized - Coming Soon",
+      price_npr: 0,
+      badge: "Coming Soon",
+      line: "profit",
+      imageUrl: "/products/eyewear_placeholder_1.jpg",
+    },
+    {
+      id: "prod-eye-ph-02",
+      sku: "ETP-EYE-02",
+      slug: "oakley-radar-ev-path-prizm-sport-coming-soon",
+      name: "Oakley Radar EV Path Prizm Sport - Coming Soon",
+      price_npr: 0,
+      badge: "Coming Soon",
+      line: "profit",
+      imageUrl: "/products/eyewear_placeholder_2.jpg",
+    },
+  ],
 };
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
