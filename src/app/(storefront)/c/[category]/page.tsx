@@ -289,12 +289,12 @@ const CATEGORY_PRODUCTS_MAP: Record<
       imageUrl: "/products/eyewear_placeholder_2.jpg",
     },
   ],
-  "premium-eyewear": [
+  "premium-eyewears": [
     {
       id: "prod-eye-ph-01",
       sku: "ETP-EYE-01",
       slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
-      name: "Ray-Ban Tech Carbon Fiber Polarized - Coming Soon",
+      name: "Carbon Fiber Polarized Tech Eyewear - Coming Soon",
       price_npr: 0,
       badge: "Coming Soon",
       line: "profit",
@@ -304,7 +304,7 @@ const CATEGORY_PRODUCTS_MAP: Record<
       id: "prod-eye-ph-02",
       sku: "ETP-EYE-02",
       slug: "oakley-radar-ev-path-prizm-sport-coming-soon",
-      name: "Oakley Radar EV Path Prizm Sport - Coming Soon",
+      name: "Titanium Sport Shield Eyewear - Coming Soon",
       price_npr: 0,
       badge: "Coming Soon",
       line: "profit",
@@ -321,8 +321,13 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const categorySlug = resolvedParams.category;
   const lineFilter = resolvedSearchParams.line;
 
-  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || CATEGORY_PRODUCTS_MAP["spa"];
-  let title = categorySlug === "spa" ? "SPA & Pedicure Chair Sanctuary" : categorySlug.replace(/-/g, " ").toUpperCase();
+  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || CATEGORY_PRODUCTS_MAP["eyewear"] || CATEGORY_PRODUCTS_MAP["spa"];
+  let title =
+    categorySlug === "eyewear" || categorySlug === "premium-eyewear" || categorySlug === "premium-eyewears"
+      ? "Premium Eyewears"
+      : categorySlug === "spa"
+      ? "SPA & Pedicure Chair Sanctuary"
+      : categorySlug.replace(/-/g, " ").toUpperCase();
 
   try {
     const cat = await db.select().from(categories).where(eq(categories.slug, categorySlug)).get();
@@ -455,6 +460,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                     }`}
                   >
                     Hair Dryers & Curlers
+                  </Link>
+                  <Link
+                    href="/c/eyewear"
+                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
+                      categorySlug === "eyewear" || categorySlug === "premium-eyewear" || categorySlug === "premium-eyewears"
+                        ? "bg-gold/15 text-on-surface border border-gold/40"
+                        : "hover:bg-surface-low text-gold"
+                    }`}
+                  >
+                    Premium Eyewears
                   </Link>
                 </div>
               </div>

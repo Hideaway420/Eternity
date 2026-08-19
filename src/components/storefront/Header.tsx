@@ -155,7 +155,7 @@ export const Header: React.FC = () => {
             </Link>
 
             <Link href="/c/eyewear" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
-              {isNp ? "प्रिमियम आईवेयर" : "Premium Eyewear"}
+              {isNp ? "प्रिमियम आईवेयर" : "Premium Eyewears"}
             </Link>
 
             <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold whitespace-nowrap">
