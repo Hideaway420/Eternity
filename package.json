@@ -14,6 +14,10 @@
     "restore:premium": "tsx scripts/restorePremiumProducts.ts",
     "migrate:flags": "tsx scripts/migrateFeatureFlags.ts"
   },
+  "allowScripts": {
+    "esbuild": true,
+    "sharp": true
+  },
   "dependencies": {
     "@libsql/client": "^0.14.0",
     "clsx": "^2.1.1",
