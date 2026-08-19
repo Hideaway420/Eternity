@@ -78,6 +78,7 @@ export async function initTables() {
         url TEXT NOT NULL,
         alt TEXT,
         alt_np TEXT,
+        image_hash TEXT,
         sort_order INTEGER DEFAULT 0,
         is_primary INTEGER DEFAULT 0
       );

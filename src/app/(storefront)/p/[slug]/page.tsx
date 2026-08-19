@@ -108,6 +108,28 @@ const CATALOG_DICTIONARY: Record<
     line: "profit",
     imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
   },
+  "ray-ban-tech-carbon-fiber-polarized-coming-soon": {
+    id: "prod-eye-ph-01",
+    sku: "ETP-EYE-01",
+    slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
+    name: "Ray-Ban Tech Carbon Fiber Polarized - Coming Soon",
+    price_npr: 0,
+    compare_at_npr: 0,
+    line: "traffic",
+    imageUrl: "/products/antigravity_eyewear.jpg",
+    description: "Ultra-lightweight carbon fiber polarized premium eyewear. Suspended anti-gravity optical engineering. Coming soon to Eternity Nepal.",
+  },
+  "oakley-radar-ev-path-prizm-coming-soon": {
+    id: "prod-eye-ph-02",
+    sku: "ETP-EYE-02",
+    slug: "oakley-radar-ev-path-prizm-coming-soon",
+    name: "Oakley Radar EV Path Prizm - Coming Soon",
+    price_npr: 0,
+    compare_at_npr: 0,
+    line: "traffic",
+    imageUrl: "/products/antigravity_eyewear.jpg",
+    description: "High-definition Prizm optics for sports performance. Suspended anti-gravity frame structure. Coming soon to Eternity Nepal.",
+  },
 };
 
 // Task 2: Generate Dynamic Localized SEO Metadata for Product Page

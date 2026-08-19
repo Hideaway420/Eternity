@@ -51,6 +51,7 @@ export const productImages = sqliteTable("product_images", {
   url: text("url").notNull(),
   alt: text("alt"),
   alt_np: text("alt_np"),
+  image_hash: text("image_hash"),
   sort_order: integer("sort_order").default(0),
   is_primary: integer("is_primary", { mode: "boolean" }).default(false),
 });

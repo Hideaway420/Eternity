@@ -34,13 +34,15 @@ export async function GET() {
 
     const productsWithImages = allProducts.map((p) => {
       const pImgs = allImages.filter((img) => img.product_id === p.id);
-      const imageUrls = pImgs.map((img) => img.url);
-      const primaryUrl = pImgs.find((img) => img.is_primary)?.url || imageUrls[0] || "/products/ikonic_straightener_1786231866243.jpg";
+      const heroImg = pImgs.find((img) => img.is_primary)?.url || pImgs[0]?.url || "/products/ikonic_straightener_1786231866243.jpg";
+      const secondaryImgs = pImgs.filter((img) => img.url !== heroImg).map((img) => img.url);
 
       return {
         ...p,
-        imageUrl: primaryUrl,
-        imageUrls: imageUrls.length > 0 ? imageUrls : [primaryUrl],
+        heroImageUrl: heroImg,
+        imageUrl: heroImg,
+        secondaryImageUrls: secondaryImgs,
+        imageUrls: pImgs.map((img) => img.url),
       };
     });
 
@@ -66,7 +68,9 @@ export async function POST(req: Request) {
       compare_at_npr,
       cost_npr,
       description,
+      heroImageUrl,
       imageUrl,
+      secondaryImageUrls,
       imageUrls,
       status,
     } = body;
@@ -106,12 +110,17 @@ export async function POST(req: Request) {
       })
       .run();
 
-    // Collect all image URLs
-    const finalUrls: string[] = Array.isArray(imageUrls) && imageUrls.length > 0
-      ? imageUrls.filter((u: string) => u.trim() !== "")
-      : imageUrl ? [imageUrl] : ["/products/ikonic_straightener_1786231866243.jpg"];
+    // Organize Hero Cover Image vs Secondary Thumbnail Images
+    const heroUrl = heroImageUrl || imageUrl || (Array.isArray(imageUrls) && imageUrls[0]) || "/products/ikonic_straightener_1786231866243.jpg";
+    const secondaries = Array.isArray(secondaryImageUrls)
+      ? secondaryImageUrls
+      : Array.isArray(imageUrls)
+      ? imageUrls.filter((u: string) => u !== heroUrl)
+      : [];
 
-    // Insert Multiple Product Images
+    const finalUrls = [heroUrl, ...secondaries.filter((u: string) => u && u.trim() !== "" && u !== heroUrl)];
+
+    // Insert Multiple Product Images into Turso DB
     for (let i = 0; i < finalUrls.length; i++) {
       await db
         .insert(productImages)
@@ -119,7 +128,7 @@ export async function POST(req: Request) {
           id: `img-${productId}-${i}-${Date.now()}`,
           product_id: productId,
           url: finalUrls[i].trim(),
-          alt: `${name} Image ${i + 1}`,
+          alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
           sort_order: i,
           is_primary: i === 0,
         })
@@ -149,15 +158,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Product created successfully with multiple images!",
+      message: "Product created successfully with Hero & Secondary images!",
       product: {
         id: productId,
         sku,
         slug: generatedSlug,
         name,
         price_npr: pricePaisa,
-        imageUrl: finalUrls[0],
-        imageUrls: finalUrls,
+        heroImageUrl: heroUrl,
+        secondaryImageUrls: secondaries,
       },
     });
   } catch (err: unknown) {
@@ -181,7 +190,9 @@ export async function PUT(req: Request) {
       compare_at_npr,
       cost_npr,
       description,
+      heroImageUrl,
       imageUrl,
+      secondaryImageUrls,
       imageUrls,
       status,
     } = body;
@@ -213,16 +224,23 @@ export async function PUT(req: Request) {
       .where(eq(products.id, id))
       .run();
 
-    // Update Product Images if imageUrls or imageUrl provided
-    const finalUrls: string[] = Array.isArray(imageUrls) && imageUrls.length > 0
-      ? imageUrls.filter((u: string) => u.trim() !== "")
-      : imageUrl ? [imageUrl] : [];
+    // Organize Hero Cover Image vs Secondary Images
+    const heroUrl = heroImageUrl || imageUrl || (Array.isArray(imageUrls) && imageUrls[0]);
+    const secondaries = Array.isArray(secondaryImageUrls)
+      ? secondaryImageUrls
+      : Array.isArray(imageUrls)
+      ? imageUrls.filter((u: string) => u !== heroUrl)
+      : [];
+
+    const finalUrls = heroUrl
+      ? [heroUrl, ...secondaries.filter((u: string) => u && u.trim() !== "" && u !== heroUrl)]
+      : secondaries;
 
     if (finalUrls.length > 0) {
       // Clean previous product images
       await db.delete(productImages).where(eq(productImages.product_id, id)).run();
 
-      // Insert new multiple images
+      // Insert new Hero & Secondary images
       for (let i = 0; i < finalUrls.length; i++) {
         await db
           .insert(productImages)
@@ -230,7 +248,7 @@ export async function PUT(req: Request) {
             id: `img-${id}-${i}-${Date.now()}`,
             product_id: id,
             url: finalUrls[i].trim(),
-            alt: `${name} Image ${i + 1}`,
+            alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
             sort_order: i,
             is_primary: i === 0,
           })
@@ -242,7 +260,7 @@ export async function PUT(req: Request) {
     revalidatePath("/c/[category]", "page");
     revalidatePath("/p/[slug]", "page");
 
-    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully with ${finalUrls.length} images!` });
+    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully with Hero and ${finalUrls.length - 1} secondary images!` });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message || "Failed to update product." }, { status: 500 });
   }

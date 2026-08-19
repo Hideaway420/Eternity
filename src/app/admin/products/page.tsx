@@ -15,6 +15,8 @@ import {
   X,
   Trash2,
   Star,
+  ShieldAlert,
+  Images,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
@@ -29,6 +31,8 @@ interface ProductItem {
   cost_npr?: number | null;
   line: string;
   status: string;
+  heroImageUrl?: string | null;
+  secondaryImageUrls?: string[] | null;
   imageUrl?: string | null;
   imageUrls?: string[] | null;
 }
@@ -49,7 +53,7 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Form State with Multi-Image Support
+  // Form State with Hero vs Secondary Images Support
   const [formData, setFormData] = useState({
     id: "",
     sku: "",
@@ -59,8 +63,8 @@ export default function AdminProductsPage() {
     price_npr: "",
     compare_at_npr: "",
     cost_npr: "",
-    imageUrl: "",
-    imageUrls: [] as string[],
+    heroImageUrl: "",
+    secondaryImageUrls: [] as string[],
     description: "",
     status: "active",
   });
@@ -86,7 +90,10 @@ export default function AdminProductsPage() {
 
   const handleOpenEditModal = (p: ProductItem) => {
     setEditingProduct(p);
-    const existingImgs = p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls : [p.imageUrl || ""].filter(Boolean);
+    const hero = p.heroImageUrl || p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg";
+    const secondaries = p.secondaryImageUrls && p.secondaryImageUrls.length > 0 
+      ? p.secondaryImageUrls 
+      : (p.imageUrls || []).filter((u) => u !== hero);
     
     setFormData({
       id: p.id,
@@ -97,16 +104,55 @@ export default function AdminProductsPage() {
       price_npr: (p.price_npr / 100).toString(),
       compare_at_npr: p.compare_at_npr ? (p.compare_at_npr / 100).toString() : "",
       cost_npr: p.cost_npr ? (p.cost_npr / 100).toString() : "",
-      imageUrl: existingImgs[0] || "",
-      imageUrls: existingImgs,
+      heroImageUrl: hero,
+      secondaryImageUrls: secondaries,
       description: p.description || "",
       status: p.status || "active",
     });
     setShowEditModal(true);
   };
 
-  // Multiple File Upload Handler
-  const handleDirectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Hero File Upload Handler with SHA-256 Validation
+  const handleDirectHeroUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setFeedbackMsg(null);
+
+    try {
+      const data = new FormData();
+      data.append("image", file);
+
+      const res = await fetch("/api/admin/upload-image", {
+        method: "POST",
+        body: data,
+      });
+
+      const json = await res.json();
+      if (res.status === 409 || json.isDuplicate) {
+        setFeedbackMsg({
+          type: "error",
+          text: json.error || `Duplicate asset detected! SHA-256 hash match on catalog asset "${json.existingUrl}".`,
+        });
+      } else if (json.success && json.url) {
+        setFormData((prev) => ({ ...prev, heroImageUrl: json.url }));
+        setFeedbackMsg({
+          type: "success",
+          text: `Hero Image uploaded & verified unique! (SHA-256: ${json.hash?.slice(0, 10)}...)`,
+        });
+      } else {
+        setFeedbackMsg({ type: "error", text: json.error || "Failed to upload Hero image file." });
+      }
+    } catch (err: any) {
+      setFeedbackMsg({ type: "error", text: err.message || "Failed to upload Hero image file." });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Secondary Files Upload Handler with SHA-256 Validation
+  const handleDirectSecondaryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -114,6 +160,7 @@ export default function AdminProductsPage() {
     setFeedbackMsg(null);
 
     const uploadedUrls: string[] = [];
+    let duplicateCount = 0;
 
     try {
       for (let i = 0; i < files.length; i++) {
@@ -126,49 +173,55 @@ export default function AdminProductsPage() {
         });
 
         const json = await res.json();
-        if (json.success && json.url) {
+        if (res.status === 409 || json.isDuplicate) {
+          duplicateCount++;
+        } else if (json.success && json.url) {
           uploadedUrls.push(json.url);
         }
       }
 
       if (uploadedUrls.length > 0) {
-        setFormData((prev) => {
-          const combined = Array.from(new Set([...(prev.imageUrls || []), ...uploadedUrls]));
-          return {
-            ...prev,
-            imageUrl: combined[0] || prev.imageUrl,
-            imageUrls: combined,
-          };
+        setFormData((prev) => ({
+          ...prev,
+          secondaryImageUrls: Array.from(new Set([...prev.secondaryImageUrls, ...uploadedUrls])),
+        }));
+        setFeedbackMsg({
+          type: "success",
+          text: `${uploadedUrls.length} secondary image(s) uploaded successfully!${
+            duplicateCount > 0 ? ` (${duplicateCount} duplicate files skipped by SHA-256)` : ""
+          }`,
         });
-        setFeedbackMsg({ type: "success", text: `${uploadedUrls.length} image(s) uploaded successfully!` });
+      } else if (duplicateCount > 0) {
+        setFeedbackMsg({
+          type: "error",
+          text: `Upload rejected: All ${duplicateCount} selected file(s) already exist in catalog (SHA-256 hash match).`,
+        });
       }
     } catch (err: any) {
-      setFeedbackMsg({ type: "error", text: err.message || "Failed to upload image files." });
+      setFeedbackMsg({ type: "error", text: err.message || "Failed to upload secondary image files." });
     } finally {
       setUploadingImage(false);
     }
   };
 
-  const handleRemoveImage = (indexToRemove: number) => {
-    setFormData((prev) => {
-      const updated = prev.imageUrls.filter((_, idx) => idx !== indexToRemove);
-      return {
-        ...prev,
-        imageUrl: updated[0] || "",
-        imageUrls: updated,
-      };
-    });
+  const handleRemoveSecondaryImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      secondaryImageUrls: prev.secondaryImageUrls.filter((_, idx) => idx !== indexToRemove),
+    }));
   };
 
-  const handleSetCoverImage = (indexToSet: number) => {
+  const handleSwapSecondaryToHero = (indexToSwap: number) => {
     setFormData((prev) => {
-      const target = prev.imageUrls[indexToSet];
-      const rest = prev.imageUrls.filter((_, idx) => idx !== indexToSet);
-      const reordered = [target, ...rest];
+      const oldHero = prev.heroImageUrl;
+      const target = prev.secondaryImageUrls[indexToSwap];
+      const updatedSecondaries = prev.secondaryImageUrls.filter((_, idx) => idx !== indexToSwap);
+      if (oldHero) updatedSecondaries.push(oldHero);
+
       return {
         ...prev,
-        imageUrl: target,
-        imageUrls: reordered,
+        heroImageUrl: target,
+        secondaryImageUrls: updatedSecondaries,
       };
     });
   };
@@ -272,8 +325,8 @@ export default function AdminProductsPage() {
                   price_npr: "",
                   compare_at_npr: "",
                   cost_npr: "",
-                  imageUrl: "",
-                  imageUrls: [],
+                  heroImageUrl: "",
+                  secondaryImageUrls: [],
                   description: "",
                   status: "active",
                 });
@@ -296,10 +349,14 @@ export default function AdminProductsPage() {
             }`}
           >
             <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-green-800" />
+              {feedbackMsg.type === "success" ? (
+                <CheckCircle2 className="w-5 h-5 text-green-800 flex-shrink-0" />
+              ) : (
+                <ShieldAlert className="w-5 h-5 text-red-800 flex-shrink-0" />
+              )}
               <span>{feedbackMsg.text}</span>
             </div>
-            <button onClick={() => setFeedbackMsg(null)} className="font-extrabold underline">
+            <button onClick={() => setFeedbackMsg(null)} className="font-extrabold underline ml-4">
               Dismiss
             </button>
           </div>
@@ -406,13 +463,13 @@ export default function AdminProductsPage() {
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-400 flex-shrink-0 relative">
                             <img
-                              src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
+                              src={p.heroImageUrl || p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                               alt={p.name}
                               className="w-full h-full object-cover"
                             />
-                            {p.imageUrls && p.imageUrls.length > 1 && (
-                              <span className="absolute bottom-0 right-0 bg-black text-white text-[9px] font-mono px-1 rounded-tl font-bold">
-                                +{p.imageUrls.length - 1}
+                            {p.secondaryImageUrls && p.secondaryImageUrls.length > 0 && (
+                              <span className="absolute bottom-0 right-0 bg-black text-white text-[9px] font-mono px-1 rounded-tl font-bold flex items-center">
+                                +{p.secondaryImageUrls.length}
                               </span>
                             )}
                           </div>
@@ -447,7 +504,6 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
-                          {/* EDIT PRODUCT BUTTON */}
                           <button
                             onClick={() => handleOpenEditModal(p)}
                             className="px-3 py-1.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black font-extrabold text-xs flex items-center space-x-1"
@@ -473,7 +529,7 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {/* Edit Product Modal - MULTI-IMAGE MANAGEMENT */}
+        {/* Edit Product Modal - HERO VS SECONDARY SEPARATION & SHA-256 CHECK */}
         {showEditModal && editingProduct && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-6 shadow-2xl text-gray-900">
@@ -574,72 +630,99 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                {/* MULTI-IMAGE UPLOAD & GALLERY MANAGEMENT */}
-                <div className="space-y-3 p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+                {/* 1. HERO COVER IMAGE SELECTION (SHA-256 PROTECTED) */}
+                <div className="p-4 bg-yellow-50 border-2 border-yellow-400 rounded-xl space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider">
-                      Product Images Gallery ({formData.imageUrls.length} Photos)
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider flex items-center">
+                      <Star className="w-4 h-4 mr-1 text-yellow-600 fill-yellow-600" /> Hero Cover Image (Main Left Display)
                     </label>
-                    <span className="text-xs text-yellow-800 font-extrabold">Select Multiple Device Files</span>
+                    <span className="text-[10px] font-mono text-yellow-800 font-extrabold">SHA-256 Hash Checked</span>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
+                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      <span>Upload Device Image(s)</span>
-                      <input type="file" multiple accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
+                      <span>Upload Hero File</span>
+                      <input type="file" accept="image/*" onChange={handleDirectHeroUpload} className="hidden" />
                     </label>
 
                     <input
                       type="text"
-                      placeholder="Or paste URL and press Enter..."
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && formData.imageUrl.trim()) {
-                          e.preventDefault();
-                          setFormData((prev) => ({
-                            ...prev,
-                            imageUrls: Array.from(new Set([...prev.imageUrls, prev.imageUrl.trim()])),
-                            imageUrl: "",
-                          }));
-                        }
-                      }}
-                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
+                      placeholder="Or paste Hero Image URL..."
+                      value={formData.heroImageUrl}
+                      onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-2.5 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
 
-                  {/* Uploaded Images List with Cover Badge and Delete */}
-                  {formData.imageUrls.length > 0 && (
+                  {formData.heroImageUrl && (
+                    <div className="flex items-center space-x-3 p-2 bg-white border border-yellow-400 rounded-lg">
+                      <div className="w-12 h-12 rounded overflow-hidden border border-gray-400 flex-shrink-0 bg-gray-100">
+                        <img src={formData.heroImageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-xs font-mono font-bold text-black truncate">{formData.heroImageUrl}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. SECONDARY THUMBNAIL IMAGES (SHA-256 PROTECTED) */}
+                <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider flex items-center">
+                      <Images className="w-4 h-4 mr-1 text-gray-700" /> Secondary Images Gallery ({formData.secondaryImageUrls.length} Thumbnails)
+                    </label>
+                    <span className="text-[10px] font-mono text-gray-600 font-extrabold">Arranged Under Hero Box</span>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-black rounded-xl text-xs font-extrabold border-2 border-gray-400 cursor-pointer flex-shrink-0">
+                      {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      <span>Add Secondary Files</span>
+                      <input type="file" multiple accept="image/*" onChange={handleDirectSecondaryUpload} className="hidden" />
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="Or paste Secondary URL and press Enter..."
+                      onKeyDown={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        if (e.key === "Enter" && target.value.trim()) {
+                          e.preventDefault();
+                          const newUrl = target.value.trim();
+                          setFormData((prev) => ({
+                            ...prev,
+                            secondaryImageUrls: Array.from(new Set([...prev.secondaryImageUrls, newUrl])),
+                          }));
+                          target.value = "";
+                        }
+                      }}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-2.5 text-xs focus:border-black focus:outline-none font-mono"
+                    />
+                  </div>
+
+                  {/* Secondary Thumbnails Grid */}
+                  {formData.secondaryImageUrls.length > 0 && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                      {formData.imageUrls.map((url, idx) => (
-                        <div key={`img-item-${idx}`} className="relative bg-white border-2 border-gray-300 rounded-xl p-2 flex flex-col space-y-2">
+                      {formData.secondaryImageUrls.map((url, idx) => (
+                        <div key={`sec-${idx}`} className="relative bg-white border-2 border-gray-300 rounded-xl p-2 flex flex-col space-y-2">
                           <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
-                            <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                            {idx === 0 ? (
-                              <span className="absolute top-1 left-1 bg-yellow-500 text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded border border-black uppercase flex items-center">
-                                <Star className="w-2.5 h-2.5 mr-0.5 fill-black" /> Cover
-                              </span>
-                            ) : (
-                              <span className="absolute top-1 left-1 bg-black text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">
-                                #{idx + 1}
-                              </span>
-                            )}
+                            <img src={url} alt={`Secondary Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                            <span className="absolute top-1 left-1 bg-black text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">
+                              #{idx + 1}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between text-[10px] font-bold">
-                            {idx !== 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleSetCoverImage(idx)}
-                                className="text-yellow-700 hover:underline font-extrabold"
-                              >
-                                Set Cover
-                              </button>
-                            )}
                             <button
                               type="button"
-                              onClick={() => handleRemoveImage(idx)}
-                              className="text-red-700 hover:underline font-extrabold ml-auto flex items-center"
+                              onClick={() => handleSwapSecondaryToHero(idx)}
+                              className="text-yellow-700 hover:underline font-extrabold"
+                            >
+                              Make Hero
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSecondaryImage(idx)}
+                              className="text-red-700 hover:underline font-extrabold flex items-center"
                             >
                               <Trash2 className="w-3 h-3 mr-0.5" /> Remove
                             </button>
@@ -690,7 +773,7 @@ export default function AdminProductsPage() {
           </div>
         )}
 
-        {/* Add Product Modal - MULTI-IMAGE MANAGEMENT */}
+        {/* Add Product Modal - HERO VS SECONDARY SEPARATION */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-5 shadow-2xl text-gray-900">
@@ -739,7 +822,7 @@ export default function AdminProductsPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Ikonic Professional Pro Titanium Shine 4.0"
+                    placeholder="e.g. Ray-Ban Tech Carbon Fiber Polarized / Oakley Radar EV Path"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
@@ -782,80 +865,65 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                {/* MULTI-IMAGE UPLOAD FIELD */}
-                <div className="space-y-3 p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+                {/* 1. HERO COVER IMAGE SELECTION */}
+                <div className="p-4 bg-yellow-50 border-2 border-yellow-400 rounded-xl space-y-3">
                   <div className="flex justify-between items-center">
-                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider">
-                      Product Images Gallery ({formData.imageUrls.length} Photos)
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider flex items-center">
+                      <Star className="w-4 h-4 mr-1 text-yellow-600 fill-yellow-600" /> Hero Cover Image (Main Display)
                     </label>
-                    <span className="text-xs text-yellow-800 font-extrabold">Select Multiple Device Files</span>
+                    <span className="text-[10px] font-mono text-yellow-800 font-extrabold">SHA-256 Hash Checked</span>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
+                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      <span>Upload Device Image(s)</span>
-                      <input type="file" multiple accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
+                      <span>Upload Hero File</span>
+                      <input type="file" accept="image/*" onChange={handleDirectHeroUpload} className="hidden" />
                     </label>
 
                     <input
                       type="text"
-                      placeholder="Or paste URL and press Enter..."
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && formData.imageUrl.trim()) {
-                          e.preventDefault();
-                          setFormData((prev) => ({
-                            ...prev,
-                            imageUrls: Array.from(new Set([...prev.imageUrls, prev.imageUrl.trim()])),
-                            imageUrl: "",
-                          }));
-                        }
-                      }}
-                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
+                      placeholder="Or paste Hero Image URL..."
+                      value={formData.heroImageUrl}
+                      onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-2.5 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
+                </div>
 
-                  {/* Uploaded Images List */}
-                  {formData.imageUrls.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                      {formData.imageUrls.map((url, idx) => (
-                        <div key={`img-add-${idx}`} className="relative bg-white border-2 border-gray-300 rounded-xl p-2 flex flex-col space-y-2">
-                          <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
-                            <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                            {idx === 0 ? (
-                              <span className="absolute top-1 left-1 bg-yellow-500 text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded border border-black uppercase flex items-center">
-                                <Star className="w-2.5 h-2.5 mr-0.5 fill-black" /> Cover
-                              </span>
-                            ) : (
-                              <span className="absolute top-1 left-1 bg-black text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">
-                                #{idx + 1}
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center justify-between text-[10px] font-bold">
-                            {idx !== 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleSetCoverImage(idx)}
-                                className="text-yellow-700 hover:underline font-extrabold"
-                              >
-                                Set Cover
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveImage(idx)}
-                              className="text-red-700 hover:underline font-extrabold ml-auto flex items-center"
-                            >
-                              <Trash2 className="w-3 h-3 mr-0.5" /> Remove
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                {/* 2. SECONDARY THUMBNAILS SELECTION */}
+                <div className="p-4 bg-gray-50 border-2 border-gray-300 rounded-xl space-y-3">
+                  <div className="flex justify-between items-center">
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider flex items-center">
+                      <Images className="w-4 h-4 mr-1 text-gray-700" /> Secondary Images Gallery ({formData.secondaryImageUrls.length} Thumbnails)
+                    </label>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-gray-200 hover:bg-gray-300 text-black rounded-xl text-xs font-extrabold border-2 border-gray-400 cursor-pointer flex-shrink-0">
+                      {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                      <span>Add Secondary Files</span>
+                      <input type="file" multiple accept="image/*" onChange={handleDirectSecondaryUpload} className="hidden" />
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="Or paste Secondary URL and press Enter..."
+                      onKeyDown={(e) => {
+                        const target = e.target as HTMLInputElement;
+                        if (e.key === "Enter" && target.value.trim()) {
+                          e.preventDefault();
+                          const newUrl = target.value.trim();
+                          setFormData((prev) => ({
+                            ...prev,
+                            secondaryImageUrls: Array.from(new Set([...prev.secondaryImageUrls, newUrl])),
+                          }));
+                          target.value = "";
+                        }
+                      }}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-2.5 text-xs focus:border-black focus:outline-none font-mono"
+                    />
+                  </div>
                 </div>
 
                 <div>
