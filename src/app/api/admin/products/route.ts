@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       status,
     } = body;
 
-    if (!sku || !name || !price_npr) {
+    if (!sku || !name || price_npr === undefined) {
       return NextResponse.json(
         { success: false, error: "SKU, Name, and Price are required." },
         { status: 400 }
@@ -76,13 +76,13 @@ export async function POST(req: Request) {
         sku: sku.trim(),
         slug: generatedSlug,
         name: name.trim(),
-        description: description || `${name} imported directly from Ikonic India by Eternity Products Nepal.`,
+        description: description || `${name} imported directly from India by Eternity Products Nepal.`,
         category_id: category_id || null,
         line: line || "traffic",
         price_npr: pricePaisa,
         compare_at_npr: comparePaisa,
         cost_npr: costPaisa,
-        status: status || "active",
+        status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
         created_at: now,
         updated_at: now,
       })
@@ -108,7 +108,7 @@ export async function POST(req: Request) {
         id: `inv-${productId}`,
         product_id: productId,
         warehouse_id: "wh-main",
-        qty_on_hand: 10,
+        qty_on_hand: pricePaisa > 0 ? 10 : 0,
         qty_reserved: 0,
         qty_incoming: 0,
         reorder_point: 3,
@@ -137,5 +137,84 @@ export async function POST(req: Request) {
   } catch (err: unknown) {
     const error = err as Error;
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    await initTables();
+    const body = await req.json();
+
+    const {
+      id,
+      sku,
+      name,
+      slug,
+      line,
+      price_npr,
+      compare_at_npr,
+      cost_npr,
+      description,
+      imageUrl,
+      status,
+    } = body;
+
+    if (!id || !name) {
+      return NextResponse.json({ success: false, error: "Product ID and Name are required for editing." }, { status: 400 });
+    }
+
+    const now = new Date().toISOString();
+    const pricePaisa = Math.round(parseFloat(price_npr || "0") * 100);
+    const comparePaisa = compare_at_npr ? Math.round(parseFloat(compare_at_npr) * 100) : null;
+    const costPaisa = cost_npr ? Math.round(parseFloat(cost_npr) * 100) : null;
+
+    // Update Product Table
+    await db
+      .update(products)
+      .set({
+        name: name.trim(),
+        sku: sku ? sku.trim() : undefined,
+        slug: slug ? slug.trim() : undefined,
+        line: line || "traffic",
+        price_npr: pricePaisa,
+        compare_at_npr: comparePaisa,
+        cost_npr: costPaisa,
+        description: description || undefined,
+        status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
+        updated_at: now,
+      })
+      .where(eq(products.id, id))
+      .run();
+
+    // Update Product Image Table if imageUrl provided
+    if (imageUrl) {
+      const existingImg = await db.select().from(productImages).where(eq(productImages.product_id, id)).get();
+      if (existingImg) {
+        await db
+          .update(productImages)
+          .set({ url: imageUrl, alt: name })
+          .where(eq(productImages.id, existingImg.id))
+          .run();
+      } else {
+        await db
+          .insert(productImages)
+          .values({
+            id: `img-${id}`,
+            product_id: id,
+            url: imageUrl,
+            alt: name,
+            is_primary: true,
+          })
+          .run();
+      }
+    }
+
+    revalidatePath("/");
+    revalidatePath("/c/[category]", "page");
+    revalidatePath("/p/[slug]", "page");
+
+    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully!` });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message || "Failed to update product." }, { status: 500 });
   }
 }

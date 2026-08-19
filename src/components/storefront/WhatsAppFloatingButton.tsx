@@ -2,12 +2,19 @@
 
 import React, { useState } from "react";
 import { MessageSquare, X, Send, Sparkles, ShieldCheck } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export const WhatsAppFloatingButton: React.FC = () => {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [customMsg, setCustomMsg] = useState("");
 
   const officialWhatsAppNumber = "9779868089892";
+
+  // Hide WhatsApp button completely on all admin routes
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
 
   const handleOpenWhatsApp = (text?: string) => {
     const message = text || customMsg || "Hi Eternity Products Nepal! I have an inquiry about your salon tools and luxury chairs.";
