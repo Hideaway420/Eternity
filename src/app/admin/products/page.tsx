@@ -17,6 +17,7 @@ import {
   Star,
   ShieldAlert,
   Images,
+  AlertTriangle,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
@@ -52,6 +53,11 @@ export default function AdminProductsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Delete Confirmation Modal State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState<ProductItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Form State with Hero vs Secondary Images Support
   const [formData, setFormData] = useState({
@@ -110,6 +116,43 @@ export default function AdminProductsPage() {
       status: p.status || "active",
     });
     setShowEditModal(true);
+  };
+
+  const handleConfirmDelete = (p: ProductItem) => {
+    setDeletingProduct(p);
+    setShowDeleteModal(true);
+  };
+
+  const handleExecuteDelete = async () => {
+    if (!deletingProduct) return;
+    setIsDeleting(true);
+    setFeedbackMsg(null);
+
+    try {
+      const res = await fetch(`/api/admin/products?id=${deletingProduct.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setFeedbackMsg({
+          type: "success",
+          text: `Product "${deletingProduct.name}" and all associated images and pages were permanently deleted!`,
+        });
+        setShowDeleteModal(false);
+        setDeletingProduct(null);
+        fetchProducts();
+      } else {
+        setFeedbackMsg({
+          type: "error",
+          text: data.error || "Failed to delete product.",
+        });
+      }
+    } catch (err: any) {
+      setFeedbackMsg({ type: "error", text: err.message || "Failed to delete product." });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   // Hero File Upload Handler with SHA-256 Validation
@@ -431,7 +474,7 @@ export default function AdminProductsPage() {
         {/* Product Listing Table */}
         <div className="rounded-xl bg-white border-2 border-gray-300 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs min-w-[700px]">
+            <table className="w-full text-left border-collapse text-xs min-w-[750px]">
               <thead>
                 <tr className="bg-gray-200 text-gray-900 uppercase font-extrabold border-b-2 border-gray-400">
                   <th className="py-3.5 px-4">Image & Product</th>
@@ -519,6 +562,15 @@ export default function AdminProductsPage() {
                           >
                             View PDP
                           </Link>
+
+                          {/* DELETE PRODUCT BUTTON */}
+                          <button
+                            onClick={() => handleConfirmDelete(p)}
+                            className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white border-2 border-red-900 font-extrabold text-xs flex items-center space-x-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -529,7 +581,55 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {/* Edit Product Modal - HERO VS SECONDARY SEPARATION & SHA-256 CHECK */}
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && deletingProduct && (
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+            <div className="bg-white border-4 border-red-600 rounded-2xl p-6 sm:p-8 max-w-md w-full space-y-5 shadow-2xl text-gray-900">
+              <div className="flex items-center space-x-3 text-red-600">
+                <AlertTriangle className="w-8 h-8 flex-shrink-0" />
+                <h2 className="text-xl font-extrabold text-black">Delete Product Permanently?</h2>
+              </div>
+
+              <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl space-y-2">
+                <span className="text-xs font-mono uppercase text-red-800 font-extrabold block">SKU: {deletingProduct.sku}</span>
+                <p className="text-sm font-extrabold text-black">{deletingProduct.name}</p>
+                <p className="text-xs text-red-900 font-bold">
+                  This action will permanently delete this product, all its image records in Turso, inventory rows, and its storefront landing pages. This cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-2 border-t-2 border-gray-300">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  className="px-4 py-2.5 rounded-xl border-2 border-gray-400 font-extrabold text-xs text-black bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExecuteDelete}
+                  disabled={isDeleting}
+                  className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs border-2 border-red-900 flex items-center space-x-2"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Deleting Product...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4 text-white" />
+                      <span>Confirm & Permanently Delete</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Product Modal */}
         {showEditModal && editingProduct && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-6 shadow-2xl text-gray-900">
@@ -773,7 +873,7 @@ export default function AdminProductsPage() {
           </div>
         )}
 
-        {/* Add Product Modal - HERO VS SECONDARY SEPARATION */}
+        {/* Add Product Modal */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-5 shadow-2xl text-gray-900">

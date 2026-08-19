@@ -265,3 +265,36 @@ export async function PUT(req: Request) {
     return NextResponse.json({ success: false, error: err.message || "Failed to update product." }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    await initTables();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ success: false, error: "Product ID parameter is required for deletion." }, { status: 400 });
+    }
+
+    // 1. Delete all associated product images
+    await db.delete(productImages).where(eq(productImages.product_id, id)).run();
+
+    // 2. Delete all associated inventory items
+    await db.delete(inventory).where(eq(inventory.product_id, id)).run();
+
+    // 3. Delete product record from database
+    await db.delete(products).where(eq(products.id, id)).run();
+
+    // Instant Revalidation across Storefront
+    revalidatePath("/");
+    revalidatePath("/c/[category]", "page");
+    revalidatePath("/p/[slug]", "page");
+
+    return NextResponse.json({
+      success: true,
+      message: `Product ID "${id}" and all associated images and pages were permanently deleted.`,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message || "Failed to delete product." }, { status: 500 });
+  }
+}
