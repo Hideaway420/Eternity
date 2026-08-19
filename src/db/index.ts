@@ -116,7 +116,8 @@ export async function initTables() {
         ('cat-spa', 'Manicure & Pedicure Spa Furniture', 'spa', 1),
         ('cat-chairs', 'Luxury Salon Chairs', 'luxury-salon-chairs', 2),
         ('cat-straighteners', 'Hair Straighteners', 'hair-straighteners', 3),
-        ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers', 4);
+        ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers', 4),
+        ('cat-eyewear', 'Premium Eyewear', 'eyewear', 5);
 
       -- 4 NEW LUXURY SPA & PEDICURE CHAIRS INVENTORY SEED
       INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
@@ -133,8 +134,11 @@ export async function initTables() {
         ('prod-etp-chair-02', 'ETP-LSC-02', 'eternity-espresso-vintage-luxury-salon-chair', 'Eternity Espresso Vintage Luxury Salon Chair', 'Vintage Espresso Brown leather hydraulic styling chair with heavy-duty chrome hydraulic pump.', 'cat-chairs', 'profit', 3750000, 3950000, 2350000, 'active', datetime('now'), datetime('now')),
         ('prod-etp-chair-03', 'ETP-LSC-03', 'eternity-burgundy-regal-luxury-salon-chair', 'Eternity Burgundy Regal Luxury Salon Chair', 'Regal Burgundy Red leather reclining chair with adjustable headrest and stainless steel footrest.', 'cat-chairs', 'profit', 3850000, 4050000, 2400000, 'active', datetime('now'), datetime('now'));
 
-      -- STEP A: CLEAN UP ANY MISMATCHED SPA PRODUCTS ASSIGNED TO HAIR TOOL CATEGORIES
-      DELETE FROM products WHERE (slug LIKE '%spa%' OR slug LIKE '%pedicure%') AND category_id IN ('cat-straighteners', 'cat-dryers');
+      -- 2 PREMIUM EYEWEAR INVENTORY SEED
+      INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
+      VALUES
+        ('prod-eye-ph-01', 'ETP-EYE-01', 'ray-ban-tech-carbon-fiber-polarized-coming-soon', 'Ray-Ban Tech Carbon Fiber Polarized - Coming Soon', 'Ultra-lightweight carbon fiber polarized premium eyewear. Suspended anti-gravity optical engineering. Coming soon to Eternity Nepal.', 'cat-eyewear', 'eyewear', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now')),
+        ('prod-eye-ph-02', 'ETP-EYE-02', 'oakley-radar-ev-path-prizm-coming-soon', 'Oakley Radar EV Path Prizm - Coming Soon', 'High-definition Prizm optics for sports performance. Suspended anti-gravity frame structure. Coming soon to Eternity Nepal.', 'cat-eyewear', 'eyewear', 0, 0, 0, 'out_of_stock', datetime('now'), datetime('now'));
 
       -- STEP B: INSERT EXACTLY 5 PLACEHOLDER PRODUCTS INTO HAIR-STRAIGHTENERS CATEGORY
       INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
@@ -164,6 +168,8 @@ export async function initTables() {
         ('img-chair-01', 'prod-etp-chair-01', '/products/chair_emerald_green_1786235658712.jpg', 'Emerald Royal Salon Chair', 1),
         ('img-chair-02', 'prod-etp-chair-02', '/products/chair_espresso_brown_1786235685819.jpg', 'Espresso Vintage Salon Chair', 1),
         ('img-chair-03', 'prod-etp-chair-03', '/products/chair_burgundy_red_1786235698852.jpg', 'Burgundy Regal Salon Chair', 1),
+        ('img-eye-ph-01', 'prod-eye-ph-01', '/products/antigravity_eyewear.jpg', 'Ray-Ban Tech Carbon Fiber Polarized', 1),
+        ('img-eye-ph-02', 'prod-eye-ph-02', '/products/antigravity_eyewear.jpg', 'Oakley Radar EV Path Prizm', 1),
         ('img-str-ph-01', 'prod-str-ph-01', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 1', 1),
         ('img-str-ph-02', 'prod-str-ph-02', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 2', 1),
         ('img-str-ph-03', 'prod-str-ph-03', '/products/ikonic_straightener_1786231866243.jpg', 'Eternity Pro Straightener 3', 1),
