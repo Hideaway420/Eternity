@@ -12,6 +12,7 @@ import {
   Upload,
   Loader2,
   CheckCircle2,
+  X,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
@@ -192,28 +193,28 @@ export default function AdminProductsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F6F2EC] text-on-surface">
+    <div className="min-h-screen bg-gray-100 text-gray-900 font-sans">
       {/* Near-White Global Backend Navigation Bar */}
       <AdminHeader />
 
-      <main className="container mx-auto p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8">
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Sub Header Action Bar */}
-        <div className="bg-surface-lowest rounded-2xl p-4 sm:p-6 border border-outline-variant shadow-soft flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="bg-white rounded-xl p-5 border-2 border-gray-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <Link href="/admin" className="text-xs text-outline hover:underline flex items-center">
+              <Link href="/admin" className="text-xs font-bold text-gray-700 hover:text-black flex items-center">
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Admin Dashboard
               </Link>
             </div>
-            <h1 className="font-serif text-xl sm:text-3xl font-bold tracking-tight mt-1 flex items-center">
-              <PackageCheck className="w-6 h-6 sm:w-7 sm:h-7 mr-2 sm:mr-3 text-gold" /> Catalog & Products
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight mt-1 flex items-center">
+              <PackageCheck className="w-7 h-7 mr-3 text-yellow-600" /> Catalog & Products Management
             </h1>
           </div>
 
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <Link
               href="/admin/inventory-studio"
-              className="px-4 py-3 rounded-xl bg-surface-low border border-outline-variant hover:border-gold text-on-surface font-bold text-xs transition-colors flex items-center space-x-1"
+              className="px-4 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 border-2 border-gray-400 text-black font-extrabold text-xs flex items-center space-x-1"
             >
               <span>Inventory Studio</span>
             </Link>
@@ -234,7 +235,7 @@ export default function AdminProductsPage() {
                 });
                 setShowAddModal(true);
               }}
-              className="px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs shadow-gold transition-colors flex items-center justify-center space-x-2"
+              className="px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold text-xs border-2 border-yellow-700 flex items-center justify-center space-x-2"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Product</span>
@@ -244,81 +245,81 @@ export default function AdminProductsPage() {
 
         {feedbackMsg && (
           <div
-            className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between ${
+            className={`p-4 rounded-xl text-xs font-bold flex items-center justify-between border-2 ${
               feedbackMsg.type === "success"
-                ? "bg-green-50 text-green-800 border border-green-200"
-                : "bg-red-50 text-red-800 border border-red-200"
+                ? "bg-green-100 text-green-900 border-green-400"
+                : "bg-red-100 text-red-900 border-red-400"
             }`}
           >
             <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-green-700" />
+              <CheckCircle2 className="w-4 h-4 text-green-800" />
               <span>{feedbackMsg.text}</span>
             </div>
-            <button onClick={() => setFeedbackMsg(null)} className="font-bold underline">
+            <button onClick={() => setFeedbackMsg(null)} className="font-extrabold underline">
               Dismiss
             </button>
           </div>
         )}
 
         {/* Metrics Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-          <div className="p-4 sm:p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
-            <span className="text-xs font-mono text-outline uppercase tracking-wider block">Total Catalog Items</span>
-            <div className="text-2xl sm:text-3xl font-bold font-sans text-on-surface mt-1.5">{productList.length}</div>
-            <span className="text-[11px] text-green-700 font-semibold mt-1 block">Active in Storefront</span>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-5 rounded-xl bg-white border-2 border-gray-300">
+            <span className="text-xs font-extrabold text-gray-700 uppercase tracking-wider block">Total Catalog Items</span>
+            <div className="text-3xl font-extrabold text-black mt-1">{productList.length}</div>
+            <span className="text-xs text-green-800 font-bold mt-1 block">Active in Storefront</span>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-surface-lowest border border-outline-variant shadow-soft">
-            <span className="text-xs font-mono text-outline uppercase tracking-wider block">D2C Styling Tools & Eyewear</span>
-            <div className="text-2xl sm:text-3xl font-bold font-sans text-gold mt-1.5">
-              {productList.filter((p) => p.line === "traffic").length}
+          <div className="p-5 rounded-xl bg-white border-2 border-gray-300">
+            <span className="text-xs font-extrabold text-gray-700 uppercase tracking-wider block">D2C Styling Tools & Eyewear</span>
+            <div className="text-3xl font-extrabold text-yellow-700 mt-1">
+              {productList.filter((p) => p.line === "traffic" || p.line === "eyewear").length}
             </div>
-            <span className="text-[11px] text-outline mt-1 block">Traffic Line</span>
+            <span className="text-xs text-gray-800 font-bold mt-1 block">Traffic Line</span>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-gold/40 shadow-soft">
-            <span className="text-xs font-mono text-gold uppercase tracking-wider block">Salon Furniture</span>
-            <div className="text-2xl sm:text-3xl font-bold font-sans text-on-surface mt-1.5">
+          <div className="p-5 rounded-xl bg-white border-2 border-yellow-500">
+            <span className="text-xs font-extrabold text-yellow-800 uppercase tracking-wider block">Salon Furniture</span>
+            <div className="text-3xl font-extrabold text-black mt-1">
               {productList.filter((p) => p.line === "profit").length}
             </div>
-            <span className="text-[11px] text-outline mt-1 block">High-Margin B2B Equipment</span>
+            <span className="text-xs text-gray-800 font-bold mt-1 block">High-Margin B2B Equipment</span>
           </div>
         </div>
 
         {/* Filter & Search Strip */}
-        <div className="p-4 rounded-2xl bg-surface-lowest border border-outline-variant flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-soft">
+        <div className="p-4 rounded-xl bg-white border-2 border-gray-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="relative flex-1">
             <input
               type="text"
               placeholder="Search product name or SKU..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface-low border border-outline-variant rounded-xl py-2.5 pl-9 pr-4 text-xs focus:outline-none focus:border-gold"
+              className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl py-2.5 pl-9 pr-4 text-xs focus:outline-none focus:border-black"
             />
-            <Search className="w-4 h-4 text-outline absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-gray-700 absolute left-3 top-3" />
           </div>
 
-          <div className="flex gap-1.5 text-[11px] sm:text-xs overflow-x-auto pb-1 sm:pb-0">
+          <div className="flex gap-2 text-xs">
             <button
               onClick={() => setLineFilter("all")}
-              className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
-                lineFilter === "all" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                lineFilter === "all" ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
               }`}
             >
               All Products
             </button>
             <button
               onClick={() => setLineFilter("traffic")}
-              className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
-                lineFilter === "traffic" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                lineFilter === "traffic" ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
               }`}
             >
               Styling Tools & Eyewear
             </button>
             <button
               onClick={() => setLineFilter("profit")}
-              className={`px-3 py-1.5 rounded-lg border font-semibold whitespace-nowrap transition-colors ${
-                lineFilter === "profit" ? "border-gold bg-gold/15 text-on-surface" : "border-outline-variant hover:border-gold/50"
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                lineFilter === "profit" ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
               }`}
             >
               Salon Equipment
@@ -327,39 +328,39 @@ export default function AdminProductsPage() {
         </div>
 
         {/* Product Listing Table */}
-        <div className="rounded-2xl bg-surface-lowest border border-outline-variant overflow-hidden shadow-soft">
+        <div className="rounded-xl bg-white border-2 border-gray-300 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs min-w-[700px]">
               <thead>
-                <tr className="bg-surface-container-high text-outline uppercase font-mono border-b border-outline-variant">
-                  <th className="py-3.5 px-4 font-bold">Image & Product</th>
-                  <th className="py-3.5 px-4 font-bold">SKU</th>
-                  <th className="py-3.5 px-4 font-bold">Line</th>
-                  <th className="py-3.5 px-4 font-bold">Retail Price (NPR)</th>
-                  <th className="py-3.5 px-4 font-bold">Daraz Anchor</th>
-                  <th className="py-3.5 px-4 font-bold">Status</th>
-                  <th className="py-3.5 px-4 font-bold text-right">Actions</th>
+                <tr className="bg-gray-200 text-gray-900 uppercase font-extrabold border-b-2 border-gray-400">
+                  <th className="py-3.5 px-4">Image & Product</th>
+                  <th className="py-3.5 px-4">SKU</th>
+                  <th className="py-3.5 px-4">Line</th>
+                  <th className="py-3.5 px-4">Retail Price (NPR)</th>
+                  <th className="py-3.5 px-4">Daraz Anchor</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-outline-variant/60">
+              <tbody className="divide-y-2 divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-outline">
+                    <td colSpan={7} className="py-12 text-center text-gray-800 font-extrabold">
                       Loading backend catalog products...
                     </td>
                   </tr>
                 ) : filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-outline">
+                    <td colSpan={7} className="py-12 text-center text-gray-800 font-extrabold">
                       No products matching filter.
                     </td>
                   </tr>
                 ) : (
                   filteredProducts.map((p) => (
-                    <tr key={p.id} className="hover:bg-surface-low/60 transition-colors">
+                    <tr key={p.id} className="hover:bg-yellow-50">
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl overflow-hidden bg-surface-low border border-outline-variant flex-shrink-0">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-400 flex-shrink-0">
                             <img
                               src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                               alt={p.name}
@@ -367,29 +368,29 @@ export default function AdminProductsPage() {
                             />
                           </div>
                           <div>
-                            <span className="font-serif font-bold text-xs sm:text-sm text-on-surface block line-clamp-1">{p.name}</span>
-                            <span className="text-[10px] text-outline font-mono">/p/{p.slug}</span>
+                            <span className="font-extrabold text-sm text-black block line-clamp-1">{p.name}</span>
+                            <span className="text-xs text-gray-600 font-mono font-bold">/p/{p.slug}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="py-3.5 px-4 font-mono font-semibold">{p.sku}</td>
+                      <td className="py-3.5 px-4 font-mono font-extrabold text-black">{p.sku}</td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase ${
-                            p.line === "profit" ? "bg-purple-100 text-purple-800" : "bg-gold/20 text-on-surface"
+                          className={`px-2.5 py-1 rounded text-xs font-extrabold uppercase ${
+                            p.line === "profit" ? "bg-purple-200 text-purple-900 border border-purple-400" : "bg-yellow-200 text-yellow-900 border border-yellow-400"
                           }`}
                         >
                           {p.line === "profit" ? "B2B Equipment" : "D2C Tool"}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-bold font-sans">{formatNpr(p.price_npr)}</td>
-                      <td className="py-3.5 px-4 text-outline font-mono">
+                      <td className="py-3.5 px-4 font-extrabold text-sm text-black">{formatNpr(p.price_npr)}</td>
+                      <td className="py-3.5 px-4 text-gray-700 font-mono font-bold">
                         {p.compare_at_npr ? formatNpr(p.compare_at_npr) : "—"}
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            p.status === "active" ? "bg-green-100 text-green-800" : "bg-amber-100 text-amber-800"
+                          className={`px-2.5 py-1 rounded text-xs font-extrabold uppercase ${
+                            p.status === "active" ? "bg-green-200 text-green-900 border border-green-400" : "bg-amber-200 text-amber-900 border border-amber-400"
                           }`}
                         >
                           {p.status}
@@ -400,16 +401,16 @@ export default function AdminProductsPage() {
                           {/* EDIT PRODUCT BUTTON */}
                           <button
                             onClick={() => handleOpenEditModal(p)}
-                            className="px-2.5 py-1.5 rounded-lg bg-gold/15 hover:bg-gold text-on-surface border border-gold/40 font-bold text-[11px] transition-colors flex items-center space-x-1"
+                            className="px-3 py-1.5 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black border-2 border-black font-extrabold text-xs flex items-center space-x-1"
                           >
-                            <Pencil className="w-3 h-3" />
+                            <Pencil className="w-3.5 h-3.5" />
                             <span>Edit</span>
                           </button>
 
                           <Link
                             href={`/p/${p.slug}`}
                             target="_blank"
-                            className="px-2.5 py-1.5 rounded-lg bg-surface-low hover:bg-gold/20 border border-outline-variant font-bold text-[11px] transition-colors inline-block"
+                            className="px-3 py-1.5 rounded-lg bg-gray-200 hover:bg-gray-300 border-2 border-gray-400 font-extrabold text-xs text-black inline-block"
                           >
                             View PDP
                           </Link>
@@ -423,44 +424,48 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {/* Edit Product Modal */}
+        {/* Edit Product Modal - ULTRA HIGH CONTRAST & STATIC */}
         {showEditModal && editingProduct && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-surface-lowest border border-outline-variant rounded-3xl p-5 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-elevated">
-              <div className="flex justify-between items-center border-b border-outline-variant pb-4">
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+            <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-6 shadow-2xl text-gray-900">
+              <div className="flex justify-between items-center border-b-2 border-gray-300 pb-4">
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-gold font-bold">Product ID: {editingProduct.id}</span>
-                  <h2 className="font-serif text-xl sm:text-2xl font-bold flex items-center mt-0.5">
-                    <Pencil className="w-5 h-5 mr-2 text-gold" /> Edit Product Details
+                  <span className="text-xs font-mono uppercase text-yellow-700 font-extrabold">Product ID: {editingProduct.id}</span>
+                  <h2 className="text-2xl font-extrabold text-black flex items-center mt-1">
+                    <Pencil className="w-6 h-6 mr-2 text-yellow-600" /> Edit Product Details
                   </h2>
                 </div>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="text-xs font-bold px-3 py-1 bg-surface-low rounded-lg hover:bg-surface-container"
+                  className="text-xs font-extrabold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 border-2 border-gray-400 rounded-lg text-black flex items-center"
                 >
-                  Close ✕
+                  <X className="w-4 h-4 mr-1" /> Close
                 </button>
               </div>
 
-              <form onSubmit={handleUpdateProduct} className="space-y-4 text-xs">
+              <form onSubmit={handleUpdateProduct} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-bold text-outline mb-1">SKU *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      SKU *
+                    </label>
                     <input
                       type="text"
                       required
                       value={formData.sku}
                       onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold font-mono"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Status *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Status *
+                    </label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     >
                       <option value="active">Active (In Stock)</option>
                       <option value="out_of_stock">Out of Stock / Coming Soon</option>
@@ -469,54 +474,64 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-outline mb-1">Product Name *</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                    Product Name *
+                  </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                    className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block font-bold text-outline mb-1">Retail Price (NPR) *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Retail Price (NPR) *
+                    </label>
                     <input
                       type="number"
                       required
                       value={formData.price_npr}
                       onChange={(e) => setFormData({ ...formData, price_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold font-bold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Daraz Anchor Price (NPR)</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Daraz Anchor Price (NPR)
+                    </label>
                     <input
                       type="number"
                       value={formData.compare_at_npr}
                       onChange={(e) => setFormData({ ...formData, compare_at_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Trade Cost (NPR)</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Trade Cost (NPR)
+                    </label>
                     <input
                       type="number"
                       value={formData.cost_npr}
                       onChange={(e) => setFormData({ ...formData, cost_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Direct Image Upload Field */}
                 <div>
-                  <label className="block font-bold text-outline mb-1">Product Image (Direct Upload from Device)</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                    Product Image (Direct Device File Upload)
+                  </label>
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-gold hover:bg-gold-hover text-on-surface rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-sm flex-shrink-0">
+                    <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                       <span>Choose New Image</span>
                       <input type="file" accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
@@ -524,49 +539,51 @@ export default function AdminProductsPage() {
 
                     <input
                       type="text"
-                      placeholder="Or paste asset URL..."
+                      placeholder="Or paste image URL..."
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold font-mono"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
 
                   {formData.imageUrl && (
-                    <div className="mt-3 flex items-center space-x-3 p-2 bg-surface-low border border-outline-variant rounded-xl">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-surface-lowest flex-shrink-0">
+                    <div className="mt-3 flex items-center space-x-3 p-3 bg-gray-100 border-2 border-gray-300 rounded-xl">
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-white border border-gray-400 flex-shrink-0">
                         <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[10px] font-mono text-outline truncate">{formData.imageUrl}</span>
+                      <span className="text-xs font-mono font-bold text-black truncate">{formData.imageUrl}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block font-bold text-outline mb-1">Full Description</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                    Full Description
+                  </label>
                   <textarea
                     rows={4}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                    className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                   />
                 </div>
 
-                <div className="pt-2 flex justify-end gap-3 border-t border-outline-variant/60">
+                <div className="pt-3 flex justify-end gap-3 border-t-2 border-gray-300">
                   <button
                     type="button"
                     onClick={() => setShowEditModal(false)}
-                    className="px-5 py-3 rounded-xl border border-outline-variant font-bold text-xs hover:bg-surface-low"
+                    className="px-5 py-3 rounded-xl border-2 border-gray-400 font-extrabold text-xs text-black bg-gray-200 hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting || uploadingImage}
-                    className="px-6 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs shadow-gold transition-colors flex items-center space-x-1"
+                    className="px-6 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold text-xs border-2 border-black flex items-center space-x-2"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <Loader2 className="w-4 h-4 animate-spin" />
                         <span>Updating...</span>
                       </>
                     ) : (
@@ -579,42 +596,42 @@ export default function AdminProductsPage() {
           </div>
         )}
 
-        {/* Add Product Modal */}
+        {/* Add Product Modal - ULTRA HIGH CONTRAST */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-surface-lowest border border-outline-variant rounded-3xl p-5 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-elevated">
-              <div className="flex justify-between items-center border-b border-outline-variant pb-4">
-                <h2 className="font-serif text-xl sm:text-2xl font-bold flex items-center">
-                  <Plus className="w-5 h-5 mr-2 text-gold" /> Add New Catalog Product
+          <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+            <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-5 shadow-2xl text-gray-900">
+              <div className="flex justify-between items-center border-b-2 border-gray-300 pb-4">
+                <h2 className="text-2xl font-extrabold text-black flex items-center">
+                  <Plus className="w-6 h-6 mr-2 text-yellow-600" /> Add New Catalog Product
                 </h2>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="text-xs font-bold px-3 py-1 bg-surface-low rounded-lg hover:bg-surface-container"
+                  className="text-xs font-extrabold px-3 py-1.5 bg-gray-200 hover:bg-gray-300 border-2 border-gray-400 rounded-lg text-black flex items-center"
                 >
-                  Close ✕
+                  <X className="w-4 h-4 mr-1" /> Close
                 </button>
               </div>
 
-              <form onSubmit={handleCreateProduct} className="space-y-4 text-xs">
+              <form onSubmit={handleCreateProduct} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-bold text-outline mb-1">SKU *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">SKU *</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. ETP-110"
                       value={formData.sku}
                       onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold font-mono"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Product Line *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Product Line *</label>
                     <select
                       value={formData.line}
                       onChange={(e) => setFormData({ ...formData, line: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     >
                       <option value="traffic">D2C Hair Styling Tool (Traffic Line)</option>
                       <option value="eyewear">D2C Premium Eyewear (Traffic Line)</option>
@@ -624,58 +641,58 @@ export default function AdminProductsPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-outline mb-1">Product Name *</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Product Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Ikonic Professional Pro Titanium Shine 4.0"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                    className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block font-bold text-outline mb-1">Retail Price (NPR) *</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Retail Price (NPR) *</label>
                     <input
                       type="number"
                       required
                       placeholder="12920"
                       value={formData.price_npr}
                       onChange={(e) => setFormData({ ...formData, price_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Daraz Anchor Price (NPR)</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Daraz Anchor Price (NPR)</label>
                     <input
                       type="number"
                       placeholder="14500"
                       value={formData.compare_at_npr}
                       onChange={(e) => setFormData({ ...formData, compare_at_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-bold text-outline mb-1">Trade Cost (NPR)</label>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Trade Cost (NPR)</label>
                     <input
                       type="number"
                       placeholder="6300"
                       value={formData.cost_npr}
                       onChange={(e) => setFormData({ ...formData, cost_npr: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
                 </div>
 
                 {/* Direct Image Upload Field */}
                 <div>
-                  <label className="block font-bold text-outline mb-1">Product Main Image (Direct Device Upload)</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Product Main Image (Direct Device Upload)</label>
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <label className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-gold hover:bg-gold-hover text-on-surface rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-sm flex-shrink-0">
+                    <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                       <span>Choose File</span>
                       <input type="file" accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
@@ -686,34 +703,34 @@ export default function AdminProductsPage() {
                       placeholder="Or paste asset URL..."
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold font-mono"
+                      className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-outline mb-1">Full Description</label>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Full Description</label>
                   <textarea
                     rows={3}
                     placeholder="Official product imported directly by Eternity Products Nepal..."
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
+                    className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                   />
                 </div>
 
-                <div className="pt-2 flex justify-end gap-3">
+                <div className="pt-3 flex justify-end gap-3 border-t-2 border-gray-300">
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="px-5 py-3 rounded-xl border border-outline-variant font-bold text-xs hover:bg-surface-low"
+                    className="px-5 py-3 rounded-xl border-2 border-gray-400 font-extrabold text-xs text-black bg-gray-200 hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting || uploadingImage}
-                    className="px-6 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs shadow-gold transition-colors"
+                    className="px-6 py-3 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold text-xs border-2 border-black flex items-center space-x-2"
                   >
                     {isSubmitting ? "Saving Product..." : "Save Product to Catalog"}
                   </button>

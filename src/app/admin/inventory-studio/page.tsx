@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { addProductAction, CategorySlugType } from "@/actions/addProduct";
-import { Sparkles, Upload, CheckCircle2, ShieldCheck, ArrowLeft, Image as ImageIcon, Loader2, Glasses } from "lucide-react";
+import { Sparkles, Upload, CheckCircle2, ShieldCheck, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function InventoryStudioPage() {
@@ -19,7 +19,7 @@ export default function InventoryStudioPage() {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  // Task 3: Direct File Upload to /api/admin/upload-image API route
+  // Direct File Upload to /api/admin/upload-image API route
   const handleDirectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -88,46 +88,46 @@ export default function InventoryStudioPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#1B1C1C] py-10 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-100 text-gray-900 py-10 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8 border-b border-[#E8E1D7] pb-5">
+        <div className="flex justify-between items-center bg-white p-5 rounded-2xl border-2 border-gray-300">
           <div>
-            <span className="text-[10px] uppercase font-mono tracking-widest text-[#B58A18] font-bold block flex items-center">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Internal Ghost Portal • Eternity Nepal
+            <span className="text-xs uppercase font-mono tracking-widest text-yellow-700 font-extrabold block flex items-center">
+              <ShieldCheck className="w-4 h-4 mr-1 text-yellow-600" /> Internal Ghost Portal • Eternity Nepal
             </span>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#1B1C1C] mt-1">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-black mt-1">
               5-Category Inventory Studio
             </h1>
           </div>
           <Link
-            href="/"
-            className="px-3.5 py-2 bg-[#F8F3EC] border border-[#E0D8CD] hover:border-[#B58A18] text-xs font-bold rounded-xl text-[#2C2A29] transition-colors flex items-center space-x-1"
+            href="/admin/products"
+            className="px-4 py-2.5 bg-gray-200 border-2 border-gray-400 hover:bg-gray-300 text-xs font-extrabold rounded-xl text-black flex items-center space-x-1"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Storefront</span>
+            <ArrowLeft className="w-4 h-4" />
+            <span>Admin Catalog</span>
           </Link>
         </div>
 
         {/* Feedback Alert */}
         {feedback && (
           <div
-            className={`p-4 rounded-2xl mb-6 text-xs sm:text-sm font-bold flex items-center space-x-2 border shadow-xs ${
+            className={`p-4 rounded-xl text-xs sm:text-sm font-extrabold flex items-center space-x-2 border-2 ${
               feedback.type === "success"
-                ? "bg-[#EBF7EE] text-[#1B5E20] border-[#A5D6A7]"
-                : "bg-[#FDF2F2] text-[#B71C1C] border-[#EF9A9A]"
+                ? "bg-green-100 text-green-900 border-green-400"
+                : "bg-red-100 text-red-900 border-red-400"
             }`}
           >
-            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
             <span>{feedback.message}</span>
           </div>
         )}
 
-        {/* Form Container */}
-        <form onSubmit={handleSubmit} className="bg-[#F8F3EC] border border-[#E8E1D7] rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
+        {/* Form Container - HIGH CONTRAST & STATIC */}
+        <form onSubmit={handleSubmit} className="bg-white border-2 border-gray-300 rounded-2xl p-6 sm:p-8 space-y-6 text-gray-900">
           {/* Product Name */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+            <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
               Product Name *
             </label>
             <input
@@ -136,14 +136,14 @@ export default function InventoryStudioPage() {
               placeholder="e.g. Ray-Ban Tech Carbon Fiber Polarized / Oakley Radar EV Path Prizm"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-sm font-bold text-[#1B1C1C] focus:outline-none focus:border-[#B58A18] placeholder-[#7A7570]"
+              className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-sm font-extrabold text-black focus:outline-none focus:border-black placeholder-gray-500"
             />
           </div>
 
           {/* Category & Deposit % (2 Columns) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
                 Category Silo *
               </label>
               <select
@@ -154,7 +154,7 @@ export default function InventoryStudioPage() {
                     category_slug: e.target.value as CategorySlugType,
                   })
                 }
-                className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-sm font-bold text-[#1B1C1C] focus:outline-none focus:border-[#B58A18]"
+                className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-sm font-extrabold text-black focus:outline-none focus:border-black"
               >
                 <option value="eyewear">👓 Premium Eyewear (Oakley, Ray-Ban Tech)</option>
                 <option value="manicure-pedicure-spa-furniture">🛁 Manicure & Pedicure Spa Furniture</option>
@@ -165,7 +165,7 @@ export default function InventoryStudioPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
                 Upfront Deposit (%) *
               </label>
               <input
@@ -176,14 +176,14 @@ export default function InventoryStudioPage() {
                 placeholder="15"
                 value={formData.deposit_percentage}
                 onChange={(e) => setFormData({ ...formData, deposit_percentage: e.target.value })}
-                className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-sm font-bold text-[#1B1C1C] focus:outline-none focus:border-[#B58A18]"
+                className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-sm font-extrabold text-black focus:outline-none focus:border-black"
               />
             </div>
           </div>
 
           {/* Price (NPR) */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+            <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
               Price (NPR) — (Enter 0 for "Coming Soon" Placeholders)
             </label>
             <input
@@ -192,16 +192,16 @@ export default function InventoryStudioPage() {
               placeholder="e.g. 18500 (or 0 for Coming Soon)"
               value={formData.price_npr}
               onChange={(e) => setFormData({ ...formData, price_npr: e.target.value })}
-              className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-sm font-bold text-[#1B1C1C] focus:outline-none focus:border-[#B58A18]"
+              className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-sm font-extrabold text-black focus:outline-none focus:border-black"
             />
-            <span className="text-[11px] text-[#7A7570] mt-1 block">
+            <span className="text-xs text-gray-700 font-bold mt-1 block">
               Enter 0 to mark item as "Coming Soon". Non-zero prices convert to integer paisa (NPR × 100).
             </span>
           </div>
 
           {/* SEO Meta Description */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+            <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
               SEO Description (Dynamic Metadata Engine)
             </label>
             <textarea
@@ -209,18 +209,18 @@ export default function InventoryStudioPage() {
               placeholder="High-converting description for Nepalese Google crawlers..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-sm font-normal text-[#1B1C1C] focus:outline-none focus:border-[#B58A18] placeholder-[#7A7570]"
+              className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-sm font-bold text-black focus:outline-none focus:border-black placeholder-gray-500"
             />
           </div>
 
-          {/* Direct Image Upload Input (Task 3) */}
+          {/* Direct Image Upload Input */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#524F4A] mb-2">
+            <label className="block text-xs font-extrabold uppercase tracking-wider text-black mb-2">
               Product Image (Direct File Upload from Device)
             </label>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <label className="flex items-center justify-center space-x-2 px-5 py-3.5 bg-[#B58A18] hover:bg-[#A37B15] text-[#1B1C1C] rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-md flex-shrink-0">
-                {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin text-[#1B1C1C]" /> : <Upload className="w-4 h-4 text-[#1B1C1C]" />}
+              <label className="flex items-center justify-center space-x-2 px-5 py-3.5 bg-yellow-500 hover:bg-yellow-600 text-black border-2 border-black rounded-xl text-xs font-extrabold cursor-pointer flex-shrink-0">
+                {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin text-black" /> : <Upload className="w-4 h-4 text-black" />}
                 <span>Direct Upload File</span>
                 <input type="file" accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
               </label>
@@ -230,21 +230,21 @@ export default function InventoryStudioPage() {
                 placeholder="Or paste asset URL / path..."
                 value={formData.image_url}
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl px-4 py-3 text-xs font-bold text-[#1B1C1C] focus:outline-none focus:border-[#B58A18]"
+                className="w-full bg-white border-2 border-gray-400 rounded-xl px-4 py-3 text-xs font-extrabold text-black focus:outline-none focus:border-black font-mono"
               />
             </div>
 
             {/* Image Preview */}
             {formData.image_url && (
-              <div className="mt-3 flex items-center space-x-3 p-2.5 bg-[#FDFBF7] border border-[#E0D8CD] rounded-xl">
-                <div className="w-14 h-14 rounded-lg overflow-hidden border border-[#E0D8CD] flex-shrink-0 bg-[#F5F0E8]">
+              <div className="mt-3 flex items-center space-x-3 p-3 bg-gray-100 border-2 border-gray-300 rounded-xl">
+                <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-400 flex-shrink-0 bg-white">
                   <img src={formData.image_url} alt="Preview" className="w-full h-full object-cover" />
                 </div>
                 <div className="overflow-hidden">
-                  <span className="text-xs font-bold text-[#1B1C1C] block">
+                  <span className="text-xs font-extrabold text-black block">
                     Upload Ready
                   </span>
-                  <span className="text-[10px] font-mono text-[#7A7570] truncate block">
+                  <span className="text-xs font-mono text-gray-700 font-bold truncate block">
                     {formData.image_url}
                   </span>
                 </div>
@@ -256,16 +256,16 @@ export default function InventoryStudioPage() {
           <button
             type="submit"
             disabled={submitting || uploadingImage}
-            className="w-full py-4 bg-[#B58A18] hover:bg-[#A37B15] disabled:opacity-50 text-[#1B1C1C] font-bold rounded-2xl text-sm transition-all shadow-md flex items-center justify-center space-x-2"
+            className="w-full py-4 bg-yellow-500 hover:bg-yellow-600 border-2 border-black disabled:opacity-50 text-black font-extrabold rounded-xl text-sm flex items-center justify-center space-x-2"
           >
             {submitting ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-[#1B1C1C]" />
+                <Loader2 className="w-4 h-4 animate-spin text-black" />
                 <span>Injecting into Turso Database...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-[#1B1C1C]" />
+                <Sparkles className="w-4 h-4 text-black" />
                 <span>Inject Product into Turso</span>
               </>
             )}
