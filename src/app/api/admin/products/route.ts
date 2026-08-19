@@ -213,6 +213,7 @@ export async function GET() {
         price_npr: products.price_npr,
         compare_at_npr: products.compare_at_npr,
         cost_npr: products.cost_npr,
+        price_range: products.price_range,
         line: products.line,
         status: products.status,
       })
@@ -233,6 +234,7 @@ export async function GET() {
           price_npr: products.price_npr,
           compare_at_npr: products.compare_at_npr,
           cost_npr: products.cost_npr,
+          price_range: products.price_range,
           line: products.line,
           status: products.status,
         })
@@ -286,6 +288,8 @@ export async function POST(req: Request) {
       price_npr,
       compare_at_npr,
       cost_npr,
+      price_range,
+      priceRange,
       description,
       heroImageUrl,
       imageUrl,
@@ -308,6 +312,7 @@ export async function POST(req: Request) {
     const pricePaisa = Math.round(parseFloat(price_npr) * 100);
     const comparePaisa = compare_at_npr ? Math.round(parseFloat(compare_at_npr) * 100) : null;
     const costPaisa = cost_npr ? Math.round(parseFloat(cost_npr) * 100) : null;
+    const finalPriceRange = price_range || priceRange || null;
 
     // Insert Product
     await db
@@ -323,6 +328,7 @@ export async function POST(req: Request) {
         price_npr: pricePaisa,
         compare_at_npr: comparePaisa,
         cost_npr: costPaisa,
+        price_range: finalPriceRange,
         status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
         created_at: now,
         updated_at: now,
@@ -408,6 +414,8 @@ export async function PUT(req: Request) {
       price_npr,
       compare_at_npr,
       cost_npr,
+      price_range,
+      priceRange,
       description,
       heroImageUrl,
       imageUrl,
@@ -424,6 +432,7 @@ export async function PUT(req: Request) {
     const pricePaisa = Math.round(parseFloat(price_npr || "0") * 100);
     const comparePaisa = compare_at_npr ? Math.round(parseFloat(compare_at_npr) * 100) : null;
     const costPaisa = cost_npr ? Math.round(parseFloat(cost_npr) * 100) : null;
+    const finalPriceRange = price_range || priceRange || undefined;
 
     // Update Product Table
     await db
@@ -436,6 +445,7 @@ export async function PUT(req: Request) {
         price_npr: pricePaisa,
         compare_at_npr: comparePaisa,
         cost_npr: costPaisa,
+        price_range: finalPriceRange,
         description: description || undefined,
         status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
         updated_at: now,

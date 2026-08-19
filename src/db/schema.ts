@@ -33,6 +33,7 @@ export const products = sqliteTable("products", {
   price_npr: integer("price_npr").notNull(), // Integer paisa (NPR * 100)
   compare_at_npr: integer("compare_at_npr"), // Integer paisa (Daraz anchor)
   cost_npr: integer("cost_npr"), // CONFIDENTIAL integer paisa
+  price_range: text("price_range"), // Custom Price Range string (e.g. NPR 115,000 - NPR 145,000)
   b2b_only: integer("b2b_only", { mode: "boolean" }).default(false),
   warranty_months: integer("warranty_months").default(12),
   hs_code: text("hs_code"),

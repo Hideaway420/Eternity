@@ -60,6 +60,7 @@ export async function initTables() {
         price_npr INTEGER NOT NULL,
         compare_at_npr INTEGER,
         cost_npr INTEGER,
+        price_range TEXT,
         b2b_only INTEGER DEFAULT 0,
         warranty_months INTEGER DEFAULT 12,
         hs_code TEXT,
@@ -187,6 +188,9 @@ export async function initTables() {
     } catch (_) {}
     try {
       await client.execute(`ALTER TABLE products ADD COLUMN is_featured INTEGER DEFAULT 0;`);
+    } catch (_) {}
+    try {
+      await client.execute(`ALTER TABLE products ADD COLUMN price_range TEXT;`);
     } catch (_) {}
     try {
       await client.execute(`UPDATE products SET is_hero = 1 WHERE sku = 'ETP-SPA-01';`);

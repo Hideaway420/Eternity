@@ -28,6 +28,7 @@ interface ProductColorSelectorProps {
     imageUrls?: string[] | null;
     description?: string | null;
     priceRange?: string | null;
+    price_range?: string | null;
     offerText?: string | null;
     offerExpiry?: string | null;
     isLimitedEdition?: boolean;
@@ -306,6 +307,13 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
               </span>
             )}
           </div>
+
+          {(product.price_range || product.priceRange) && (
+            <div className="text-xs font-mono font-extrabold text-yellow-800 bg-yellow-100/90 px-3 py-1.5 rounded-xl border border-yellow-400 inline-flex items-center space-x-1">
+              <Tag className="w-3.5 h-3.5 mr-1 text-yellow-700" />
+              <span>Category Price Range: {product.price_range || product.priceRange}</span>
+            </div>
+          )}
 
           {/* 10% - 15% Upfront Booking Deposit Callout */}
           {isSpaCategory && (

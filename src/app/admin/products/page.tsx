@@ -30,6 +30,7 @@ interface ProductItem {
   price_npr: number;
   compare_at_npr?: number | null;
   cost_npr?: number | null;
+  price_range?: string | null;
   line: string;
   status: string;
   heroImageUrl?: string | null;
@@ -59,7 +60,7 @@ export default function AdminProductsPage() {
   const [deletingProduct, setDeletingProduct] = useState<ProductItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Form State with Hero vs Secondary Images Support
+  // Form State with Hero vs Secondary Images & Price Range Support
   const [formData, setFormData] = useState({
     id: "",
     sku: "",
@@ -69,6 +70,7 @@ export default function AdminProductsPage() {
     price_npr: "",
     compare_at_npr: "",
     cost_npr: "",
+    price_range: "",
     heroImageUrl: "",
     secondaryImageUrls: [] as string[],
     description: "",
@@ -110,6 +112,7 @@ export default function AdminProductsPage() {
       price_npr: (p.price_npr / 100).toString(),
       compare_at_npr: p.compare_at_npr ? (p.compare_at_npr / 100).toString() : "",
       cost_npr: p.cost_npr ? (p.cost_npr / 100).toString() : "",
+      price_range: p.price_range || "",
       heroImageUrl: hero,
       secondaryImageUrls: secondaries,
       description: p.description || "",
@@ -368,6 +371,7 @@ export default function AdminProductsPage() {
                   price_npr: "",
                   compare_at_npr: "",
                   cost_npr: "",
+                  price_range: "",
                   heroImageUrl: "",
                   secondaryImageUrls: [],
                   description: "",
@@ -728,6 +732,19 @@ export default function AdminProductsPage() {
                       className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                    Category Price Range Text (e.g. NPR 115,000 – NPR 145,000)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. NPR 115,000 – NPR 145,000"
+                    value={formData.price_range}
+                    onChange={(e) => setFormData({ ...formData, price_range: e.target.value })}
+                    className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none font-mono"
+                  />
                 </div>
 
                 {/* 1. HERO COVER IMAGE SELECTION (SHA-256 PROTECTED) */}

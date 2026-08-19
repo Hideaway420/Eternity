@@ -12,6 +12,7 @@ import {
   Building2,
   Footprints,
   Flame,
+  Glasses,
 } from "lucide-react";
 import { CartDrawer } from "@/components/storefront/CartDrawer";
 import { SearchModal } from "@/components/storefront/SearchModal";
@@ -254,6 +255,14 @@ export const Header: React.FC = () => {
               className="block p-2.5 rounded-xl font-bold text-xs hover:bg-white text-[#2C2A29]"
             >
               {isNp ? "ड्रायर र कर्लर" : "Dryers & Curlers"}
+            </Link>
+            <Link
+              href="/c/eyewear"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block p-2.5 rounded-xl font-bold text-xs hover:bg-white text-[#2C2A29] flex items-center"
+            >
+              <Glasses className="w-4 h-4 mr-2 text-gold" />
+              {isNp ? "प्रिमियम आईवेयर" : "Premium Eyewears"}
             </Link>
             <Link
               href="/warranty"
