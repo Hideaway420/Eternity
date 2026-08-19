@@ -180,6 +180,22 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       if (matched) {
         product = { ...product, ...matched };
       }
+
+      // Fetch all images for this product ordered by sort_order
+      const pImgs = await db
+        .select()
+        .from(productImages)
+        .where(eq(productImages.product_id, fetchedProd.id))
+        .all();
+
+      if (pImgs && pImgs.length > 0) {
+        const imageUrls = pImgs.map((img) => img.url);
+        product = {
+          ...product,
+          imageUrl: pImgs.find((img) => img.is_primary)?.url || imageUrls[0],
+          imageUrls: imageUrls,
+        };
+      }
     }
   } catch (err) {
     console.warn("⚠️ PDP DB query fallback active:", err);

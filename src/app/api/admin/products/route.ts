@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db, initTables } from "@/db";
 import { products, productImages, inventory } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function GET() {
@@ -20,14 +20,31 @@ export async function GET() {
         cost_npr: products.cost_npr,
         line: products.line,
         status: products.status,
-        imageUrl: productImages.url,
       })
       .from(products)
-      .leftJoin(productImages, eq(products.id, productImages.product_id))
       .orderBy(desc(products.created_at))
       .all();
 
-    return NextResponse.json({ success: true, products: allProducts });
+    // Fetch images for all products
+    const allImages = await db
+      .select()
+      .from(productImages)
+      .orderBy(asc(productImages.sort_order))
+      .all();
+
+    const productsWithImages = allProducts.map((p) => {
+      const pImgs = allImages.filter((img) => img.product_id === p.id);
+      const imageUrls = pImgs.map((img) => img.url);
+      const primaryUrl = pImgs.find((img) => img.is_primary)?.url || imageUrls[0] || "/products/ikonic_straightener_1786231866243.jpg";
+
+      return {
+        ...p,
+        imageUrl: primaryUrl,
+        imageUrls: imageUrls.length > 0 ? imageUrls : [primaryUrl],
+      };
+    });
+
+    return NextResponse.json({ success: true, products: productsWithImages });
   } catch (err: unknown) {
     const error = err as Error;
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -50,6 +67,7 @@ export async function POST(req: Request) {
       cost_npr,
       description,
       imageUrl,
+      imageUrls,
       status,
     } = body;
 
@@ -88,18 +106,25 @@ export async function POST(req: Request) {
       })
       .run();
 
-    // Insert Primary Product Image
-    const imgUrl = imageUrl || "/products/ikonic_straightener_1786231866243.jpg";
-    await db
-      .insert(productImages)
-      .values({
-        id: `img-${productId}`,
-        product_id: productId,
-        url: imgUrl,
-        alt: name,
-        is_primary: true,
-      })
-      .run();
+    // Collect all image URLs
+    const finalUrls: string[] = Array.isArray(imageUrls) && imageUrls.length > 0
+      ? imageUrls.filter((u: string) => u.trim() !== "")
+      : imageUrl ? [imageUrl] : ["/products/ikonic_straightener_1786231866243.jpg"];
+
+    // Insert Multiple Product Images
+    for (let i = 0; i < finalUrls.length; i++) {
+      await db
+        .insert(productImages)
+        .values({
+          id: `img-${productId}-${i}-${Date.now()}`,
+          product_id: productId,
+          url: finalUrls[i].trim(),
+          alt: `${name} Image ${i + 1}`,
+          sort_order: i,
+          is_primary: i === 0,
+        })
+        .run();
+    }
 
     // Insert Default Warehouse Inventory
     await db
@@ -124,14 +149,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Product created successfully!",
+      message: "Product created successfully with multiple images!",
       product: {
         id: productId,
         sku,
         slug: generatedSlug,
         name,
         price_npr: pricePaisa,
-        imageUrl: imgUrl,
+        imageUrl: finalUrls[0],
+        imageUrls: finalUrls,
       },
     });
   } catch (err: unknown) {
@@ -156,6 +182,7 @@ export async function PUT(req: Request) {
       cost_npr,
       description,
       imageUrl,
+      imageUrls,
       status,
     } = body;
 
@@ -186,24 +213,26 @@ export async function PUT(req: Request) {
       .where(eq(products.id, id))
       .run();
 
-    // Update Product Image Table if imageUrl provided
-    if (imageUrl) {
-      const existingImg = await db.select().from(productImages).where(eq(productImages.product_id, id)).get();
-      if (existingImg) {
-        await db
-          .update(productImages)
-          .set({ url: imageUrl, alt: name })
-          .where(eq(productImages.id, existingImg.id))
-          .run();
-      } else {
+    // Update Product Images if imageUrls or imageUrl provided
+    const finalUrls: string[] = Array.isArray(imageUrls) && imageUrls.length > 0
+      ? imageUrls.filter((u: string) => u.trim() !== "")
+      : imageUrl ? [imageUrl] : [];
+
+    if (finalUrls.length > 0) {
+      // Clean previous product images
+      await db.delete(productImages).where(eq(productImages.product_id, id)).run();
+
+      // Insert new multiple images
+      for (let i = 0; i < finalUrls.length; i++) {
         await db
           .insert(productImages)
           .values({
-            id: `img-${id}`,
+            id: `img-${id}-${i}-${Date.now()}`,
             product_id: id,
-            url: imageUrl,
-            alt: name,
-            is_primary: true,
+            url: finalUrls[i].trim(),
+            alt: `${name} Image ${i + 1}`,
+            sort_order: i,
+            is_primary: i === 0,
           })
           .run();
       }
@@ -213,7 +242,7 @@ export async function PUT(req: Request) {
     revalidatePath("/c/[category]", "page");
     revalidatePath("/p/[slug]", "page");
 
-    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully!` });
+    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully with ${finalUrls.length} images!` });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message || "Failed to update product." }, { status: 500 });
   }

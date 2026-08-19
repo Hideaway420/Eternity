@@ -25,6 +25,7 @@ interface ProductColorSelectorProps {
     line: string;
     specs?: string | null;
     imageUrl?: string | null;
+    imageUrls?: string[] | null;
     description?: string | null;
     priceRange?: string | null;
     offerText?: string | null;
@@ -68,6 +69,10 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
   const primaryImg = product.imageUrl || (isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
 
+  // Multi-Image Gallery List
+  const extraImages = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [primaryImg];
+  const galleryPhotos = Array.from(new Set([primaryImg, ...extraImages]));
+
   // Real Color Swatches
   const colorVariants: ColorVariant[] = isSpaCategory
     ? [
@@ -100,14 +105,14 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           hex: "#1B4D3E",
           image: "/products/chair_emerald_green_1786235658712.jpg",
           inStock: true,
-          stockCount: 4,
+          stockCount: 5,
         },
         {
           name: "Espresso Vintage Brown",
           hex: "#4A2E1B",
           image: "/products/chair_espresso_brown_1786235685819.jpg",
           inStock: true,
-          stockCount: 3,
+          stockCount: 4,
         },
         {
           name: "Burgundy Velvet Red",
@@ -119,14 +124,7 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
       ]
     : [
         {
-          name: "Rose Gold Titanium",
-          hex: "#B76E79",
-          image: "https://www.ikonicworld.com/cdn/shop/files/8904231015937_1_702816a3-41c8-4c88-92b3-ab4c7779920f.jpg",
-          inStock: true,
-          stockCount: 15,
-        },
-        {
-          name: "Matte Charcoal Pro",
+          name: "Ikonic Professional Titanium",
           hex: "#2B2C2C",
           image: primaryImg.includes("http") ? primaryImg : "/products/ikonic_straightener_1786231866243.jpg",
           inStock: true,
@@ -205,8 +203,39 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           )}
         </div>
 
-        {/* Real Color Thumbnails */}
-        <div className="grid grid-cols-3 gap-3 pt-2">
+        {/* Multi-Image Interactive Gallery Strip */}
+        {galleryPhotos.length > 1 && (
+          <div className="space-y-2 pt-1">
+            <span className="text-[11px] uppercase font-bold text-gold tracking-wider block">
+              Product Photos Gallery ({galleryPhotos.length} View Angles)
+            </span>
+            <div className="flex items-center space-x-3 overflow-x-auto pb-2">
+              {galleryPhotos.map((photoUrl, idx) => (
+                <button
+                  key={`photo-${idx}`}
+                  onClick={() => {
+                    setImageLoading(true);
+                    setSelectedImage(photoUrl);
+                    setTimeout(() => setImageLoading(false), 150);
+                  }}
+                  className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 flex-shrink-0 transition-all ${
+                    selectedImage === photoUrl
+                      ? "border-gold ring-4 ring-gold/30 scale-105 shadow-gold"
+                      : "border-outline-variant opacity-75 hover:opacity-100"
+                  }`}
+                >
+                  <img src={photoUrl} alt={`${product.name} View ${idx + 1}`} className="w-full h-full object-cover" />
+                  <span className="absolute bottom-1 right-1 bg-black/80 text-white text-[9px] font-mono px-1 py-0.5 rounded font-bold">
+                    #{idx + 1}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Real Color Swatch Thumbnails */}
+        <div className="grid grid-cols-3 gap-3 pt-1">
           {colorVariants.map((v) => (
             <button
               key={v.name}

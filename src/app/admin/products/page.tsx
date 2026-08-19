@@ -13,6 +13,8 @@ import {
   Loader2,
   CheckCircle2,
   X,
+  Trash2,
+  Star,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 
@@ -28,6 +30,7 @@ interface ProductItem {
   line: string;
   status: string;
   imageUrl?: string | null;
+  imageUrls?: string[] | null;
 }
 
 export default function AdminProductsPage() {
@@ -46,7 +49,7 @@ export default function AdminProductsPage() {
   const [editingProduct, setEditingProduct] = useState<ProductItem | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Form State
+  // Form State with Multi-Image Support
   const [formData, setFormData] = useState({
     id: "",
     sku: "",
@@ -57,6 +60,7 @@ export default function AdminProductsPage() {
     compare_at_npr: "",
     cost_npr: "",
     imageUrl: "",
+    imageUrls: [] as string[],
     description: "",
     status: "active",
   });
@@ -82,6 +86,8 @@ export default function AdminProductsPage() {
 
   const handleOpenEditModal = (p: ProductItem) => {
     setEditingProduct(p);
+    const existingImgs = p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls : [p.imageUrl || ""].filter(Boolean);
+    
     setFormData({
       id: p.id,
       sku: p.sku,
@@ -91,43 +97,80 @@ export default function AdminProductsPage() {
       price_npr: (p.price_npr / 100).toString(),
       compare_at_npr: p.compare_at_npr ? (p.compare_at_npr / 100).toString() : "",
       cost_npr: p.cost_npr ? (p.cost_npr / 100).toString() : "",
-      imageUrl: p.imageUrl || "",
+      imageUrl: existingImgs[0] || "",
+      imageUrls: existingImgs,
       description: p.description || "",
       status: p.status || "active",
     });
     setShowEditModal(true);
   };
 
-  // Direct Image Upload Handler for Admin Panel
+  // Multiple File Upload Handler
   const handleDirectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploadingImage(true);
     setFeedbackMsg(null);
 
+    const uploadedUrls: string[] = [];
+
     try {
-      const data = new FormData();
-      data.append("image", file);
+      for (let i = 0; i < files.length; i++) {
+        const data = new FormData();
+        data.append("image", files[i]);
 
-      const res = await fetch("/api/admin/upload-image", {
-        method: "POST",
-        body: data,
-      });
+        const res = await fetch("/api/admin/upload-image", {
+          method: "POST",
+          body: data,
+        });
 
-      const json = await res.json();
+        const json = await res.json();
+        if (json.success && json.url) {
+          uploadedUrls.push(json.url);
+        }
+      }
 
-      if (json.success && json.url) {
-        setFormData((prev) => ({ ...prev, imageUrl: json.url }));
-        setFeedbackMsg({ type: "success", text: "Image uploaded successfully to server!" });
-      } else {
-        setFeedbackMsg({ type: "error", text: json.error || "Failed to upload image file." });
+      if (uploadedUrls.length > 0) {
+        setFormData((prev) => {
+          const combined = Array.from(new Set([...(prev.imageUrls || []), ...uploadedUrls]));
+          return {
+            ...prev,
+            imageUrl: combined[0] || prev.imageUrl,
+            imageUrls: combined,
+          };
+        });
+        setFeedbackMsg({ type: "success", text: `${uploadedUrls.length} image(s) uploaded successfully!` });
       }
     } catch (err: any) {
-      setFeedbackMsg({ type: "error", text: err.message || "Failed to upload image file." });
+      setFeedbackMsg({ type: "error", text: err.message || "Failed to upload image files." });
     } finally {
       setUploadingImage(false);
     }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData((prev) => {
+      const updated = prev.imageUrls.filter((_, idx) => idx !== indexToRemove);
+      return {
+        ...prev,
+        imageUrl: updated[0] || "",
+        imageUrls: updated,
+      };
+    });
+  };
+
+  const handleSetCoverImage = (indexToSet: number) => {
+    setFormData((prev) => {
+      const target = prev.imageUrls[indexToSet];
+      const rest = prev.imageUrls.filter((_, idx) => idx !== indexToSet);
+      const reordered = [target, ...rest];
+      return {
+        ...prev,
+        imageUrl: target,
+        imageUrls: reordered,
+      };
+    });
   };
 
   const handleCreateProduct = async (e: React.FormEvent) => {
@@ -230,6 +273,7 @@ export default function AdminProductsPage() {
                   compare_at_npr: "",
                   cost_npr: "",
                   imageUrl: "",
+                  imageUrls: [],
                   description: "",
                   status: "active",
                 });
@@ -360,12 +404,17 @@ export default function AdminProductsPage() {
                     <tr key={p.id} className="hover:bg-yellow-50">
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-400 flex-shrink-0">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-400 flex-shrink-0 relative">
                             <img
                               src={p.imageUrl || "/products/ikonic_straightener_1786231866243.jpg"}
                               alt={p.name}
                               className="w-full h-full object-cover"
                             />
+                            {p.imageUrls && p.imageUrls.length > 1 && (
+                              <span className="absolute bottom-0 right-0 bg-black text-white text-[9px] font-mono px-1 rounded-tl font-bold">
+                                +{p.imageUrls.length - 1}
+                              </span>
+                            )}
                           </div>
                           <div>
                             <span className="font-extrabold text-sm text-black block line-clamp-1">{p.name}</span>
@@ -424,7 +473,7 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {/* Edit Product Modal - ULTRA HIGH CONTRAST & STATIC */}
+        {/* Edit Product Modal - MULTI-IMAGE MANAGEMENT */}
         {showEditModal && editingProduct && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-6 shadow-2xl text-gray-900">
@@ -525,33 +574,78 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                {/* Direct Image Upload Field */}
-                <div>
-                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
-                    Product Image (Direct Device File Upload)
-                  </label>
+                {/* MULTI-IMAGE UPLOAD & GALLERY MANAGEMENT */}
+                <div className="space-y-3 p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider">
+                      Product Images Gallery ({formData.imageUrls.length} Photos)
+                    </label>
+                    <span className="text-xs text-yellow-800 font-extrabold">Select Multiple Device Files</span>
+                  </div>
+
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      <span>Choose New Image</span>
-                      <input type="file" accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
+                      <span>Upload Device Image(s)</span>
+                      <input type="file" multiple accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
                     </label>
 
                     <input
                       type="text"
-                      placeholder="Or paste image URL..."
+                      placeholder="Or paste URL and press Enter..."
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && formData.imageUrl.trim()) {
+                          e.preventDefault();
+                          setFormData((prev) => ({
+                            ...prev,
+                            imageUrls: Array.from(new Set([...prev.imageUrls, prev.imageUrl.trim()])),
+                            imageUrl: "",
+                          }));
+                        }
+                      }}
                       className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
 
-                  {formData.imageUrl && (
-                    <div className="mt-3 flex items-center space-x-3 p-3 bg-gray-100 border-2 border-gray-300 rounded-xl">
-                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-white border border-gray-400 flex-shrink-0">
-                        <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                      </div>
-                      <span className="text-xs font-mono font-bold text-black truncate">{formData.imageUrl}</span>
+                  {/* Uploaded Images List with Cover Badge and Delete */}
+                  {formData.imageUrls.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                      {formData.imageUrls.map((url, idx) => (
+                        <div key={`img-item-${idx}`} className="relative bg-white border-2 border-gray-300 rounded-xl p-2 flex flex-col space-y-2">
+                          <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
+                            <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                            {idx === 0 ? (
+                              <span className="absolute top-1 left-1 bg-yellow-500 text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded border border-black uppercase flex items-center">
+                                <Star className="w-2.5 h-2.5 mr-0.5 fill-black" /> Cover
+                              </span>
+                            ) : (
+                              <span className="absolute top-1 left-1 bg-black text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">
+                                #{idx + 1}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] font-bold">
+                            {idx !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetCoverImage(idx)}
+                                className="text-yellow-700 hover:underline font-extrabold"
+                              >
+                                Set Cover
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(idx)}
+                              className="text-red-700 hover:underline font-extrabold ml-auto flex items-center"
+                            >
+                              <Trash2 className="w-3 h-3 mr-0.5" /> Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -596,7 +690,7 @@ export default function AdminProductsPage() {
           </div>
         )}
 
-        {/* Add Product Modal - ULTRA HIGH CONTRAST */}
+        {/* Add Product Modal - MULTI-IMAGE MANAGEMENT */}
         {showAddModal && (
           <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
             <div className="bg-white border-4 border-black rounded-2xl p-6 sm:p-8 max-w-2xl w-full max-h-[95vh] overflow-y-auto space-y-5 shadow-2xl text-gray-900">
@@ -688,24 +782,80 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                {/* Direct Image Upload Field */}
-                <div>
-                  <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Product Main Image (Direct Device Upload)</label>
+                {/* MULTI-IMAGE UPLOAD FIELD */}
+                <div className="space-y-3 p-4 bg-gray-50 border-2 border-gray-300 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider">
+                      Product Images Gallery ({formData.imageUrls.length} Photos)
+                    </label>
+                    <span className="text-xs text-yellow-800 font-extrabold">Select Multiple Device Files</span>
+                  </div>
+
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <label className="flex items-center justify-center space-x-2 px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-black rounded-xl text-xs font-extrabold border-2 border-black cursor-pointer flex-shrink-0">
                       {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      <span>Choose File</span>
-                      <input type="file" accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
+                      <span>Upload Device Image(s)</span>
+                      <input type="file" multiple accept="image/*" onChange={handleDirectImageUpload} className="hidden" />
                     </label>
 
                     <input
                       type="text"
-                      placeholder="Or paste asset URL..."
+                      placeholder="Or paste URL and press Enter..."
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && formData.imageUrl.trim()) {
+                          e.preventDefault();
+                          setFormData((prev) => ({
+                            ...prev,
+                            imageUrls: Array.from(new Set([...prev.imageUrls, prev.imageUrl.trim()])),
+                            imageUrl: "",
+                          }));
+                        }
+                      }}
                       className="w-full bg-white border-2 border-gray-400 text-black font-bold rounded-xl p-3 text-xs focus:border-black focus:outline-none font-mono"
                     />
                   </div>
+
+                  {/* Uploaded Images List */}
+                  {formData.imageUrls.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                      {formData.imageUrls.map((url, idx) => (
+                        <div key={`img-add-${idx}`} className="relative bg-white border-2 border-gray-300 rounded-xl p-2 flex flex-col space-y-2">
+                          <div className="relative aspect-square rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
+                            <img src={url} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
+                            {idx === 0 ? (
+                              <span className="absolute top-1 left-1 bg-yellow-500 text-black font-extrabold text-[9px] px-1.5 py-0.5 rounded border border-black uppercase flex items-center">
+                                <Star className="w-2.5 h-2.5 mr-0.5 fill-black" /> Cover
+                              </span>
+                            ) : (
+                              <span className="absolute top-1 left-1 bg-black text-white font-bold text-[9px] px-1.5 py-0.5 rounded font-mono">
+                                #{idx + 1}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between text-[10px] font-bold">
+                            {idx !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetCoverImage(idx)}
+                                className="text-yellow-700 hover:underline font-extrabold"
+                              >
+                                Set Cover
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(idx)}
+                              className="text-red-700 hover:underline font-extrabold ml-auto flex items-center"
+                            >
+                              <Trash2 className="w-3 h-3 mr-0.5" /> Remove
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
