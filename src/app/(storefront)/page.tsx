@@ -1,21 +1,27 @@
 import React from "react";
 import Link from "next/link";
+import { formatNpr } from "@/lib/money";
+import {
+  Sparkles,
+  ArrowRight,
+  Footprints,
+  Armchair,
+  Glasses,
+} from "lucide-react";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { MobileBottomBar } from "@/components/storefront/MobileBottomBar";
 import { TopLoadingBar } from "@/components/storefront/TopLoadingBar";
 import { SalonCalculatorWidget } from "@/components/storefront/SalonCalculatorWidget";
 import { InteractiveColorSection } from "@/components/storefront/InteractiveColorSection";
+
 import { db, initTables } from "@/db";
 import { products, productImages, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { formatNpr } from "@/lib/money";
-import { ShieldCheck, Sparkles, ArrowRight, CheckCircle2, Building2, Flame, Check, Footprints, Armchair, Tag, Lock } from "lucide-react";
 
-// Task 4: Incremental Static Regeneration (ISR) with 60-second revalidation
 export const revalidate = 60;
 
-// Task 2: Fetch Hero Product (where is_hero = true)
+// Fetch Hero Product (where is_hero = true)
 async function getHeroProduct() {
   try {
     await initTables();
@@ -50,7 +56,7 @@ async function getHeroProduct() {
   };
 }
 
-// Task 2: Fetch Featured Products (where is_featured = true)
+// Fetch Featured Products (where is_featured = true)
 async function getFeaturedProducts() {
   try {
     await initTables();
@@ -139,7 +145,7 @@ async function getFeaturedProducts() {
   ];
 }
 
-// Task 1: Fetch Styling Tools (category_slug = 'hair-dryers-curlers' LIMIT 4)
+// Fetch Styling Tools (category_slug = 'hair-dryers-curlers' LIMIT 4)
 async function getStylingTools() {
   try {
     await initTables();
@@ -180,12 +186,61 @@ async function getStylingTools() {
   });
 }
 
+// Fetch Premium Eyewear Products (category_slug = 'eyewear' LIMIT 4)
+async function getEyewearProducts() {
+  try {
+    await initTables();
+    const res = await db
+      .select({
+        id: products.id,
+        sku: products.sku,
+        slug: products.slug,
+        name: products.name,
+        price_npr: products.price_npr,
+        status: products.status,
+        imageUrl: productImages.url,
+      })
+      .from(products)
+      .leftJoin(productImages, eq(products.id, productImages.product_id))
+      .leftJoin(categories, eq(products.category_id, categories.id))
+      .where(eq(categories.slug, "eyewear"))
+      .limit(4)
+      .all();
+
+    if (res && res.length > 0) return res;
+  } catch (err) {
+    console.warn("⚠️ getEyewearProducts DB fetch fallback active:", err);
+  }
+
+  return [
+    {
+      id: "prod-eye-ph-01",
+      sku: "ETP-EYE-01",
+      slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
+      name: "Carbon Fiber Polarized Tech Eyewear - Coming Soon",
+      price_npr: 0,
+      status: "out_of_stock",
+      imageUrl: "/products/eyewear_placeholder_1.jpg",
+    },
+    {
+      id: "prod-eye-ph-02",
+      sku: "ETP-EYE-02",
+      slug: "oakley-radar-ev-path-prizm-sport-coming-soon",
+      name: "Titanium Sport Shield Eyewear - Coming Soon",
+      price_npr: 0,
+      status: "out_of_stock",
+      imageUrl: "/products/eyewear_placeholder_2.jpg",
+    },
+  ];
+}
+
 export default async function HomePage() {
-  // Task 1: Concurrent database queries via Promise.all for peak performance
-  const [heroProduct, featuredProducts, stylingTools] = await Promise.all([
+  // Concurrent database queries via Promise.all for peak performance
+  const [heroProduct, featuredProducts, stylingTools, eyewearProducts] = await Promise.all([
     getHeroProduct(),
     getFeaturedProducts(),
     getStylingTools(),
+    getEyewearProducts(),
   ]);
 
   return (
@@ -229,21 +284,20 @@ export default async function HomePage() {
 
               <div className="pt-4 sm:pt-6 grid grid-cols-3 gap-2 sm:gap-4 border-t border-outline-variant/60 text-[10px] sm:text-xs text-on-surface-variant">
                 <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold flex-shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-gold inline-block" />
                   <span>100% Genuine Seal</span>
                 </div>
                 <div className="flex items-center space-x-1.5">
-                  <Lock className="w-3.5 h-3.5 text-gold flex-shrink-0" />
-                  <span>15% Spa Booking Deposit</span>
+                  <span className="w-2 h-2 rounded-full bg-gold inline-block" />
+                  <span>15% Spa Deposit</span>
                 </div>
                 <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold flex-shrink-0" />
+                  <span className="w-2 h-2 rounded-full bg-gold inline-block" />
                   <span>1-Yr Warranty</span>
                 </div>
               </div>
             </div>
 
-            {/* Dynamic Hero Image Showcase */}
             <div className="lg:col-span-5 relative">
               <Link
                 href={`/p/${heroProduct.slug}`}
@@ -254,13 +308,10 @@ export default async function HomePage() {
                   alt={heroProduct.name}
                   className="w-full h-[320px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                
-                {/* Badge */}
                 <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 z-20">
                   <Sparkles className="w-3 h-3" />
                   <span>HERO FEATURE</span>
                 </div>
-
                 <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 glass-card rounded-2xl border border-white/60 z-20">
                   <div className="flex justify-between items-center">
                     <div>
@@ -284,12 +335,12 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 2: Interactive Color Matcher */}
+        {/* Section 2: Real Upholstery Color Customizer */}
         <section className="container mx-auto px-4 lg:px-8">
           <InteractiveColorSection />
         </section>
 
-        {/* Section 3: Categories Showcase */}
+        {/* Section 3: 5-Category Grid */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -357,21 +408,21 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6">
-            {featuredProducts.map((p) => (
+            {featuredProducts.map((product) => (
               <Link
-                key={p.id}
-                href={`/p/${p.slug}`}
+                key={product.id}
+                href={`/p/${product.slug}`}
                 className="group rounded-2xl md:rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-2.5 md:p-4 transition-all duration-150 active:scale-[0.98] hover:shadow-elevated flex flex-col justify-between cursor-pointer"
               >
                 <div>
                   <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
                     <img
-                      src={p.imageUrl || "/products/spa_chair_classic.jpg"}
-                      alt={p.name}
+                      src={product.imageUrl || "/products/spa_chair_classic.jpg"}
+                      alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <span className="absolute top-2 right-2 md:top-3 md:right-3 bg-inverse-surface/80 backdrop-blur-md text-white px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold font-mono">
-                      {p.sku}
+                      {product.sku}
                     </span>
                   </div>
 
@@ -379,14 +430,16 @@ export default async function HomePage() {
                     Official Eternity
                   </span>
                   <h3 className="font-serif font-bold text-xs sm:text-sm md:text-base text-on-surface group-hover:text-gold transition-colors line-clamp-2 mb-1">
-                    {p.name}
+                    {product.name}
                   </h3>
                 </div>
 
                 <div className="pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2">
                   <div>
                     <span className="text-[9px] md:text-xs text-outline block">Direct Importer Price</span>
-                    <span className="font-bold text-xs md:text-base text-gold font-sans">{formatNpr(p.price_npr)}</span>
+                    <span className="font-bold text-xs md:text-base text-gold font-sans">
+                      {formatNpr(product.price_npr)}
+                    </span>
                   </div>
                   <span className="w-full sm:w-auto text-center px-2.5 py-1.5 rounded-xl bg-gold/15 text-on-surface font-bold text-[10px] md:text-xs group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">
                     <span>View Item</span>
@@ -398,7 +451,70 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 5: Professional Hair Dryers & Curlers Row */}
+        {/* Section 5: Dedicated Premium Eyewear Section */}
+        <section className="container mx-auto px-4 lg:px-8">
+          <div className="flex justify-between items-end mb-6 sm:mb-8">
+            <div>
+              <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold flex items-center">
+                <Glasses className="w-3.5 h-3.5 mr-1 text-gold" /> Premium Eyewear Collection
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-on-surface mt-1">
+                Luxury Optics & Sport Eyewear
+              </h2>
+            </div>
+            <Link
+              href="/c/eyewear"
+              className="text-xs font-bold text-gold hover:underline flex items-center"
+            >
+              View All Eyewear <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">
+            {eyewearProducts.map((item) => (
+              <Link
+                key={item.id}
+                href={`/p/${item.slug}`}
+                className="group rounded-2xl md:rounded-3xl bg-surface-container-low border border-outline-variant hover:border-gold/60 p-2.5 md:p-4 transition-all duration-150 active:scale-[0.98] hover:shadow-elevated flex flex-col justify-between cursor-pointer"
+              >
+                <div>
+                  <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
+                    <img
+                      src={item.imageUrl || "/products/eyewear_placeholder_1.jpg"}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <span className="absolute top-2 right-2 md:top-2.5 md:right-2.5 bg-gold text-on-surface px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[8px] md:text-[10px] font-bold font-mono uppercase tracking-wider">
+                      {item.sku}
+                    </span>
+                  </div>
+
+                  <span className="text-[9px] md:text-xs font-mono text-outline uppercase tracking-wider block mb-0.5">
+                    Premium Optics
+                  </span>
+                  <h3 className="font-serif font-bold text-xs sm:text-sm md:text-base text-on-surface group-hover:text-gold transition-colors line-clamp-2 mb-1">
+                    {item.name}
+                  </h3>
+                </div>
+
+                <div className="pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1 mt-2">
+                  <div>
+                    <span className="text-[9px] md:text-[10px] text-outline block font-medium">Status</span>
+                    <span className="font-bold text-xs text-gold font-mono">
+                      {item.price_npr > 0 ? formatNpr(item.price_npr) : "Coming Soon"}
+                    </span>
+                  </div>
+                  <span className="w-full sm:w-auto text-center px-2 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[10px] md:text-[11px] group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">
+                    <span>Details</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Section 6: Professional Hair Dryers & Curlers Row */}
         <section className="container mx-auto px-4 lg:px-8">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
@@ -461,7 +577,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Section 6: B2B Salon Profit Calculator */}
+        {/* Section 7: B2B Salon Profit Calculator */}
         <section className="container mx-auto px-4 lg:px-8">
           <SalonCalculatorWidget />
         </section>

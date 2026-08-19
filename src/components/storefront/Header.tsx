@@ -154,6 +154,10 @@ export const Header: React.FC = () => {
               {isNp ? "ड्रायर र कर्लर" : "Hair Dryers & Curlers"}
             </Link>
 
+            <Link href="/c/eyewear" className="hover:text-gold transition-colors font-bold whitespace-nowrap">
+              {isNp ? "प्रिमियम आईवेयर" : "Premium Eyewear"}
+            </Link>
+
             <Link href="/warranty" className="hover:text-gold transition-colors flex items-center text-xs text-outline font-semibold whitespace-nowrap">
               <ShieldCheck className="w-3.5 h-3.5 mr-1 text-gold" /> {isNp ? "असली उत्पादन" : "Authenticity"}
             </Link>

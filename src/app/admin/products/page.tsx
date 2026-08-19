@@ -616,8 +616,9 @@ export default function AdminProductsPage() {
                       onChange={(e) => setFormData({ ...formData, line: e.target.value })}
                       className="w-full bg-surface-low border border-outline-variant rounded-xl p-3 text-xs focus:outline-none focus:border-gold"
                     >
-                      <option value="traffic">D2C Hair Styling Tool / Eyewear</option>
-                      <option value="profit">B2B Salon Furniture / Equipment</option>
+                      <option value="traffic">D2C Hair Styling Tool (Traffic Line)</option>
+                      <option value="eyewear">D2C Premium Eyewear (Traffic Line)</option>
+                      <option value="profit">B2B Salon Furniture / Equipment (Profit Line)</option>
                     </select>
                   </div>
                 </div>

@@ -121,10 +121,11 @@ export const Footer: React.FC = () => {
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Retail Categories</h4>
           <ul className="space-y-2 text-xs text-on-surface-variant font-medium">
-            <li><Link href="/c/spa" className="hover:text-gold transition-colors font-bold text-gold">Manicure & Pedicure Spa Furniture</Link></li>
-            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors font-bold text-on-surface">Luxury Salon Chairs</Link></li>
+            <li><Link href="/c/manicure-pedicure-spa-furniture" className="hover:text-gold transition-colors font-bold text-gold">Manicure & Pedicure Spa Furniture</Link></li>
+            <li><Link href="/c/luxury-chairs" className="hover:text-gold transition-colors font-bold text-on-surface">Luxury Salon Chairs</Link></li>
+            <li><Link href="/c/eyewear" className="hover:text-gold transition-colors font-bold text-on-surface">Premium Eyewear (Oakley & Ray-Ban Tech)</Link></li>
             <li><Link href="/c/hair-straighteners" className="hover:text-gold transition-colors">Hair Straighteners & Crimpers</Link></li>
-            <li><Link href="/c/hair-dryers" className="hover:text-gold transition-colors">Professional Blow Dryers</Link></li>
+            <li><Link href="/c/hair-dryers-curlers" className="hover:text-gold transition-colors">Professional Blow Dryers & Curlers</Link></li>
           </ul>
         </div>
 
