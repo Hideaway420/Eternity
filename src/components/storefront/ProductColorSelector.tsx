@@ -326,34 +326,36 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           </div>
         </div>
 
-        {/* CUSTOM SALON COLOR MATCH ADD-ON (+NPR 6,000) */}
-        <div className="p-5 rounded-2xl bg-surface-lowest border-2 border-gold/40 space-y-3 shadow-soft">
-          <div className="flex justify-between items-center">
-            <span className="font-serif font-bold text-xs sm:text-sm text-on-surface uppercase tracking-wider">
-              Bespoke Customization Add-On:
-            </span>
-            <span className="text-xs font-bold text-gold font-mono">+NPR 6,000</span>
-          </div>
+        {/* CUSTOM SALON COLOR MATCH ADD-ON (+NPR 6,000) - RESTRICTED STRICTLY TO SALON SPA & PEDICURE CHAIRS */}
+        {isSpaCategory && (
+          <div className="p-5 rounded-2xl bg-surface-lowest border-2 border-gold/40 space-y-3 shadow-soft">
+            <div className="flex justify-between items-center">
+              <span className="font-serif font-bold text-xs sm:text-sm text-on-surface uppercase tracking-wider">
+                Bespoke Customization Add-On:
+              </span>
+              <span className="text-xs font-bold text-gold font-mono">+NPR 6,000</span>
+            </div>
 
-          <label
-            onClick={() => setHasCustomColorMatch(!hasCustomColorMatch)}
-            className={`flex items-center space-x-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-              hasCustomColorMatch
-                ? "border-gold bg-gold/15 text-on-surface shadow-gold ring-2 ring-gold"
-                : "border-outline-variant bg-surface-low text-on-surface-variant hover:border-gold/60"
-            }`}
-          >
-            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-              hasCustomColorMatch ? "bg-gold border-gold text-on-surface" : "border-outline-variant bg-surface-lowest"
-            }`}>
-              {hasCustomColorMatch && <Check className="w-3.5 h-3.5 text-on-surface stroke-[3]" />}
-            </div>
-            <div>
-              <span className="font-bold text-xs sm:text-sm block">Custom Salon Color Match (+NPR 6,000)</span>
-              <span className="text-[11px] text-outline block">Align upholstery color perfectly with your salon&apos;s interior brand palette.</span>
-            </div>
-          </label>
-        </div>
+            <label
+              onClick={() => setHasCustomColorMatch(!hasCustomColorMatch)}
+              className={`flex items-center space-x-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                hasCustomColorMatch
+                  ? "border-gold bg-gold/15 text-on-surface shadow-gold ring-2 ring-gold"
+                  : "border-outline-variant bg-surface-low text-on-surface-variant hover:border-gold/60"
+              }`}
+            >
+              <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                hasCustomColorMatch ? "bg-gold border-gold text-on-surface" : "border-outline-variant bg-surface-lowest"
+              }`}>
+                {hasCustomColorMatch && <Check className="w-3.5 h-3.5 text-on-surface stroke-[3]" />}
+              </div>
+              <div>
+                <span className="font-bold text-xs sm:text-sm block">Custom Salon Color Match (+NPR 6,000)</span>
+                <span className="text-[11px] text-outline block">Align upholstery color perfectly with your salon&apos;s interior brand palette.</span>
+              </div>
+            </label>
+          </div>
+        )}
 
         {/* Interactive Quantity Selector */}
         <div className="flex items-center justify-between p-4 rounded-2xl bg-surface-lowest border border-outline-variant">

@@ -756,11 +756,20 @@ export default function AdminProductsPage() {
                   </div>
 
                   {formData.heroImageUrl && (
-                    <div className="flex items-center space-x-3 p-2 bg-white border border-yellow-400 rounded-lg">
-                      <div className="w-12 h-12 rounded overflow-hidden border border-gray-400 flex-shrink-0 bg-gray-100">
-                        <img src={formData.heroImageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
+                    <div className="flex items-center justify-between p-2 bg-white border border-yellow-400 rounded-lg">
+                      <div className="flex items-center space-x-3 overflow-hidden">
+                        <div className="w-12 h-12 rounded overflow-hidden border border-gray-400 flex-shrink-0 bg-gray-100">
+                          <img src={formData.heroImageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
+                        </div>
+                        <span className="text-xs font-mono font-bold text-black truncate">{formData.heroImageUrl}</span>
                       </div>
-                      <span className="text-xs font-mono font-bold text-black truncate">{formData.heroImageUrl}</span>
+                      <button
+                        type="button"
+                        onClick={() => setFormData((prev) => ({ ...prev, heroImageUrl: "" }))}
+                        className="text-red-700 hover:underline font-extrabold text-xs flex items-center ml-2 flex-shrink-0"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 mr-0.5" /> Remove
+                      </button>
                     </div>
                   )}
                 </div>
