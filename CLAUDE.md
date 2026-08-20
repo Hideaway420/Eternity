@@ -199,3 +199,10 @@ Direct and concrete. Name the number, the file, the action.
 ## The user
 
 Runs Eternity Products. Sells on TikTok (`@eternity.products`) and Facebook, imports from India, and already supplies beauty parlours directly.
+
+---
+
+## Open work
+
+Current open items, deferred work and the one thing still unverified in production are in
+`docs/NEXT-SESSION.md`. Read it before starting a new task.
