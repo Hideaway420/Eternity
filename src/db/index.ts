@@ -204,6 +204,9 @@ export async function initTables() {
     `);
 
     try {
+      await client.execute(`ALTER TABLE product_images ADD COLUMN image_hash TEXT;`);
+    } catch (_) {}
+    try {
       await client.execute(`ALTER TABLE products ADD COLUMN is_hero INTEGER DEFAULT 0;`);
     } catch (_) {}
     try {

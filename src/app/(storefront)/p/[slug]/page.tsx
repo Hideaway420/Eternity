@@ -7,6 +7,7 @@ import { db, initTables } from "@/db";
 import { products, productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { ProductColorSelector } from "@/components/storefront/ProductColorSelector";
+import { ProductReviewsSection } from "@/components/storefront/ProductReviewsSection";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -412,6 +413,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             equipmentType={product.name}
           />
         </div>
+
+        {/* Customer & Salon Verified Reviews Section */}
+        <ProductReviewsSection productName={product.name} />
       </main>
 
       <Footer />

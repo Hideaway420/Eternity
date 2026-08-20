@@ -617,19 +617,23 @@ export async function POST(req: Request) {
 
     const finalUrls = [heroUrl, ...secondaries.filter((u: string) => u && u.trim() !== "" && u !== heroUrl)];
 
-    // Insert Multiple Product Images into Turso DB
+    // Insert Multiple Product Images into Turso DB safely
     for (let i = 0; i < finalUrls.length; i++) {
-      await db
-        .insert(productImages)
-        .values({
-          id: `img-${productId}-${i}-${Date.now()}`,
-          product_id: productId,
-          url: finalUrls[i].trim(),
-          alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
-          sort_order: i,
-          is_primary: i === 0,
-        })
-        .run();
+      try {
+        await db
+          .insert(productImages)
+          .values({
+            id: `img-${productId}-${i}-${Date.now()}`,
+            product_id: productId,
+            url: finalUrls[i].trim(),
+            alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
+            sort_order: i,
+            is_primary: i === 0,
+          })
+          .run();
+      } catch (imgErr) {
+        console.warn("⚠️ productImages insert fallback:", imgErr);
+      }
     }
 
     // Insert Default Warehouse Inventory
@@ -741,19 +745,23 @@ export async function PUT(req: Request) {
       // Clean previous product images
       await db.delete(productImages).where(eq(productImages.product_id, id)).run();
 
-      // Insert new Hero & Secondary images
+      // Insert new Hero & Secondary images safely
       for (let i = 0; i < finalUrls.length; i++) {
-        await db
-          .insert(productImages)
-          .values({
-            id: `img-${id}-${i}-${Date.now()}`,
-            product_id: id,
-            url: finalUrls[i].trim(),
-            alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
-            sort_order: i,
-            is_primary: i === 0,
-          })
-          .run();
+        try {
+          await db
+            .insert(productImages)
+            .values({
+              id: `img-${id}-${i}-${Date.now()}`,
+              product_id: id,
+              url: finalUrls[i].trim(),
+              alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
+              sort_order: i,
+              is_primary: i === 0,
+            })
+            .run();
+        } catch (imgErr) {
+          console.warn("⚠️ productImages PUT insert fallback:", imgErr);
+        }
       }
     }
 
