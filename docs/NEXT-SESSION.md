@@ -16,7 +16,8 @@ Live at `https://www.eternityproducts.online`, verified 15/15 on production afte
   nothing ranked.
 - Sitemap is 16 URLs: 7 real products and 5 categories. No "Coming Soon" slugs.
 - Unknown slugs 404 instead of returning 200 with an invented product.
-- Orders persist to the database. Checkout used to discard every order silently.
+- Orders persist to the database, verified end to end on production. Checkout used to discard
+  every order silently.
 - `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `TURSO_DATABASE_URL` and
   `TURSO_AUTH_TOKEN` are all set in Vercel and confirmed working.
 
@@ -24,21 +25,33 @@ Live at `https://www.eternityproducts.online`, verified 15/15 on production afte
 
 ## Do these first
 
-### 1. Verify the order insert against Turso
+### 1. ~~Verify the order insert against Turso~~ DONE 2026-08-20
 
-**This is the only part of the new code never exercised in production.** `/api/orders` was proven
-to load, reject unstocked SKUs and reject bad phone numbers, but all three of those return before
-touching the database. The insert path itself is untested against the live Turso schema.
+Resolved. A live order was placed against production and round-tripped:
 
-```bash
-vercel env pull .env.local
-npm run db:push
+- `POST /api/orders` returned **201** with order `ETP-330479`
+- `/order/ETP-330479` returned 200 showing the right product and NPR 35,000
+- VAT component 402,655 paisa (exact 13% of a VAT-inclusive NPR 35,000), delivery 0 for Kathmandu,
+  `isSpaOrder: false` on a luxury chair so cash on delivery rather than deposit
+
+**`npm run db:push` is NOT needed.** Every column the order route writes already exists on Turso.
+
+Note for anyone who tries: the five Vercel variables are flagged **Sensitive**, which makes them
+write-only. `vercel env pull` returns the keys with **empty values**, so `drizzle-kit` silently
+falls back to the local `eternity.db`. There is no way to run `db:push` against Turso without the
+credentials from the Turso dashboard directly. Do not assume a `db:push` run touched production.
+
+**One test row to delete.** Order `ETP-330479`, recipient `ZZ TEST ORDER DELETE ME`. Remove it with:
+
+```sql
+DELETE FROM payments   WHERE order_id IN (SELECT id FROM orders WHERE order_number = 'ETP-330479');
+DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE order_number = 'ETP-330479');
+DELETE FROM orders     WHERE order_number = 'ETP-330479';
+DELETE FROM addresses  WHERE recipient = 'ZZ TEST ORDER DELETE ME';
 ```
 
-`drizzle-kit push` reconciles Turso to `src/db/schema.ts` and is additive for new columns. Then place
-one real order on the live site and confirm it appears, and delete the test row afterwards.
-
-If checkout 500s before you run this, a column is missing on Turso. That is the cause.
+Run those in order, the foreign keys require it. Do **not** delete the `customers` row by phone:
+the test used `9868089892`, which is the business's own number.
 
 ### 2. Turn the analytics on
 
