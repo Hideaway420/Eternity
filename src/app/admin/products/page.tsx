@@ -20,6 +20,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { AdminHeader } from "@/components/admin/AdminHeader";
+import { PILLARS } from "@/lib/taxonomy";
 
 interface ProductItem {
   id: string;
@@ -31,6 +32,7 @@ interface ProductItem {
   compare_at_npr?: number | null;
   cost_npr?: number | null;
   price_range?: string | null;
+  category_id?: string | null;
   line: string;
   status: string;
   heroImageUrl?: string | null;
@@ -39,12 +41,40 @@ interface ProductItem {
   imageUrls?: string[] | null;
 }
 
+const BLANK_FORM = {
+  id: "",
+  sku: "",
+  name: "",
+  slug: "",
+  category_id: "",
+  line: "traffic",
+  price_npr: "",
+  compare_at_npr: "",
+  cost_npr: "",
+  price_range: "",
+  opening_stock: "",
+  heroImageUrl: "",
+  secondaryImageUrls: [] as string[],
+  description: "",
+  status: "active",
+};
+
+/** Reads the API response whether it is JSON, an HTML error page, or a non-200. */
+async function readApiResult(res: Response) {
+  const body = await res
+    .json()
+    .catch(() => ({ success: false, error: `Server returned HTTP ${res.status} ${res.statusText}.` }));
+  const ok = res.ok && body?.success === true;
+  return { ok, body, error: body?.error || `Request failed with HTTP ${res.status}.` };
+}
+
 export default function AdminProductsPage() {
   const [productList, setProductList] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [lineFilter, setLineFilter] = useState<"all" | "traffic" | "eyewear" | "profit">("all");
-  
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+
   // Create Modal State
   const [showAddModal, setShowAddModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,36 +90,35 @@ export default function AdminProductsPage() {
   const [deletingProduct, setDeletingProduct] = useState<ProductItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Form State with Hero vs Secondary Images & Price Range Support
-  const [formData, setFormData] = useState({
-    id: "",
-    sku: "",
-    name: "",
-    slug: "",
-    line: "traffic",
-    price_npr: "",
-    compare_at_npr: "",
-    cost_npr: "",
-    price_range: "",
-    heroImageUrl: "",
-    secondaryImageUrls: [] as string[],
-    description: "",
-    status: "active",
-  });
+  // Form State with Category, Hero vs Secondary Images & Price Range Support
+  const [formData, setFormData] = useState({ ...BLANK_FORM });
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/admin/products");
-      const data = await res.json();
-      if (data.success) {
-        setProductList(data.products || []);
+      const { ok, body, error } = await readApiResult(res);
+      if (ok) {
+        setProductList(body.products || []);
+      } else {
+        setFeedbackMsg({ type: "error", text: error });
       }
     } catch (err) {
       console.error("Failed to load admin products:", err);
+      setFeedbackMsg({ type: "error", text: "Network error loading the catalog from the database." });
     } finally {
       setLoading(false);
     }
+  };
+
+  /** Picking a category also sets the matching product line, so the two can't drift apart. */
+  const handleCategoryChange = (categoryId: string) => {
+    const pillar = PILLARS.find((p) => p.id === categoryId);
+    setFormData((prev) => ({
+      ...prev,
+      category_id: categoryId,
+      line: pillar ? (pillar.slug === "eyewear" ? "eyewear" : pillar.line) : prev.line,
+    }));
   };
 
   useEffect(() => {
@@ -104,10 +133,12 @@ export default function AdminProductsPage() {
       : (p.imageUrls || []).filter((u) => u !== hero);
     
     setFormData({
+      ...BLANK_FORM,
       id: p.id,
       sku: p.sku,
       name: p.name,
       slug: p.slug,
+      category_id: p.category_id || "",
       line: p.line || "traffic",
       price_npr: (p.price_npr / 100).toString(),
       compare_at_npr: p.compare_at_npr ? (p.compare_at_npr / 100).toString() : "",
@@ -135,9 +166,9 @@ export default function AdminProductsPage() {
       const res = await fetch(`/api/admin/products?id=${deletingProduct.id}`, {
         method: "DELETE",
       });
-      const data = await res.json();
+      const { ok, error } = await readApiResult(res);
 
-      if (data.success) {
+      if (ok) {
         setFeedbackMsg({
           type: "success",
           text: `Product "${deletingProduct.name}" and all associated images and pages were permanently deleted!`,
@@ -146,10 +177,7 @@ export default function AdminProductsPage() {
         setDeletingProduct(null);
         fetchProducts();
       } else {
-        setFeedbackMsg({
-          type: "error",
-          text: data.error || "Failed to delete product.",
-        });
+        setFeedbackMsg({ type: "error", text: error });
       }
     } catch (err: any) {
       setFeedbackMsg({ type: "error", text: err.message || "Failed to delete product." });
@@ -274,6 +302,10 @@ export default function AdminProductsPage() {
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.category_id) {
+      setFeedbackMsg({ type: "error", text: "Pick a category. Without one the product never appears on any /c/ category page." });
+      return;
+    }
     setIsSubmitting(true);
     setFeedbackMsg(null);
 
@@ -283,14 +315,17 @@ export default function AdminProductsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const result = await res.json();
+      const { ok, body, error } = await readApiResult(res);
 
-      if (result.success) {
-        setFeedbackMsg({ type: "success", text: `Product "${formData.name}" added successfully!` });
+      if (ok) {
+        setFeedbackMsg({
+          type: "success",
+          text: body.message || `Product "${formData.name}" added successfully!`,
+        });
         setShowAddModal(false);
         fetchProducts();
       } else {
-        setFeedbackMsg({ type: "error", text: result.error || "Failed to create product." });
+        setFeedbackMsg({ type: "error", text: error });
       }
     } catch (err) {
       setFeedbackMsg({ type: "error", text: "Network error creating product." });
@@ -301,6 +336,10 @@ export default function AdminProductsPage() {
 
   const handleUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.category_id) {
+      setFeedbackMsg({ type: "error", text: "Pick a category. Without one the product never appears on any /c/ category page." });
+      return;
+    }
     setIsSubmitting(true);
     setFeedbackMsg(null);
 
@@ -310,14 +349,17 @@ export default function AdminProductsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      const result = await res.json();
+      const { ok, body, error } = await readApiResult(res);
 
-      if (result.success) {
-        setFeedbackMsg({ type: "success", text: `Product "${formData.name}" updated successfully!` });
+      if (ok) {
+        setFeedbackMsg({
+          type: "success",
+          text: body.message || `Product "${formData.name}" updated successfully!`,
+        });
         setShowEditModal(false);
         fetchProducts();
       } else {
-        setFeedbackMsg({ type: "error", text: result.error || "Failed to update product." });
+        setFeedbackMsg({ type: "error", text: error });
       }
     } catch (err) {
       setFeedbackMsg({ type: "error", text: "Network error updating product." });
@@ -338,8 +380,16 @@ export default function AdminProductsPage() {
         : lineFilter === "eyewear"
         ? p.line === "eyewear"
         : p.line === lineFilter;
-    return matchesSearch && matchesLine;
+    const matchesCategory =
+      categoryFilter === "all"
+        ? true
+        : categoryFilter === "none"
+        ? !p.category_id
+        : p.category_id === categoryFilter;
+    return matchesSearch && matchesLine && matchesCategory;
   });
+
+  const uncategorisedCount = productList.filter((p) => !p.category_id).length;
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 font-sans">
@@ -369,21 +419,7 @@ export default function AdminProductsPage() {
             </Link>
             <button
               onClick={() => {
-                setFormData({
-                  id: "",
-                  sku: "",
-                  name: "",
-                  slug: "",
-                  line: "traffic",
-                  price_npr: "",
-                  compare_at_npr: "",
-                  cost_npr: "",
-                  price_range: "",
-                  heroImageUrl: "",
-                  secondaryImageUrls: [],
-                  description: "",
-                  status: "active",
-                });
+                setFormData({ ...BLANK_FORM });
                 setShowAddModal(true);
               }}
               className="px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-black font-extrabold text-xs border-2 border-yellow-700 flex items-center justify-center space-x-2"
@@ -490,14 +526,55 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
+        {/* Category Filter Strip — driven by the 5-pillar taxonomy */}
+        <div className="p-4 rounded-xl bg-white border-2 border-gray-300 space-y-2.5">
+          <span className="text-xs font-extrabold text-gray-700 uppercase tracking-wider block">
+            Filter by Official Category
+          </span>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <button
+              onClick={() => setCategoryFilter("all")}
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                categoryFilter === "all" ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
+              }`}
+            >
+              All Categories
+            </button>
+            {PILLARS.map((pillar) => (
+              <button
+                key={pillar.id}
+                onClick={() => setCategoryFilter(pillar.id)}
+                className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                  categoryFilter === pillar.id ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
+                }`}
+              >
+                {pillar.name} ({productList.filter((p) => p.category_id === pillar.id).length})
+              </button>
+            ))}
+            <button
+              onClick={() => setCategoryFilter("none")}
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                categoryFilter === "none"
+                  ? "border-black bg-red-500 text-white"
+                  : uncategorisedCount > 0
+                  ? "border-red-400 bg-red-50 text-red-900"
+                  : "border-gray-300 bg-white text-gray-800"
+              }`}
+            >
+              Uncategorised ({uncategorisedCount})
+            </button>
+          </div>
+        </div>
+
         {/* Product Listing Table */}
         <div className="rounded-xl bg-white border-2 border-gray-300 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs min-w-[750px]">
+            <table className="w-full text-left border-collapse text-xs min-w-[900px]">
               <thead>
                 <tr className="bg-gray-200 text-gray-900 uppercase font-extrabold border-b-2 border-gray-400">
                   <th className="py-3.5 px-4">Image & Product</th>
                   <th className="py-3.5 px-4">SKU</th>
+                  <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Line</th>
                   <th className="py-3.5 px-4">Retail Price (NPR)</th>
                   <th className="py-3.5 px-4">Daraz Anchor</th>
@@ -508,13 +585,13 @@ export default function AdminProductsPage() {
               <tbody className="divide-y-2 divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-gray-800 font-extrabold">
+                    <td colSpan={8} className="py-12 text-center text-gray-800 font-extrabold">
                       Loading backend catalog products...
                     </td>
                   </tr>
                 ) : filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-gray-800 font-extrabold">
+                    <td colSpan={8} className="py-12 text-center text-gray-800 font-extrabold">
                       No products matching filter.
                     </td>
                   </tr>
@@ -542,6 +619,20 @@ export default function AdminProductsPage() {
                         </div>
                       </td>
                       <td className="py-3.5 px-4 font-mono font-extrabold text-black">{p.sku}</td>
+                      <td className="py-3.5 px-4">
+                        {(() => {
+                          const pillar = PILLARS.find((c) => c.id === p.category_id);
+                          return pillar ? (
+                            <span className="px-2.5 py-1 rounded text-xs font-extrabold uppercase bg-gray-200 text-gray-900 border border-gray-400 inline-block">
+                              {pillar.name}
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded text-xs font-extrabold uppercase bg-red-200 text-red-900 border border-red-500 inline-flex items-center">
+                              <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Uncategorised
+                            </span>
+                          );
+                        })()}
+                      </td>
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2.5 py-1 rounded text-xs font-extrabold uppercase ${
@@ -693,6 +784,49 @@ export default function AdminProductsPage() {
                     >
                       <option value="active">Active (In Stock)</option>
                       <option value="out_of_stock">Out of Stock / Coming Soon</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Category *
+                    </label>
+                    <select
+                      required
+                      value={formData.category_id}
+                      onChange={(e) => handleCategoryChange(e.target.value)}
+                      className={`w-full bg-white border-2 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none ${
+                        formData.category_id ? "border-gray-400" : "border-red-500"
+                      }`}
+                    >
+                      <option value="">Select a category…</option>
+                      {PILLARS.map((pillar) => (
+                        <option key={pillar.id} value={pillar.id}>
+                          {pillar.name}
+                        </option>
+                      ))}
+                    </select>
+                    {!formData.category_id && (
+                      <span className="text-[11px] font-extrabold text-red-700 mt-1 block">
+                        This product has no category, so it is invisible on every /c/ page. Pick one.
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Product Line *
+                    </label>
+                    <select
+                      value={formData.line}
+                      onChange={(e) => setFormData({ ...formData, line: e.target.value })}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
+                    >
+                      <option value="traffic">D2C Hair Styling Tool (Traffic Line)</option>
+                      <option value="eyewear">D2C Premium Eyewear (Traffic Line)</option>
+                      <option value="profit">B2B Salon Furniture / Equipment (Profit Line)</option>
                     </select>
                   </div>
                 </div>
@@ -945,6 +1079,32 @@ export default function AdminProductsPage() {
                   </div>
 
                   <div>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Category *</label>
+                    <select
+                      required
+                      value={formData.category_id}
+                      onChange={(e) => handleCategoryChange(e.target.value)}
+                      className={`w-full bg-white border-2 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none ${
+                        formData.category_id ? "border-gray-400" : "border-red-500"
+                      }`}
+                    >
+                      <option value="">Select a category…</option>
+                      {PILLARS.map((pillar) => (
+                        <option key={pillar.id} value={pillar.id}>
+                          {pillar.name}
+                        </option>
+                      ))}
+                    </select>
+                    {!formData.category_id && (
+                      <span className="text-[11px] font-extrabold text-red-700 mt-1 block">
+                        Required. A product with no category never shows on any /c/ page.
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
                     <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">Product Line *</label>
                     <select
                       value={formData.line}
@@ -955,6 +1115,26 @@ export default function AdminProductsPage() {
                       <option value="eyewear">D2C Premium Eyewear (Traffic Line)</option>
                       <option value="profit">B2B Salon Furniture / Equipment (Profit Line)</option>
                     </select>
+                    <span className="text-[11px] font-bold text-gray-600 mt-1 block">
+                      Auto-set from the category. Override only if this item sells on a different line.
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block font-extrabold text-black text-xs uppercase tracking-wider mb-1.5">
+                      Opening Stock (Units at Kathmandu Warehouse)
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder="0"
+                      value={formData.opening_stock}
+                      onChange={(e) => setFormData({ ...formData, opening_stock: e.target.value })}
+                      className="w-full bg-white border-2 border-gray-400 text-black font-extrabold rounded-xl p-3 text-sm focus:border-black focus:outline-none"
+                    />
+                    <span className="text-[11px] font-bold text-gray-600 mt-1 block">
+                      Blank saves 0 units. Adjust later in Inventory Studio.
+                    </span>
                   </div>
                 </div>
 

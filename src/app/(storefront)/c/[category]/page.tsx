@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { MobileBottomBar } from "@/components/storefront/MobileBottomBar";
@@ -7,13 +9,40 @@ import { db, initTables } from "@/db";
 import { products, categories, productImages } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { formatNpr } from "@/lib/money";
-import { SlidersHorizontal, ShieldCheck, Palette, Tag, Footprints, Lock } from "lucide-react";
+import { ProductImage } from "@/components/storefront/ProductImage";
+import { getPillar, PILLARS } from "@/lib/taxonomy";
+import { SlidersHorizontal, ShieldCheck, Palette, Tag, Footprints, Lock, ArrowUpDown } from "lucide-react";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
-  searchParams: Promise<{ line?: string; color?: string }>;
+  searchParams: Promise<{ line?: string; color?: string; sort?: string }>;
+}
+
+// Category-specific SEO metadata. Every pillar gets its own title/description/canonical
+// instead of inheriting the homepage's <title>.
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { category } = await params;
+  const pillar = getPillar(category);
+  if (!pillar) {
+    return { title: "Category Not Found" };
+  }
+
+  const title = `${pillar.name} in Nepal`;
+  const description = `Shop genuine ${pillar.name} in Nepal from Eternity Products. Direct import, 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery nationwide.`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/c/${pillar.slug}` },
+    openGraph: {
+      title: `${title} | Eternity Products`,
+      description,
+      url: `/c/${pillar.slug}`,
+      type: "website",
+    },
+  };
 }
 
 // 4 Distinct Product Catalogues for Each Category
@@ -320,14 +349,19 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const categorySlug = resolvedParams.category;
   const lineFilter = resolvedSearchParams.line;
+  const sortFilter = resolvedSearchParams.sort;
 
-  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || CATEGORY_PRODUCTS_MAP["eyewear"] || CATEGORY_PRODUCTS_MAP["spa"];
-  let title =
-    categorySlug === "eyewear" || categorySlug === "premium-eyewear" || categorySlug === "premium-eyewears"
-      ? "Premium Eyewears"
-      : categorySlug === "spa"
-      ? "SPA & Pedicure Chair Sanctuary"
-      : categorySlug.replace(/-/g, " ").toUpperCase();
+  // Unknown slugs (e.g. /c/nike-shoes) must 404, not silently render the eyewear catalogue.
+  const pillar = getPillar(categorySlug);
+  if (!pillar) {
+    notFound();
+  }
+  const isSpaFurniture = pillar.slug === "manicure-pedicure-spa-furniture";
+  // Unstocked pillars never show a price or a buy affordance, even where seed rows carry one.
+  const showPrices = pillar.stocked;
+
+  let categoryProducts = CATEGORY_PRODUCTS_MAP[categorySlug] || [];
+  let title = pillar.name;
 
   try {
     const cat = await db.select().from(categories).where(eq(categories.slug, categorySlug)).get();
@@ -368,8 +402,43 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     categoryProducts = categoryProducts.filter((p) => p.line === lineFilter);
   }
 
+  if (sortFilter === "price_asc") {
+    categoryProducts = [...categoryProducts].sort((a, b) => a.price_npr - b.price_npr);
+  } else if (sortFilter === "price_desc") {
+    categoryProducts = [...categoryProducts].sort((a, b) => b.price_npr - a.price_npr);
+  }
+
+  const absoluteBase = "https://www.eternityproducts.online";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${absoluteBase}/` },
+      { "@type": "ListItem", position: 2, name: title, item: `${absoluteBase}/c/${pillar.slug}` },
+    ],
+  };
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: categoryProducts
+      .filter((p) => showPrices && p.price_npr > 0)
+      .map((p, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        url: `${absoluteBase}/p/${p.slug}`,
+      })),
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface pb-16 md:pb-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <Header />
 
       <main className="flex-1 py-6 sm:py-10 container mx-auto px-3 sm:px-4 lg:px-8">
@@ -385,18 +454,18 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <span className="text-[10px] sm:text-xs uppercase font-bold text-gold tracking-widest block flex items-center">
-                <Footprints className="w-3.5 h-3.5 mr-1" /> Eternity Luxury Spa Collection
+                <Footprints className="w-3.5 h-3.5 mr-1" /> {pillar.name} Collection
               </span>
               <h1 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-on-surface capitalize mt-1">
                 {title}
               </h1>
               <p className="text-xs sm:text-sm text-on-surface-variant mt-2 max-w-2xl font-light">
-                {categorySlug === "spa"
+                {isSpaFurniture
                   ? "Transform your salon into a sanctuary of relaxation. Secured with a convenient 10% - 15% upfront booking deposit. Custom Salon Color Match available (+NPR 6,000)."
                   : "Explore genuine professional tools. Direct import with 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery."}
               </p>
             </div>
-            {categorySlug === "spa" && (
+            {isSpaFurniture && (
               <div className="px-4 py-2.5 bg-gold/15 border border-gold/40 text-on-surface rounded-xl text-xs font-bold flex items-center space-x-2 flex-shrink-0">
                 <Lock className="w-4 h-4 text-gold" />
                 <span>10% - 15% Upfront Booking Deposit</span>
@@ -417,59 +486,51 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <span className="text-xs text-outline">{categoryProducts.length} items</span>
               </div>
 
-              {/* Dedicated Category Quick Filters */}
+              {/* Dedicated Category Quick Filters — driven by the taxonomy.ts pillar list */}
               <div>
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2">Category Catalogue</h4>
                 <div className="space-y-1.5 text-xs">
+                  {PILLARS.map((p) => (
+                    <Link
+                      key={p.slug}
+                      href={`/c/${p.slug}`}
+                      className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
+                        categorySlug === p.slug
+                          ? "bg-gold/15 text-on-surface border border-gold/40"
+                          : "hover:bg-surface-low text-gold"
+                      }`}
+                    >
+                      {p.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sort Control — the SlidersHorizontal icon above now actually does something */}
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-outline mb-2 flex items-center">
+                  <ArrowUpDown className="w-3 h-3 mr-1" /> Sort By Price
+                </h4>
+                <div className="space-y-1.5 text-xs">
                   <Link
-                    href="/c/manicure-pedicure-spa-furniture"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
-                      categorySlug === "manicure-pedicure-spa-furniture" || categorySlug === "spa"
-                        ? "bg-gold/15 text-on-surface border border-gold/40"
-                        : "hover:bg-surface-low text-gold"
-                    }`}
-                  >
-                    Manicure & Pedicure Spa Furniture
-                  </Link>
-                  <Link
-                    href="/c/luxury-chairs"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
-                      categorySlug === "luxury-chairs" || categorySlug === "luxury-salon-chairs"
-                        ? "bg-gold/15 text-on-surface border border-gold/40"
-                        : "hover:bg-surface-low"
-                    }`}
-                  >
-                    Luxury Chairs
-                  </Link>
-                  <Link
-                    href="/c/hair-straighteners"
+                    href={`/c/${categorySlug}?sort=price_asc`}
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${
-                      categorySlug === "hair-straighteners" || categorySlug === "straighteners"
+                      sortFilter === "price_asc"
                         ? "bg-gold/15 text-on-surface font-bold border border-gold/40"
                         : "hover:bg-surface-low"
                     }`}
                   >
-                    Hair Straighteners
+                    Price: Low to High
                   </Link>
                   <Link
-                    href="/c/hair-dryers-curlers"
+                    href={`/c/${categorySlug}?sort=price_desc`}
                     className={`block px-3 py-2 rounded-lg font-medium transition-colors ${
-                      categorySlug === "hair-dryers-curlers" || categorySlug === "hair-dryers"
+                      sortFilter === "price_desc"
                         ? "bg-gold/15 text-on-surface font-bold border border-gold/40"
                         : "hover:bg-surface-low"
                     }`}
                   >
-                    Hair Dryers & Curlers
-                  </Link>
-                  <Link
-                    href="/c/eyewear"
-                    className={`block px-3 py-2 rounded-lg font-bold transition-colors ${
-                      categorySlug === "eyewear" || categorySlug === "premium-eyewear" || categorySlug === "premium-eyewears"
-                        ? "bg-gold/15 text-on-surface border border-gold/40"
-                        : "hover:bg-surface-low text-gold"
-                    }`}
-                  >
-                    Premium Eyewears
+                    Price: High to Low
                   </Link>
                 </div>
               </div>
@@ -496,7 +557,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6">
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">
                 {categoryProducts.map((p) => {
                   return (
                     <Link
@@ -507,10 +568,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       <div>
                         {/* PRODUCT IMAGE */}
                         <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-low mb-2.5">
-                          <img
+                          <ProductImage
                             src={p.imageUrl || "/products/spa_chair_classic.jpg"}
                             alt={p.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 50vw, 25vw"
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {p.badge && (
                             <span className="absolute top-1.5 left-1.5 bg-gold text-on-surface text-[8px] md:text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase shadow-md truncate max-w-[90%]">
@@ -531,14 +593,16 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                       <div className="mt-2.5 pt-2 md:pt-3 border-t border-outline-variant/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                         <div>
                           <div className="text-xs sm:text-sm md:text-base font-bold text-on-surface font-sans">
-                            {formatNpr(p.price_npr)}
+                            {showPrices && p.price_npr > 0 ? formatNpr(p.price_npr) : "Coming Soon"}
                           </div>
-                          <span className="text-[8px] md:text-[10px] text-green-700 font-bold block">
-                            {p.isSpaCategory ? "15% Upfront Deposit" : "Cash on Delivery"}
-                          </span>
+                          {showPrices && p.price_npr > 0 && (
+                            <span className="text-[8px] md:text-[10px] text-green-700 font-bold block">
+                              {p.isSpaCategory ? "15% Upfront Deposit" : "Cash on Delivery"}
+                            </span>
+                          )}
                         </div>
                         <span className="w-full sm:w-auto text-center px-2.5 py-1.5 rounded-xl bg-gold/15 group-hover:bg-gold text-on-surface text-[10px] md:text-xs font-bold transition-colors shadow-xs">
-                          Reserve
+                          View details
                         </span>
                       </div>
                     </Link>

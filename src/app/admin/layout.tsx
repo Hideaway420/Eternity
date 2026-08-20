@@ -1,12 +1,11 @@
 import React from "react";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 
-export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("eternity_admin_session");
+// Middleware gates every /admin route; this layout only keeps admin pages out of search results.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
-  // Allow access to login route without session
-  // For admin routes, if no session, redirect to /admin/login
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

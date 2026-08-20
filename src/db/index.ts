@@ -7,10 +7,24 @@ function getClientUrl() {
   if (process.env.TURSO_DATABASE_URL) {
     return process.env.TURSO_DATABASE_URL;
   }
-  // On Vercel / serverless environment without Turso, fallback to in-memory DB to prevent EROFS 500 error
-  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+
+  // `next build` imports this module while prerendering, before any deployment env is available,
+  // so the build itself is allowed an empty throwaway DB.
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    console.warn("Building without TURSO_DATABASE_URL - using a throwaway in-memory database.");
     return "file::memory:";
   }
+
+  // At runtime this used to fall back to "file::memory:", so every cold start began with an empty
+  // database: admin writes reported success and vanished, and the storefront served fallbacks.
+  // Failing loudly is the only honest option - a silent empty catalogue looks like a working site.
+  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+    throw new Error(
+      "TURSO_DATABASE_URL is not set. Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in the deployment " +
+        "environment and run `npm run db:push` once against that database."
+    );
+  }
+
   return `file:${path.join(process.cwd(), "eternity.db")}`;
 }
 
@@ -114,12 +128,23 @@ export async function initTables() {
       -- Categories
       INSERT OR IGNORE INTO categories (id, name, slug, sort_order)
       VALUES 
-        ('cat-spa', 'Manicure & Pedicure Spa Furniture', 'spa', 1),
-        ('cat-chairs', 'Luxury Salon Chairs', 'luxury-salon-chairs', 2),
+        ('cat-spa', 'Manicure & Pedicure Spa Furniture', 'manicure-pedicure-spa-furniture', 1),
+        ('cat-chairs', 'Luxury Salon Chairs', 'luxury-chairs', 2),
         ('cat-straighteners', 'Hair Straighteners', 'hair-straighteners', 3),
-        ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers', 4),
+        ('cat-dryers', 'Hair Dryers & Curlers', 'hair-dryers-curlers', 4),
         ('cat-eyewear', 'Premium Eyewear', 'eyewear', 5);
 
+      -- Migrate databases seeded with the old slugs onto the canonical 5-pillar slugs.
+      UPDATE categories SET slug = 'manicure-pedicure-spa-furniture' WHERE id = 'cat-spa';
+      UPDATE categories SET slug = 'luxury-chairs'                   WHERE id = 'cat-chairs';
+      UPDATE categories SET slug = 'hair-dryers-curlers'             WHERE id = 'cat-dryers';
+
+    `);
+
+    // Product seed is best-effort and deliberately in its own batch. A single bad row here
+    // must not prevent table creation, the slug migration, or the feature-flag backfill.
+    try {
+      await client.executeMultiple(`
       -- 4 REAL LUXURY SPA & PEDICURE CHAIRS INVENTORY SEED
       INSERT OR IGNORE INTO products (id, sku, slug, name, description, category_id, line, price_npr, compare_at_npr, cost_npr, status, created_at, updated_at)
       VALUES
@@ -176,9 +201,6 @@ export async function initTables() {
         ('img-spa-02', 'prod-etp-spa-02', '/products/spa_chair_elegance.jpg', 'Eternity Elegance Pedicure Station', 1),
         ('img-spa-03', 'prod-etp-spa-03', '/products/spa_chair_pink_recliner.jpg', 'Eternity Luxe Spa Recliner', 1),
         ('img-spa-04', 'prod-etp-spa-04', '/products/spa_chair_signature.jpg', 'Eternity Signature Series', 1),
-        ('img-chair-01', 'prod-etp-chair-01', '/products/chair_emerald_green_1786235658712.jpg', 'Emerald Royal Salon Chair', 1),
-        ('img-chair-02', 'prod-etp-chair-02', '/products/chair_espresso_brown_1786235685819.jpg', 'Espresso Vintage Salon Chair', 1),
-        ('img-chair-03', 'prod-etp-chair-03', '/products/chair_burgundy_red_1786235698852.jpg', 'Burgundy Regal Salon Chair', 1),
         ('img-eye-ph-01', 'prod-eye-ph-01', '/products/antigravity_eyewear.jpg', 'Ray-Ban Tech Carbon Fiber Polarized', 1),
         ('img-eye-ph-02', 'prod-eye-ph-02', '/products/antigravity_eyewear.jpg', 'Oakley Radar EV Path Prizm', 1),
         ('img-etp-087', 'prod-etp-087', '/products/ikonic_straightener_1786231866243.jpg', 'Ikonic Professional Hot Brush', 1),
@@ -201,25 +223,49 @@ export async function initTables() {
         ('img-etp-123', 'prod-etp-123', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Ikonic Professional Pro 2100+', 1),
         ('img-etp-135', 'prod-etp-135', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Ikonic Professional Pro Curl Hair Curler', 1),
         ('img-etp-138', 'prod-etp-138', '/products/ikonic_blow_dryer_1786231888743.jpg', 'Ikonic Professional Curling Tong 2.0 Hair Curler', 1);
-    `);
+      `);
 
-    try {
-      await client.execute(`ALTER TABLE product_images ADD COLUMN image_hash TEXT;`);
-    } catch (_) {}
-    try {
-      await client.execute(`ALTER TABLE products ADD COLUMN is_hero INTEGER DEFAULT 0;`);
-    } catch (_) {}
-    try {
-      await client.execute(`ALTER TABLE products ADD COLUMN is_featured INTEGER DEFAULT 0;`);
-    } catch (_) {}
-    try {
-      await client.execute(`ALTER TABLE products ADD COLUMN price_range TEXT;`);
-    } catch (_) {}
+      // Chair images resolved by SKU, because the chair rows may already exist under ids created
+      // by scripts/purgeAndResetTaxonomy.ts rather than the ids in the seed above.
+      for (const [imageId, sku, url, alt] of [
+        ["img-chair-01", "ETP-LSC-01", "/products/chair_emerald_green_1786235658712.jpg", "Emerald Royal Salon Chair"],
+        ["img-chair-02", "ETP-LSC-02", "/products/chair_espresso_brown_1786235685819.jpg", "Espresso Vintage Salon Chair"],
+        ["img-chair-03", "ETP-LSC-03", "/products/chair_burgundy_red_1786235698852.jpg", "Burgundy Regal Salon Chair"],
+      ]) {
+        await client.execute({
+          sql: `INSERT OR IGNORE INTO product_images (id, product_id, url, alt, is_primary)
+                SELECT ?, p.id, ?, ?, 1 FROM products p WHERE p.sku = ?`,
+          args: [imageId, url, alt, sku],
+        });
+      }
+    } catch (seedErr) {
+      console.error("Product seed failed (schema is still intact):", seedErr);
+    }
+
+    // "duplicate column name" is the expected no-op here; anything else is a real migration failure.
+    for (const statement of [
+      `ALTER TABLE product_images ADD COLUMN image_hash TEXT;`,
+      `ALTER TABLE products ADD COLUMN is_hero INTEGER DEFAULT 0;`,
+      `ALTER TABLE products ADD COLUMN is_featured INTEGER DEFAULT 0;`,
+      `ALTER TABLE products ADD COLUMN price_range TEXT;`,
+    ]) {
+      try {
+        await client.execute(statement);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (!/duplicate column/i.test(message)) {
+          console.error("Migration failed:", statement, message);
+        }
+      }
+    }
+
     try {
       await client.execute(`UPDATE products SET is_hero = 1 WHERE sku = 'ETP-SPA-01';`);
       await client.execute(`UPDATE products SET is_featured = 1 WHERE sku IN ('ETP-SPA-02', 'ETP-SPA-03', 'ETP-SPA-04', 'ETP-LSC-01', 'ETP-LSC-02', 'ETP-LSC-03');`);
-    } catch (_) {}
+    } catch (err) {
+      console.error("Feature-flag backfill failed:", err);
+    }
   } catch (err) {
-    console.warn("⚠️ initTables warning (likely read-only environment or missing Turso env):", err);
+    console.error("initTables failed. Run `npm run db:push` against this database:", err);
   }
 }

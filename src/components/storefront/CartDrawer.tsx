@@ -33,7 +33,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
   const freeShippingPct = Math.min(100, Math.round((totalNpr / freeShippingThreshold) * 100));
 
   const whatsappMessage = encodeURIComponent(
-    `Hi Eternity Products Nepal! I would like to place an order for items totaling NPR ${formatNpr(
+    `Hi Eternity Products Nepal! I would like to place an order for items totaling ${formatNpr(
       totalNpr
     )} via Open-Box Cash on Delivery.`
   );
@@ -114,26 +114,28 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
                 {/* Quantity Controls & Remove Action Component */}
                 <div className="flex flex-col items-end space-y-2">
-                  {/* Task 4 Rule 3: Explicit Remove Button */}
+                  {/* Task 4 Rule 3: Explicit Remove Button — 44x44 minimum tap target */}
                   <button
                     onClick={() => removeFromCart(item.id)}
-                    className="text-outline hover:text-red-600 transition-colors p-1 rounded-lg hover:bg-red-50"
+                    className="text-outline hover:text-red-600 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-red-50"
                     aria-label={`Remove ${item.name} from cart`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
 
-                  <div className="flex items-center space-x-2 bg-surface-low p-1 rounded-lg border border-outline-variant text-xs">
+                  <div className="flex items-center space-x-1 bg-surface-low p-1 rounded-lg border border-outline-variant text-xs">
                     <button
                       onClick={() => updateQuantity(item.id, -1)}
-                      className="px-1.5 font-bold hover:text-gold transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center font-bold hover:text-gold transition-colors"
+                      aria-label={`Decrease quantity of ${item.name}`}
                     >
                       -
                     </button>
                     <span className="font-mono font-bold">{item.qty}</span>
                     <button
                       onClick={() => updateQuantity(item.id, 1)}
-                      className="px-1.5 font-bold hover:text-gold transition-colors"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center font-bold hover:text-gold transition-colors"
+                      aria-label={`Increase quantity of ${item.name}`}
                     >
                       +
                     </button>

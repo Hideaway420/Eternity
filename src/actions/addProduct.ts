@@ -4,6 +4,7 @@ import { db, initTables } from "@/db";
 import { products, productImages, inventory, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
 
 export type CategorySlugType =
   | "eyewear"
@@ -24,6 +25,11 @@ export interface AddProductInput {
 
 export async function addProductAction(input: AddProductInput) {
   try {
+    // "use server" actions are publicly invocable POST endpoints; middleware does not cover them.
+    if (await requireAdmin()) {
+      return { success: false, error: "Unauthorized." };
+    }
+
     await initTables();
 
     // 1. Inputs Validation & Sanitization
@@ -70,8 +76,6 @@ export async function addProductAction(input: AddProductInput) {
     if (catDb) categoryId = catDb.id;
 
     const pricePaisa = Math.round(priceNpr * 100);
-    const compareAtPaisa = pricePaisa > 0 ? Math.round(pricePaisa * 1.08) : 0;
-    const costPaisa = pricePaisa > 0 ? Math.round(pricePaisa * 0.65) : 0;
     const now = new Date().toISOString();
 
     const isPlaceholder = priceNpr === 0;
@@ -90,8 +94,9 @@ export async function addProductAction(input: AddProductInput) {
         category_id: categoryId,
         line: input.category_slug === "hair-straighteners" || input.category_slug === "hair-dryers-curlers" ? "traffic" : "profit",
         price_npr: pricePaisa,
-        compare_at_npr: compareAtPaisa,
-        cost_npr: costPaisa,
+        // compare_at_npr and cost_npr stay null until a real figure is entered in the admin panel.
+        compare_at_npr: null,
+        cost_npr: null,
         status: isPlaceholder ? "out_of_stock" : "active",
         created_at: now,
         updated_at: now,
@@ -100,7 +105,7 @@ export async function addProductAction(input: AddProductInput) {
 
     // 5. Insert Primary Image
     const defaultImage = input.category_slug === "eyewear" ? "/products/eyewear_placeholder_1.jpg" : "/products/spa_chair_classic.jpg";
-    const imgUrl = input.image_url.trim() || defaultImage;
+    const imgUrl = input.image_url?.trim() || defaultImage;
 
     await db
       .insert(productImages)

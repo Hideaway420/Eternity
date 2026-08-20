@@ -3,6 +3,22 @@ import Link from "next/link";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { ShieldCheck, Award, CheckCircle2, Search } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Warranty Claim & Serial Verification",
+  description:
+    "Verify your Eternity Products serial number and check your 1-year replacement warranty. Genuine hologram authentication for salon chairs and spa furniture bought in Nepal.",
+  alternates: { canonical: "/warranty" },
+  openGraph: {
+    title: "Warranty Claim & Serial Verification | Eternity Products",
+    description: "Check your 1-year replacement warranty and verify a genuine serial hologram.",
+    url: "/warranty",
+    siteName: "Eternity Products",
+    locale: "en_NP",
+    type: "website",
+  },
+};
 
 export default function WarrantyPage() {
   return (

@@ -10,8 +10,17 @@ export const revalidate = 0;
 export default async function SalonPortalPage() {
   await initTables();
 
+  // Explicit columns only. SELECT * would ship cost_npr into the client payload.
   const salonProducts = await db
-    .select()
+    .select({
+      id: products.id,
+      sku: products.sku,
+      slug: products.slug,
+      name: products.name,
+      price_npr: products.price_npr,
+      compare_at_npr: products.compare_at_npr,
+      line: products.line,
+    })
     .from(products)
     .where(eq(products.status, "active"))
     .limit(10)

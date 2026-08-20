@@ -10,8 +10,9 @@ import { ProductColorSelector } from "@/components/storefront/ProductColorSelect
 import { ProductReviewsSection } from "@/components/storefront/ProductReviewsSection";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import { getPillar, getPillarById, isForSale, type Pillar } from "@/lib/taxonomy";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -138,7 +139,26 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const resolvedParams = await params;
   const slug = resolvedParams.slug;
   const matched = CATALOG_DICTIONARY[slug];
-  
+
+  // A CATALOG_DICTIONARY entry (e.g. "coming soon" placeholders) overrides the DB price, matching
+  // the merge order used in the page body below — so only hit the DB when there's no override.
+  let priceNpr: number | undefined = matched?.price_npr;
+  let categoryId: string | undefined;
+  if (priceNpr === undefined) {
+    try {
+      await initTables();
+      const dbProduct = await db
+        .select({ price_npr: products.price_npr, category_id: products.category_id })
+        .from(products)
+        .where(eq(products.slug, slug))
+        .get();
+      priceNpr = dbProduct?.price_npr;
+      categoryId = dbProduct?.category_id ?? undefined;
+    } catch {
+      // Genuinely unknown — no robots directive is the safe default.
+    }
+  }
+
   const productName = matched ? matched.name : slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   const title = `${productName} | Luxury Salon & Spa Equipment Nepal`;
   const description = `Buy the authentic ${productName} from Eternity Products Nepal. Premium salon furniture, pedicure spa chairs, and Ikonic styling tools. Open-box cash on delivery available nationwide.`;
@@ -156,10 +176,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     title,
     description,
     keywords,
+    alternates: { canonical: `/p/${slug}` },
     openGraph: {
       title,
       description,
       url: `https://www.eternityproducts.online/p/${slug}`,
+      siteName: "Eternity Products",
+      type: "website",
+      locale: "en_NP",
       images: [{ url: image, alt: `${productName} - Eternity Products Nepal Authorized Import` }],
     },
     twitter: {
@@ -168,6 +192,12 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       description,
       images: [image],
     },
+    // Products we do not stock stay browsable but out of the index. Price alone is not the
+    // test: seed rows in unstocked categories carry prices too (two eyewear rows are even named
+    // "Coming Soon" with a price), so this keys off the category's stocked flag as well.
+    ...(isForSale({ price_npr: priceNpr ?? 0, category_id: categoryId })
+      ? {}
+      : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -177,7 +207,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const slug = resolvedParams.slug;
 
   let product = null;
-  let category = null;
+  let category: Pillar | undefined;
 
   try {
     const fetchedProd = await db
@@ -190,6 +220,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         compare_at_npr: products.compare_at_npr,
         line: products.line,
         specs: products.specs,
+        category_id: products.category_id,
         imageUrl: productImages.url,
       })
       .from(products)
@@ -199,6 +230,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
     if (fetchedProd) {
       product = fetchedProd;
+      category = fetchedProd.category_id ? getPillarById(fetchedProd.category_id) : undefined;
       const matched = CATALOG_DICTIONARY[slug];
       if (matched) {
         product = { ...product, ...matched };
@@ -228,6 +260,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     const matched = CATALOG_DICTIONARY[slug];
     if (matched) {
       product = matched;
+      // This fallback only runs when the DB lookup above found nothing at all — best-effort guess
+      // from the catalogue entry rather than a wrong claim.
+      category = matched.isSpaCategory ? getPillar("manicure-pedicure-spa-furniture") : undefined;
     } else {
       const isFurniture =
         slug.includes("chair") || slug.includes("spa") || slug.includes("pedicure") || slug.includes("recliner");
@@ -241,10 +276,25 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         line: isFurniture ? "profit" : "traffic",
         imageUrl: isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
       };
+      // No DB row and no catalogue match — best-effort guess from the slug. Genuinely unknown
+      // categories fall back to no breadcrumb crumb rather than a wrong claim.
+      category = isFurniture ? getPillar("manicure-pedicure-spa-furniture") : undefined;
     }
   }
 
   const priceNprNum = product.price_npr / 100;
+  // Not for sale if it has no price, or if its category is one we do not stock yet.
+  // `category` is the Pillar resolved above from the product's category_id.
+  const isPlaceholder = product.price_npr <= 0 || (category ? !category.stocked : false);
+
+  // Brand is derived from the product name — never hardcoded — so eyewear doesn't get labelled "Eternity Products".
+  const brandName = /ikonic/i.test(product.name)
+    ? "Ikonic"
+    : /ray-?ban/i.test(product.name)
+    ? "Ray-Ban"
+    : /oakley/i.test(product.name)
+    ? "Oakley"
+    : "Eternity Products";
 
   // Complete Google Search Console Structured Data: Fixes Product Snippets & Merchant Listings Issues
   const productSchema = {
@@ -260,102 +310,64 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     mpn: product.sku,
     brand: {
       "@type": "Brand",
-      name: "Eternity Products",
+      name: brandName,
     },
-    // Google Search Console Non-Critical Fix: aggregateRating
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "48",
-      bestRating: "5",
-      worstRating: "1",
-    },
-    // Google Search Console Non-Critical Fix: review array
-    review: [
-      {
-        "@type": "Review",
-        author: {
-          "@type": "Person",
-          name: "Suman Shrestha (Kathmandu Salon Owner)",
+    // Placeholder products (price_npr === 0, not really stocked yet) omit `offers` entirely rather
+    // than publish a zero price — that risks a Google Merchant listing policy violation.
+    ...(!isPlaceholder && {
+      offers: {
+        "@type": "Offer",
+        url: `https://www.eternityproducts.online/p/${product.slug}`,
+        priceCurrency: "NPR",
+        price: priceNprNum,
+        priceValidUntil: "2027-12-31",
+        itemCondition: "https://schema.org/NewCondition",
+        availability: "https://schema.org/InStock",
+        seller: {
+          "@type": "Organization",
+          name: "Eternity Products Nepal",
+          url: "https://www.eternityproducts.online",
         },
-        datePublished: "2026-08-01",
-        reviewBody: "Authentic quality salon equipment with fast open-box cash on delivery in Kathmandu. Outstanding build quality and customer support.",
-        reviewRating: {
-          "@type": "Rating",
-          ratingValue: "5",
-          bestRating: "5",
-          worstRating: "1",
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "NP",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 7,
+          returnMethod: "https://schema.org/ReturnInStore",
+          returnFees: "https://schema.org/FreeReturn",
         },
-      },
-      {
-        "@type": "Review",
-        author: {
-          "@type": "Person",
-          name: "Pooja Gurung (Lalitpur Beauty Parlour)",
-        },
-        datePublished: "2026-08-10",
-        reviewBody: "100% genuine Ikonic tools and spa furniture with official warranty seal. Highly recommended supplier for salons in Nepal.",
-        reviewRating: {
-          "@type": "Rating",
-          ratingValue: "4.8",
-          bestRating: "5",
-          worstRating: "1",
-        },
-      },
-    ],
-    // Google Merchant Listings Enhancements
-    offers: {
-      "@type": "Offer",
-      url: `https://www.eternityproducts.online/p/${product.slug}`,
-      priceCurrency: "NPR",
-      price: priceNprNum,
-      priceValidUntil: "2027-12-31",
-      itemCondition: "https://schema.org/NewCondition",
-      availability: "https://schema.org/InStock",
-      seller: {
-        "@type": "Organization",
-        name: "Eternity Products Nepal",
-        url: "https://www.eternityproducts.online",
-      },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "NP",
-        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 7,
-        returnMethod: "https://schema.org/ReturnInStore",
-        returnFees: "https://schema.org/FreeReturn",
-      },
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          value: "0",
-          currency: "NPR",
-        },
-        shippingDestination: {
-          "@type": "DefinedRegion",
-          addressCountry: "NP",
-        },
-        deliveryTime: {
-          "@type": "ShippingDeliveryTime",
-          handlingTime: {
-            "@type": "QuantitativeValue",
-            minValue: 0,
-            maxValue: 1,
-            unitCode: "DAY",
+        shippingDetails: {
+          "@type": "OfferShippingDetails",
+          shippingRate: {
+            "@type": "MonetaryAmount",
+            value: "0",
+            currency: "NPR",
           },
-          transitTime: {
-            "@type": "QuantitativeValue",
-            minValue: 1,
-            maxValue: 3,
-            unitCode: "DAY",
+          shippingDestination: {
+            "@type": "DefinedRegion",
+            addressCountry: "NP",
+          },
+          deliveryTime: {
+            "@type": "ShippingDeliveryTime",
+            handlingTime: {
+              "@type": "QuantitativeValue",
+              minValue: 0,
+              maxValue: 1,
+              unitCode: "DAY",
+            },
+            transitTime: {
+              "@type": "QuantitativeValue",
+              minValue: 1,
+              maxValue: 3,
+              unitCode: "DAY",
+            },
           },
         },
       },
-    },
+    }),
   };
 
-  // JSON-LD Breadcrumb Schema
+  // JSON-LD Breadcrumb Schema — reflects the product's real pillar, not a hardcoded guess.
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -366,15 +378,19 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         name: "Home",
         item: "https://www.eternityproducts.online",
       },
+      ...(category
+        ? [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: category.name,
+              item: `https://www.eternityproducts.online/c/${category.slug}`,
+            },
+          ]
+        : []),
       {
         "@type": "ListItem",
-        position: 2,
-        name: (category as { name?: string } | null)?.name || "Manicure & Pedicure Spa Furniture",
-        item: "https://www.eternityproducts.online/c/manicure-pedicure-spa-furniture",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
+        position: category ? 3 : 2,
         name: product.name,
         item: `https://www.eternityproducts.online/p/${product.slug}`,
       },
@@ -393,18 +409,22 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       />
       <Header />
 
-      <main className="flex-1 py-10 container mx-auto px-4 lg:px-8 space-y-12">
+      <main className="flex-1 py-10 pb-28 md:pb-10 container mx-auto px-4 lg:px-8 space-y-12">
         {/* Breadcrumb */}
         <div className="text-xs text-outline flex items-center space-x-2">
           <Link href="/" className="hover:underline">Home</Link>
-          <ChevronRight className="w-3 h-3 text-outline" />
-          <Link href="/c/manicure-pedicure-spa-furniture" className="hover:underline font-semibold">Manicure & Pedicure Spa Furniture</Link>
+          {category && (
+            <>
+              <ChevronRight className="w-3 h-3 text-outline" />
+              <Link href={`/c/${category.slug}`} className="hover:underline font-semibold">{category.name}</Link>
+            </>
+          )}
           <ChevronRight className="w-3 h-3 text-outline" />
           <span className="text-on-surface font-semibold truncate max-w-xs">{product.name}</span>
         </div>
 
         {/* Product Color Selection & Interactive Showcase */}
-        <ProductColorSelector product={product} categoryName="Manicure & Pedicure Spa Furniture" />
+        <ProductColorSelector product={product} categoryName={category?.name} isPlaceholder={isPlaceholder} />
 
         {/* Live Interactive B2B ROI Calculator Section */}
         <div className="pt-8 border-t border-outline-variant/60">

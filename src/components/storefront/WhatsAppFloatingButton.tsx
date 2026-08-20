@@ -55,10 +55,10 @@ export const WhatsAppFloatingButton: React.FC = () => {
             <div className="space-y-1.5 pt-1">
               <span className="text-[10px] uppercase font-bold text-gold tracking-wider block">Quick Inquiries:</span>
               <button
-                onClick={() => handleOpenWhatsApp("Hi Eternity Nepal! I want to order Eternity Luxury Salon Chair (NPR 35,000) with 5% OFF deal.")}
+                onClick={() => handleOpenWhatsApp("Hi Eternity Nepal! I want to order a Luxury Salon Chair. Please share pricing and current offers.")}
                 className="w-full text-left p-2 rounded-xl bg-surface-low hover:bg-gold/15 border border-outline-variant hover:border-gold/40 text-[11px] font-medium transition-all text-on-surface flex items-center justify-between group"
               >
-                <span>🪑 Order Luxury Chair (NPR 35,000)</span>
+                <span>🪑 Order a Luxury Salon Chair</span>
                 <Sparkles className="w-3 h-3 text-gold opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
 

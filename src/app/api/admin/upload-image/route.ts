@@ -5,14 +5,45 @@ import crypto from "crypto";
 import { db, initTables } from "@/db";
 import { productImages } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "@/lib/auth";
+
+// Only raster image types. An .svg or .html upload would be stored XSS on our own origin.
+const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_BYTES = 5 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     const formData = await request.formData();
     const file = formData.get("image") as File | null;
 
     if (!file) {
       return NextResponse.json({ success: false, error: "No image file provided." }, { status: 400 });
+    }
+
+    const extension = path.extname(file.name).toLowerCase();
+    if (!ALLOWED_EXTENSIONS.has(extension)) {
+      return NextResponse.json(
+        { success: false, error: "Only .jpg, .jpeg, .png and .webp images are accepted." },
+        { status: 400 }
+      );
+    }
+
+    if (!ALLOWED_MIME_TYPES.has(file.type)) {
+      return NextResponse.json(
+        { success: false, error: "File content type does not match an accepted image format." },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > MAX_BYTES) {
+      return NextResponse.json(
+        { success: false, error: "Image is larger than the 5 MB limit." },
+        { status: 413 }
+      );
     }
 
     const bytes = await file.arrayBuffer();
@@ -47,7 +78,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Sanitize filename and create unique timestamped name
-    const extension = path.extname(file.name) || ".jpg";
     const sanitizedBase = path.basename(file.name, extension).toLowerCase().replace(/[^a-z0-9]/g, "_");
     const fileName = `upload_${Date.now()}_${sanitizedBase}${extension}`;
 
@@ -80,6 +110,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (err: any) {
     console.error("❌ Error in upload-image API:", err);
-    return NextResponse.json({ success: false, error: err.message || "Failed to process image upload." }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to process image upload." }, { status: 500 });
   }
 }

@@ -132,9 +132,9 @@ export const Footer: React.FC = () => {
         <div>
           <h4 className="font-serif font-semibold text-sm mb-3 uppercase tracking-wider text-outline">Salon B2B Hub</h4>
           <ul className="space-y-2 text-xs text-on-surface-variant font-medium">
-            <li><Link href="/c/spa" className="hover:text-gold transition-colors font-bold text-on-surface">Wholesale B2B Catalog & Bulk Pricing</Link></li>
-            <li><Link href="/c/luxury-salon-chairs" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
-            <li><Link href="/c/spa" className="hover:text-gold transition-colors">Pedicure Tubs & Spa Beds</Link></li>
+            <li><Link href="/c/manicure-pedicure-spa-furniture" className="hover:text-gold transition-colors font-bold text-on-surface">Wholesale B2B Catalog & Bulk Pricing</Link></li>
+            <li><Link href="/c/luxury-chairs" className="hover:text-gold transition-colors">Barber Chairs & Styling Stations</Link></li>
+            <li><Link href="/c/manicure-pedicure-spa-furniture" className="hover:text-gold transition-colors">Pedicure Tubs & Spa Beds</Link></li>
             <li><Link href="/contact" className="hover:text-gold transition-colors">Concierge Support & Head Office</Link></li>
           </ul>
         </div>

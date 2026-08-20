@@ -182,7 +182,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               </div>
               <div className="pt-2 flex flex-wrap justify-center gap-2">
                 <Link
-                  href="/c/spa"
+                  href="/c/manicure-pedicure-spa-furniture"
                   onClick={onClose}
                   className="px-4 py-2 bg-[#B58A18] hover:bg-[#A37B15] text-[#1B1C1C] font-bold rounded-xl text-xs shadow-md transition-colors"
                 >

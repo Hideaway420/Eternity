@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Grid, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { CartDrawer } from "@/components/storefront/CartDrawer";
 
 export const MobileBottomBar: React.FC = () => {
   const pathname = usePathname();
@@ -13,6 +14,10 @@ export const MobileBottomBar: React.FC = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // The cart is a drawer, not a route — there is no /cart page. Opening it here instead
+  // of navigating to /checkout lets mobile users review the cart before checking out.
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const cartItems = useCartStore((state) => state.cartItems);
   const derivedTotalItems = isMounted
@@ -35,7 +40,7 @@ export const MobileBottomBar: React.FC = () => {
 
         {/* Categories */}
         <Link
-          href="/c/spa"
+          href="/c/manicure-pedicure-spa-furniture"
           className={`flex flex-col items-center space-y-1 transition-colors ${
             pathname.startsWith("/c/") ? "text-gold font-bold" : "text-outline hover:text-on-surface"
           }`}
@@ -44,12 +49,14 @@ export const MobileBottomBar: React.FC = () => {
           <span className="text-[10px] font-medium">Categories</span>
         </Link>
 
-        {/* Cart */}
-        <Link
-          href="/checkout"
+        {/* Cart — opens the cart drawer for review instead of jumping straight to checkout */}
+        <button
+          type="button"
+          onClick={() => setIsCartOpen(true)}
           className={`relative flex flex-col items-center space-y-1 transition-colors ${
-            pathname === "/checkout" ? "text-gold font-bold" : "text-outline hover:text-on-surface"
+            isCartOpen ? "text-gold font-bold" : "text-outline hover:text-on-surface"
           }`}
+          aria-label="Open Shopping Cart"
         >
           <div className="relative">
             <ShoppingBag className="w-5 h-5" />
@@ -60,8 +67,10 @@ export const MobileBottomBar: React.FC = () => {
             )}
           </div>
           <span className="text-[10px] font-medium">Cart</span>
-        </Link>
+        </button>
       </div>
+
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 };

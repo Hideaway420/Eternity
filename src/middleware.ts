@@ -1,34 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ADMIN_COOKIE, verifySession } from "@/lib/session";
 
-export function middleware(request: NextRequest) {
+// Routes reachable without a session: the login page and the login endpoint itself.
+const PUBLIC_PATHS = new Set(["/admin/login", "/api/admin/login"]);
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Task 1: Absolute Security via Edge Middleware for all /admin routes
-  if (pathname.startsWith("/admin")) {
-    // Allow login route if explicitly navigating to login page
-    if (pathname === "/admin/login") {
-      return NextResponse.next();
-    }
-
-    // Check for HTTP-only cookies: ADMIN_SESSION or eternity_admin_session
-    const adminSession =
-      request.cookies.get("ADMIN_SESSION")?.value ||
-      request.cookies.get("eternity_admin_session")?.value;
-
-    const isValidSession =
-      adminSession === "authenticated_staff_owner" ||
-      adminSession === "admin_secret_token_eternity_2026";
-
-    // If cookie is missing or invalid, rewrite to /not-found so admin routes appear 404 to unauthorized users
-    if (!isValidSession) {
-      return NextResponse.rewrite(new URL("/not-found", request.url));
-    }
+  if (PUBLIC_PATHS.has(pathname)) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  if (await verifySession(request.cookies.get(ADMIN_COOKIE)?.value)) {
+    return NextResponse.next();
+  }
+
+  // API callers get a real 401 so the admin UI can react; page routes stay cloaked as 404.
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  return NextResponse.rewrite(new URL("/not-found", request.url));
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/salon/:path*"],
 };

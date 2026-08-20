@@ -1,39 +1,44 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { ADMIN_COOKIE, SESSION_COOKIE_OPTIONS, signSession } from "@/lib/session";
 
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();
 
-    const expectedUser = process.env.ADMIN_USERNAME || "admin";
-    const expectedPhone = "9868089892";
-    const expectedPassword = process.env.ADMIN_PASSWORD || "eternity2026";
+    const expectedUser = process.env.ADMIN_USERNAME;
+    const expectedPassword = process.env.ADMIN_PASSWORD;
 
-    const cleanUser = (username || "").trim().toLowerCase();
-    const isUserValid =
-      cleanUser === expectedUser ||
-      cleanUser === expectedPhone ||
-      cleanUser === `+977${expectedPhone}` ||
-      cleanUser === "eternity";
+    // Fail closed. No hardcoded fallback credentials.
+    if (!expectedUser || !expectedPassword || !process.env.ADMIN_SESSION_SECRET) {
+      console.error("Admin login blocked: ADMIN_USERNAME, ADMIN_PASSWORD or ADMIN_SESSION_SECRET is unset.");
+      return NextResponse.json(
+        { success: false, error: "Admin login is not configured on this deployment." },
+        { status: 503 }
+      );
+    }
+
+    const cleanUser = String(username ?? "").trim().toLowerCase();
+    const isUserValid = cleanUser === expectedUser.trim().toLowerCase();
 
     if (isUserValid && password === expectedPassword) {
+      const token = await signSession();
+      if (!token) {
+        return NextResponse.json({ success: false, error: "Session signing unavailable." }, { status: 503 });
+      }
+
       const cookieStore = await cookies();
-      cookieStore.set("eternity_admin_session", "authenticated_staff_owner", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 7 days session
-      });
+      cookieStore.set(ADMIN_COOKIE, token, SESSION_COOKIE_OPTIONS);
 
       return NextResponse.json({ success: true, message: "Login successful!" });
     }
 
     return NextResponse.json(
-      { success: false, error: "Invalid username/phone or password." },
+      { success: false, error: "Invalid username or password." },
       { status: 401 }
     );
-  } catch (err: unknown) {
-    const error = err as Error;
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch {
+    // Never echo raw error text to the client.
+    return NextResponse.json({ success: false, error: "Login failed." }, { status: 500 });
   }
 }

@@ -31,7 +31,7 @@ export default function NotFound() {
               <span>Return to Storefront</span>
             </Link>
             <Link
-              href="/c/spa"
+              href="/c/manicure-pedicure-spa-furniture"
               className="px-6 py-3.5 rounded-xl bg-inverse-surface text-white hover:bg-neutral-800 font-bold text-xs sm:text-sm transition-colors inline-flex items-center space-x-2"
             >
               <Footprints className="w-4 h-4 text-gold" />
@@ -43,7 +43,7 @@ export default function NotFound() {
         {/* Featured Category Shortcuts (Prevent Dead End) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-outline-variant/60">
           <Link
-            href="/c/spa"
+            href="/c/manicure-pedicure-spa-furniture"
             className="p-6 rounded-3xl bg-surface-lowest border border-outline-variant hover:border-gold/60 transition-all shadow-soft group space-y-3"
           >
             <div className="w-10 h-10 rounded-2xl bg-gold/15 flex items-center justify-center text-gold font-bold">
@@ -61,7 +61,7 @@ export default function NotFound() {
           </Link>
 
           <Link
-            href="/c/luxury-salon-chairs"
+            href="/c/luxury-chairs"
             className="p-6 rounded-3xl bg-surface-lowest border border-outline-variant hover:border-gold/60 transition-all shadow-soft group space-y-3"
           >
             <div className="w-10 h-10 rounded-2xl bg-gold/15 flex items-center justify-center text-gold font-bold">

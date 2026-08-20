@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { WhatsAppFloatingButton } from "@/components/storefront/WhatsAppFloatingButton";
+import { Analytics } from "@/components/analytics/Analytics";
 
 export const viewport: Viewport = {
   themeColor: "#F8F3EC",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Eternity Products",
   },
   description:
-    "Eternity Products is Nepal's authorized importer of Ikonic professional titanium hair straighteners, blow dryers 2500+, curling wands, luxury salon chairs, and pedicure spa stations. 100% genuine seal, 13% VAT inclusive pricing, 1-year replacement warranty, and open-box cash on delivery across Kathmandu Valley and nationwide Nepal.",
+    "Luxury salon chairs and manicure & pedicure spa furniture in Nepal. Authorized importer, 1-year warranty, open-box cash on delivery across Kathmandu Valley.",
   keywords: [
     "Eternity Products",
     "Eternity Products Nepal",
@@ -36,13 +37,9 @@ export const metadata: Metadata = {
   creator: "Eternity Products",
   publisher: "Eternity Products",
   category: "Beauty & Personal Care / Salon Equipment",
-  alternates: {
-    canonical: "https://www.eternityproducts.online",
-    languages: {
-      "en-NP": "https://www.eternityproducts.online",
-      "ne-NP": "https://www.eternityproducts.online?lang=np",
-    },
-  },
+  // No canonical here on purpose. Each route declares its own via `alternates.canonical`;
+  // a canonical set on the root layout is inherited by every child route that does not
+  // override it, which previously pointed the entire catalogue at the homepage.
   // Task 3: Perfect Favicon Configuration for Google Search Results
   icons: {
     icon: [
@@ -101,7 +98,8 @@ export const metadata: Metadata = {
 // JSON-LD Organization Schema for Google Search Logo & Knowledge Graph
 const organizationJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
+  "@type": ["Organization", "Store"],
+  "@id": "https://www.eternityproducts.online/#store",
   name: "Eternity Products",
   legalName: "Eternity Products Importers & Distributors",
   url: "https://www.eternityproducts.online",
@@ -117,6 +115,28 @@ const organizationJsonLd = {
     postalCode: "44600",
     addressCountry: "NP",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 27.7172,
+    longitude: 85.324,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "10:00",
+      closes: "18:00",
+    },
+  ],
+  priceRange: "NPR 30,000 - NPR 145,000",
+  currenciesAccepted: "NPR",
+  paymentAccepted: "Cash on Delivery, eSewa, Khalti, Fonepay, Bank Transfer",
+  areaServed: [
+    { "@type": "City", name: "Kathmandu" },
+    { "@type": "City", name: "Lalitpur" },
+    { "@type": "City", name: "Bhaktapur" },
+    { "@type": "Country", name: "Nepal" },
+  ],
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "+977-9868089892",
@@ -137,14 +157,7 @@ const websiteJsonLd = {
   name: "Eternity Products",
   alternateName: ["Eternity Products Nepal", "Eternity Salon & Spa Nepal"],
   url: "https://www.eternityproducts.online",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: "https://www.eternityproducts.online/c/spa?q={search_term_string}",
-    },
-    "query-input": "required name=search_term_string",
-  },
+  // No potentialAction: there is no server-side search route that reads a `q` parameter yet.
 };
 
 export default function RootLayout({
@@ -155,7 +168,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <meta name="google-site-verification" content="0ahB6Zbvm8IrToCcYC_CsFlziYMvb31S2a-VkEkXj0U" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
@@ -168,6 +180,7 @@ export default function RootLayout({
       <body className="bg-surface text-on-surface antialiased min-h-screen flex flex-col selection:bg-gold-light selection:text-on-surface">
         {children}
         <WhatsAppFloatingButton />
+        <Analytics />
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { CATEGORY_REDIRECTS } from "./src/lib/taxonomy";
 
 const nextConfig: NextConfig = {
   images: {
@@ -20,6 +21,10 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
       }
     ],
+  },
+  // Legacy category slugs 301 to their canonical pillar instead of serving duplicate pages.
+  async redirects() {
+    return CATEGORY_REDIRECTS;
   },
 };
 

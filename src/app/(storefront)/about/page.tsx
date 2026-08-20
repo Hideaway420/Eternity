@@ -9,10 +9,14 @@ export const metadata: Metadata = {
   title: "About Us & Frequently Asked Questions (FAQ) | Eternity Products Nepal",
   description:
     "Learn about Eternity Products Nepal, authorized importer of Ikonic styling tools & luxury pedicure spa chairs. Read our FAQ on Open-Box Cash on Delivery, 1-year warranty, serial verification, and 10%-15% deposit booking terms.",
+  alternates: { canonical: "/about" },
   openGraph: {
     title: "About Us & FAQ | Eternity Products Nepal",
     description: "Authorized Nepal importer of Ikonic Professional tools & luxury salon furniture.",
-    url: "https://eternityproducts.online/about",
+    url: "/about",
+    siteName: "Eternity Products",
+    locale: "en_NP",
+    type: "website",
   },
 };
 

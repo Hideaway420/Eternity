@@ -1,521 +1,163 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { db, initTables } from "@/db";
 import { products, productImages, inventory } from "@/db/schema";
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, or, desc, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth";
+import { PILLARS, getPillarById } from "@/lib/taxonomy";
 
-const FALLBACK_CATALOG = [
-  {
-    id: "prod-etp-spa-01",
-    sku: "ETP-SPA-01",
-    slug: "classic-eternity-spa-chair",
-    name: "Classic Eternity Spa Chair",
-    description: "Transform your salon into a sanctuary of relaxation with the Classic Eternity Spa Chair.",
-    price_npr: 12000000,
-    compare_at_npr: 13000000,
-    cost_npr: 7800000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/spa_chair_classic.jpg",
-    imageUrl: "/products/spa_chair_classic.jpg",
-    secondaryImageUrls: ["/products/spa_chair_elegance.jpg"],
-    imageUrls: ["/products/spa_chair_classic.jpg", "/products/spa_chair_elegance.jpg"],
-  },
-  {
-    id: "prod-etp-spa-02",
-    sku: "ETP-SPA-02",
-    slug: "eternity-elegance-pedicure-station",
-    name: "Eternity Elegance Pedicure Station",
-    description: "Gold standard of foot care with quiet massage mechanics.",
-    price_npr: 12800000,
-    compare_at_npr: 13900000,
-    cost_npr: 8200000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/spa_chair_elegance.jpg",
-    imageUrl: "/products/spa_chair_elegance.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/spa_chair_elegance.jpg"],
-  },
-  {
-    id: "prod-etp-spa-03",
-    sku: "ETP-SPA-03",
-    slug: "eternity-luxe-spa-recliner",
-    name: "Eternity Luxe Spa Recliner",
-    description: "VIP Spa recliner engineered for luxury wellness resorts.",
-    price_npr: 13500000,
-    compare_at_npr: 14650000,
-    cost_npr: 8700000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/spa_chair_pink_recliner.jpg",
-    imageUrl: "/products/spa_chair_pink_recliner.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/spa_chair_pink_recliner.jpg"],
-  },
-  {
-    id: "prod-etp-spa-04",
-    sku: "ETP-SPA-04",
-    slug: "eternity-signature-series-limited-edition",
-    name: "Eternity Signature Series (Limited Edition)",
-    description: "Pinnacle of salon luxury. Hand-stitched detailing and memory foam.",
-    price_npr: 14000000,
-    compare_at_npr: 14500000,
-    cost_npr: 9000000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/spa_chair_signature.jpg",
-    imageUrl: "/products/spa_chair_signature.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/spa_chair_signature.jpg"],
-  },
-  {
-    id: "prod-etp-chair-01",
-    sku: "ETP-LSC-01",
-    slug: "eternity-emerald-royal-luxury-salon-chair",
-    name: "Eternity Emerald Royal Luxury Salon Chair",
-    description: "Heavy-duty hydraulic reclining chair in Emerald Green leather.",
-    price_npr: 3500000,
-    compare_at_npr: 3685000,
-    cost_npr: 2200000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-    imageUrl: "/products/chair_emerald_green_1786235658712.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/chair_emerald_green_1786235658712.jpg"],
-  },
-  {
-    id: "prod-etp-chair-02",
-    sku: "ETP-LSC-02",
-    slug: "eternity-espresso-vintage-luxury-salon-chair",
-    name: "Eternity Espresso Vintage Luxury Salon Chair",
-    description: "Vintage Espresso Brown leather hydraulic styling chair.",
-    price_npr: 3750000,
-    compare_at_npr: 3950000,
-    cost_npr: 2350000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
-    imageUrl: "/products/chair_espresso_brown_1786235685819.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/chair_espresso_brown_1786235685819.jpg"],
-  },
-  {
-    id: "prod-etp-chair-03",
-    sku: "ETP-LSC-03",
-    slug: "eternity-burgundy-regal-luxury-salon-chair",
-    name: "Eternity Burgundy Regal Luxury Salon Chair",
-    description: "Regal Burgundy Red leather reclining chair.",
-    price_npr: 3850000,
-    compare_at_npr: 4050000,
-    cost_npr: 2400000,
-    line: "profit",
-    status: "active",
-    heroImageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
-    imageUrl: "/products/chair_burgundy_red_1786235698852.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/chair_burgundy_red_1786235698852.jpg"],
-  },
-  {
-    id: "prod-eye-ph-01",
-    sku: "ETP-EYE-01",
-    slug: "ray-ban-tech-carbon-fiber-polarized-coming-soon",
-    name: "Ray-Ban Tech Carbon Fiber Polarized",
-    description: "Ultra-lightweight carbon fiber polarized premium eyewear. Suspended anti-gravity optical engineering.",
-    price_npr: 1292000,
-    compare_at_npr: 1450000,
-    cost_npr: 936700,
-    line: "eyewear",
-    status: "active",
-    heroImageUrl: "/products/antigravity_eyewear.jpg",
-    imageUrl: "/products/antigravity_eyewear.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/antigravity_eyewear.jpg"],
-  },
-  {
-    id: "prod-eye-ph-02",
-    sku: "ETP-EYE-02",
-    slug: "oakley-radar-ev-path-prizm-coming-soon",
-    name: "Oakley Radar EV Path Prizm",
-    description: "High-definition Prizm optics for sports performance. Suspended anti-gravity frame structure.",
-    price_npr: 1450000,
-    compare_at_npr: 1600000,
-    cost_npr: 1050000,
-    line: "eyewear",
-    status: "active",
-    heroImageUrl: "/products/antigravity_eyewear.jpg",
-    imageUrl: "/products/antigravity_eyewear.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/antigravity_eyewear.jpg"],
-  },
-  {
-    id: "prod-etp-087",
-    sku: "ETP-087",
-    slug: "ikonic-professional-hot-brush-burgundy",
-    name: "Ikonic Professional Hot Brush - Hair Straightener (Burgundy)",
-    description: "Ikonic Professional Hot Brush Hair Straightener in Burgundy edition.",
-    price_npr: 1150000,
-    compare_at_npr: 1150000,
-    cost_npr: 833800,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-088",
-    sku: "ETP-088",
-    slug: "ikonic-professional-hair-straightener-hot-brush",
-    name: "Ikonic Professional Hair Straightener Hot Brush",
-    description: "Fast heating ceramic hot brush for smooth frizz-free hair straightening.",
-    price_npr: 1014000,
-    compare_at_npr: 1014000,
-    cost_npr: 735200,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-089",
-    sku: "ETP-089",
-    slug: "ikonic-pro-titanium-shine-30-hair-straightener",
-    name: "Ikonic Professional Pro Titanium Shine 3.0 Hair Straightener",
-    description: "Professional 3.0 Titanium Shine Hair Straightener with digital temperature indicator.",
-    price_npr: 1292000,
-    compare_at_npr: 1292000,
-    cost_npr: 936700,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-090",
-    sku: "ETP-090",
-    slug: "ikonic-gleam-pro-hair-straightener",
-    name: "Ikonic Professional Gleam Pro Hair Straightener",
-    description: "Gleam Pro salon-grade titanium floating plate straightener.",
-    price_npr: 1376000,
-    compare_at_npr: 1376000,
-    cost_npr: 997600,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-092",
-    sku: "ETP-092",
-    slug: "ikonic-gleam-30-hair-straightener",
-    name: "Ikonic Professional Gleam 3.0 Hair Straightener",
-    description: "Slim 1-inch rose gold titanium plates with ultra-fast heating.",
-    price_npr: 1258000,
-    compare_at_npr: 1258000,
-    cost_npr: 912100,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-093",
-    sku: "ETP-093",
-    slug: "ikonic-slim-titanium-shine-30-straightener",
-    name: "Ikonic Professional Hair Straightener - Slim Titanium Shine 3.0",
-    description: "Slim profile titanium shine straightener for precision styling.",
-    price_npr: 1292000,
-    compare_at_npr: 1292000,
-    cost_npr: 936700,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-095",
-    sku: "ETP-095",
-    slug: "ikonic-black-titanium-slim-straightener",
-    name: "Ikonic Professional Black Titanium Slim Hair Straightener",
-    description: "Black titanium floating plates for smooth glides without snagging.",
-    price_npr: 888000,
-    compare_at_npr: 888000,
-    cost_npr: 643800,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-096",
-    sku: "ETP-096",
-    slug: "ikonic-pro-straight-black-hair-straightener",
-    name: "Ikonic Professional Pro Straight Black Hair Straightener",
-    description: "High-heat ceramic straightener with ergonomic swivel cord.",
-    price_npr: 976000,
-    compare_at_npr: 976000,
-    cost_npr: 707600,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-098",
-    sku: "ETP-098",
-    slug: "ikonic-s3-plus-hair-straightener",
-    name: "Ikonic Professional S3+ Hair Straightener",
-    description: "Ceramic coated floating plates with rapid heat recovery.",
-    price_npr: 769000,
-    compare_at_npr: 769000,
-    cost_npr: 557500,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-103",
-    sku: "ETP-103",
-    slug: "ikonic-me-xtreme-straight-hair-straightener",
-    name: "Ikonic Me Xtreme Straight Hair Straightener",
-    description: "Compact lightweight daily straightener for smooth silky hair.",
-    price_npr: 480000,
-    compare_at_npr: 480000,
-    cost_npr: 348000,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    imageUrl: "/products/ikonic_straightener_1786231866243.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_straightener_1786231866243.jpg"],
-  },
-  {
-    id: "prod-etp-112",
-    sku: "ETP-112",
-    slug: "ikonic-professional-id-20-hair-dryer",
-    name: "Ikonic Professional Id 2.0 Hair Dryer",
-    description: "Flagship 2000W AC Motor Salon Hair Dryer with brushless high-speed airflow.",
-    price_npr: 2622000,
-    compare_at_npr: 2622000,
-    cost_npr: 1901000,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-113",
-    sku: "ETP-113",
-    slug: "ikonic-professional-id-20-ash-grey-dryer-stand",
-    name: "Ikonic Professional ID 2.0 Hair Dryer (Ash Grey) + Free Stand",
-    description: "Ash Grey limited edition ID 2.0 hair dryer bundled with official desktop stand.",
-    price_npr: 2185000,
-    compare_at_npr: 2185000,
-    cost_npr: 1584100,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-114",
-    sku: "ETP-114",
-    slug: "ikonic-dynamite-scarlett-limited-edition-dryer",
-    name: "Ikonic Professional Dynamite+ Scarlett Limited Edition Hair Dryer",
-    description: "Scarlett Red edition ultra-compact high-power salon blow dryer.",
-    price_npr: 1844000,
-    compare_at_npr: 1844000,
-    cost_npr: 1336900,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-115",
-    sku: "ETP-115",
-    slug: "ikonic-dynamite-plus-hair-dryer",
-    name: "Ikonic Professional Dynamite+ Hair Dryer",
-    description: "Heavy-duty salon blow dryer with ionic airflow technology.",
-    price_npr: 1529000,
-    compare_at_npr: 1529000,
-    cost_npr: 1108500,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-116",
-    sku: "ETP-116",
-    slug: "ikonic-pro-2800-plus-hair-dryer",
-    name: "Ikonic Professional Pro 2800+ Hair Dryer",
-    description: "Professional 2800W high-velocity salon blow dryer with double nozzles.",
-    price_npr: 1338000,
-    compare_at_npr: 1338000,
-    cost_npr: 970100,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-118",
-    sku: "ETP-118",
-    slug: "ikonic-pro-2500-plus-advanced-hair-dryer",
-    name: "Ikonic Professional Pro 2500+ Advanced Hair Dryer",
-    description: "Advanced 2500W ionic blow dryer with cold shot button.",
-    price_npr: 1000000,
-    compare_at_npr: 1000000,
-    cost_npr: 725000,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-121",
-    sku: "ETP-121",
-    slug: "ikonic-professional-hair-dryer-pro-2200-plus",
-    name: "Ikonic Professional Hair Dryer Pro 2200+",
-    description: "High-performance 2200W salon dryer in Black & Red accents.",
-    price_npr: 750000,
-    compare_at_npr: 750000,
-    cost_npr: 543800,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-123",
-    sku: "ETP-123",
-    slug: "ikonic-pro-2100-plus-hair-dryer",
-    name: "Ikonic Professional Pro 2100+ Hair Dryer",
-    description: "Lightweight 2100W daily salon blow dryer.",
-    price_npr: 572000,
-    compare_at_npr: 572000,
-    cost_npr: 414700,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-135",
-    sku: "ETP-135",
-    slug: "ikonic-pro-curl-hair-curler",
-    name: "Ikonic Professional Pro Curl Hair Curler",
-    description: "Professional ceramic curling tong for bouncy long-lasting curls.",
-    price_npr: 937000,
-    compare_at_npr: 937000,
-    cost_npr: 679300,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-  {
-    id: "prod-etp-138",
-    sku: "ETP-138",
-    slug: "ikonic-curling-tong-20-hair-curler",
-    name: "Ikonic Professional Curling Tong 2.0 Hair Curler",
-    description: "Black & Gold 2.0 ceramic curling barrel with digital thermostatic control.",
-    price_npr: 660000,
-    compare_at_npr: 660000,
-    cost_npr: 478500,
-    line: "traffic",
-    status: "active",
-    heroImageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    imageUrl: "/products/ikonic_blow_dryer_1786231888743.jpg",
-    secondaryImageUrls: [],
-    imageUrls: ["/products/ikonic_blow_dryer_1786231888743.jpg"],
-  },
-];
+const GENERIC_ERROR = "The request could not be completed. Check the server logs for details.";
+const PLACEHOLDER_IMAGE = "/products/ikonic_straightener_1786231866243.jpg";
+
+const PRODUCT_COLUMNS = {
+  id: products.id,
+  sku: products.sku,
+  slug: products.slug,
+  name: products.name,
+  description: products.description,
+  price_npr: products.price_npr,
+  compare_at_npr: products.compare_at_npr,
+  cost_npr: products.cost_npr,
+  price_range: products.price_range,
+  category_id: products.category_id,
+  line: products.line,
+  status: products.status,
+};
+
+/* ------------------------------------------------------------------ *
+ * Payload validation. Money is integer paisa (NPR * 100) in the DB,
+ * so every price crosses this boundary through requiredPaisa/optionalPaisa
+ * and a non-numeric value is rejected instead of inserted as NaN.
+ * ------------------------------------------------------------------ */
+
+const isBlank = (v: unknown) => v === null || v === undefined || (typeof v === "string" && v.trim() === "");
+const isNumeric = (v: unknown) => Number.isFinite(Number(v)) && Number(v) >= 0;
+
+const requiredPaisa = z
+  .union([z.string(), z.number()])
+  .refine((v) => !isBlank(v) && isNumeric(v), "must be a number in NPR (0 or more)")
+  .transform((v) => Math.round(Number(v) * 100));
+
+const optionalPaisa = z
+  .union([z.string(), z.number(), z.null()])
+  .optional()
+  .refine((v) => isBlank(v) || isNumeric(v), "must be a number in NPR (0 or more), or left blank")
+  .transform((v) => (isBlank(v) ? null : Math.round(Number(v) * 100)));
+
+const openingStock = z
+  .union([z.string(), z.number()])
+  .optional()
+  .refine((v) => isBlank(v) || isNumeric(v), "must be a whole number of units (0 or more)")
+  .transform((v) => (isBlank(v) ? 0 : Math.trunc(Number(v))));
+
+const CATEGORY_IDS = PILLARS.map((p) => p.id);
+
+const productPayload = z.object({
+  sku: z.string().trim().min(1, "SKU is required"),
+  name: z.string().trim().min(1, "Product name is required"),
+  slug: z.string().trim().optional(),
+  category_id: z
+    .string({ required_error: "Category is required" })
+    .refine((v) => CATEGORY_IDS.includes(v), `must be one of the five official categories (${CATEGORY_IDS.join(", ")})`),
+  line: z.enum(["traffic", "eyewear", "profit"]).optional(),
+  price_npr: requiredPaisa,
+  compare_at_npr: optionalPaisa,
+  cost_npr: optionalPaisa,
+  price_range: z.string().nullish(),
+  priceRange: z.string().nullish(),
+  description: z.string().nullish(),
+  heroImageUrl: z.string().nullish(),
+  imageUrl: z.string().nullish(),
+  secondaryImageUrls: z.array(z.string()).optional(),
+  imageUrls: z.array(z.string()).optional(),
+  status: z.enum(["draft", "active", "out_of_stock", "archived"]).optional(),
+  opening_stock: openingStock,
+});
+
+const updatePayload = productPayload.extend({
+  id: z.string().trim().min(1, "Product ID is required"),
+});
+
+function validationError(error: z.ZodError) {
+  return NextResponse.json(
+    {
+      success: false,
+      error: error.issues.map((i) => `${i.path.join(".") || "body"} ${i.message}`).join(" · "),
+      fieldErrors: error.flatten().fieldErrors,
+    },
+    { status: 400 }
+  );
+}
+
+/** The storefront treats eyewear as its own line, everything else follows the pillar. */
+function lineForCategory(categoryId: string, explicit?: string) {
+  if (explicit) return explicit;
+  const pillar = getPillarById(categoryId);
+  if (!pillar) return "traffic";
+  return pillar.slug === "eyewear" ? "eyewear" : pillar.line;
+}
+
+/** Hero first, then de-duplicated secondaries. Shared by POST and PUT. */
+function orderImageUrls(p: {
+  heroImageUrl?: string | null;
+  imageUrl?: string | null;
+  secondaryImageUrls?: string[];
+  imageUrls?: string[];
+}, fallbackHero: string | null) {
+  const hero = p.heroImageUrl || p.imageUrl || p.imageUrls?.[0] || fallbackHero;
+  const secondaries = p.secondaryImageUrls ?? (p.imageUrls || []).filter((u) => u !== hero);
+  const rest = secondaries.filter((u) => u && u.trim() !== "" && u !== hero);
+  return hero ? [hero, ...rest] : rest;
+}
+
+async function writeProductImages(productId: string, name: string, urls: string[]) {
+  for (let i = 0; i < urls.length; i++) {
+    try {
+      await db
+        .insert(productImages)
+        .values({
+          id: `img-${productId}-${i}-${Date.now()}`,
+          product_id: productId,
+          url: urls[i].trim(),
+          alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
+          sort_order: i,
+          is_primary: i === 0,
+        })
+        .run();
+    } catch (imgErr) {
+      console.warn("productImages insert skipped:", imgErr);
+    }
+  }
+}
+
+function revalidateStorefront() {
+  revalidatePath("/");
+  revalidatePath("/c/[category]", "page");
+  revalidatePath("/p/[slug]", "page");
+}
 
 export async function GET() {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     await initTables();
 
     let allProducts = await db
-      .select({
-        id: products.id,
-        sku: products.sku,
-        slug: products.slug,
-        name: products.name,
-        description: products.description,
-        price_npr: products.price_npr,
-        compare_at_npr: products.compare_at_npr,
-        cost_npr: products.cost_npr,
-        price_range: products.price_range,
-        line: products.line,
-        status: products.status,
-      })
+      .select(PRODUCT_COLUMNS)
       .from(products)
       .orderBy(desc(products.created_at))
       .all();
 
-    // If DB has 0 items (e.g. read-only memory DB or post-migration reset), seed and fallback
+    // If DB has 0 items (e.g. read-only memory DB or post-migration reset), seed and re-read
     if (!allProducts || allProducts.length === 0) {
       await initTables();
-      allProducts = await db
-        .select({
-          id: products.id,
-          sku: products.sku,
-          slug: products.slug,
-          name: products.name,
-          description: products.description,
-          price_npr: products.price_npr,
-          compare_at_npr: products.compare_at_npr,
-          cost_npr: products.cost_npr,
-          price_range: products.price_range,
-          line: products.line,
-          status: products.status,
-        })
-        .from(products)
-        .all();
+      allProducts = await db.select(PRODUCT_COLUMNS).from(products).all();
     }
 
     if (!allProducts || allProducts.length === 0) {
-      return NextResponse.json({ success: true, products: FALLBACK_CATALOG });
+      return NextResponse.json({ success: true, products: [] });
     }
 
     // Fetch images for all products
@@ -527,7 +169,7 @@ export async function GET() {
 
     const productsWithImages = allProducts.map((p) => {
       const pImgs = allImages.filter((img) => img.product_id === p.id);
-      const heroImg = pImgs.find((img) => img.is_primary)?.url || pImgs[0]?.url || "/products/ikonic_straightener_1786231866243.jpg";
+      const heroImg = pImgs.find((img) => img.is_primary)?.url || pImgs[0]?.url || PLACEHOLDER_IMAGE;
       const secondaryImgs = pImgs.filter((img) => img.url !== heroImg).map((img) => img.url);
 
       return {
@@ -541,109 +183,75 @@ export async function GET() {
 
     return NextResponse.json({ success: true, products: productsWithImages });
   } catch (err: unknown) {
-    console.warn("⚠️ Error fetching admin products, using fallback catalog:", err);
-    return NextResponse.json({ success: true, products: FALLBACK_CATALOG });
+    console.error("Error fetching admin products:", err);
+    return NextResponse.json(
+      { success: false, error: "Could not load products from the database." },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: Request) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     await initTables();
-    const body = await req.json();
 
-    const {
-      sku,
-      name,
-      slug: customSlug,
-      category_id,
-      line,
-      price_npr,
-      compare_at_npr,
-      cost_npr,
-      price_range,
-      priceRange,
-      description,
-      heroImageUrl,
-      imageUrl,
-      secondaryImageUrls,
-      imageUrls,
-      status,
-    } = body;
+    const parsed = productPayload.safeParse(await req.json());
+    if (!parsed.success) return validationError(parsed.error);
+    const p = parsed.data;
 
-    if (!sku || !name || price_npr === undefined) {
+    const productId = `prod-${p.sku.toLowerCase()}`;
+
+    // The id is derived from the SKU, so a repeat SKU is a duplicate on both columns.
+    const clash = await db
+      .select({ id: products.id, sku: products.sku })
+      .from(products)
+      .where(or(eq(products.sku, p.sku), eq(products.id, productId)))
+      .all();
+
+    if (clash.length > 0) {
       return NextResponse.json(
-        { success: false, error: "SKU, Name, and Price are required." },
-        { status: 400 }
+        { success: false, error: `SKU "${p.sku}" already exists (product ${clash[0].id}). Use a different SKU or edit the existing product.` },
+        { status: 409 }
       );
     }
 
-    const generatedSlug = customSlug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-    const productId = `prod-${sku.toLowerCase()}`;
+    const generatedSlug = p.slug || p.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
     const now = new Date().toISOString();
 
-    const pricePaisa = Math.round(parseFloat(price_npr) * 100);
-    const comparePaisa = compare_at_npr ? Math.round(parseFloat(compare_at_npr) * 100) : null;
-    const costPaisa = cost_npr ? Math.round(parseFloat(cost_npr) * 100) : null;
-    const finalPriceRange = price_range || priceRange || null;
-
-    // Insert Product
     await db
       .insert(products)
       .values({
         id: productId,
-        sku: sku.trim(),
+        sku: p.sku,
         slug: generatedSlug,
-        name: name.trim(),
-        description: description || `${name} imported directly from India by Eternity Products Nepal.`,
-        category_id: category_id || null,
-        line: line || "traffic",
-        price_npr: pricePaisa,
-        compare_at_npr: comparePaisa,
-        cost_npr: costPaisa,
-        price_range: finalPriceRange,
-        status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
+        name: p.name,
+        description: p.description || `${p.name} imported directly from India by Eternity Products Nepal.`,
+        category_id: p.category_id,
+        line: lineForCategory(p.category_id, p.line),
+        price_npr: p.price_npr,
+        compare_at_npr: p.compare_at_npr,
+        cost_npr: p.cost_npr,
+        price_range: p.price_range || p.priceRange || null,
+        status: p.status || (p.price_npr > 0 ? "active" : "out_of_stock"),
         created_at: now,
         updated_at: now,
       })
       .run();
 
-    // Organize Hero Cover Image vs Secondary Thumbnail Images
-    const heroUrl = heroImageUrl || imageUrl || (Array.isArray(imageUrls) && imageUrls[0]) || "/products/ikonic_straightener_1786231866243.jpg";
-    const secondaries = Array.isArray(secondaryImageUrls)
-      ? secondaryImageUrls
-      : Array.isArray(imageUrls)
-      ? imageUrls.filter((u: string) => u !== heroUrl)
-      : [];
+    const finalUrls = orderImageUrls(p, PLACEHOLDER_IMAGE);
+    await writeProductImages(productId, p.name, finalUrls);
 
-    const finalUrls = [heroUrl, ...secondaries.filter((u: string) => u && u.trim() !== "" && u !== heroUrl)];
-
-    // Insert Multiple Product Images into Turso DB safely
-    for (let i = 0; i < finalUrls.length; i++) {
-      try {
-        await db
-          .insert(productImages)
-          .values({
-            id: `img-${productId}-${i}-${Date.now()}`,
-            product_id: productId,
-            url: finalUrls[i].trim(),
-            alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
-            sort_order: i,
-            is_primary: i === 0,
-          })
-          .run();
-      } catch (imgErr) {
-        console.warn("⚠️ productImages insert fallback:", imgErr);
-      }
-    }
-
-    // Insert Default Warehouse Inventory
+    // Real opening stock against the default warehouse, not a hardcoded count.
     await db
       .insert(inventory)
       .values({
         id: `inv-${productId}`,
         product_id: productId,
         warehouse_id: "wh-main",
-        qty_on_hand: pricePaisa > 0 ? 10 : 0,
+        qty_on_hand: p.opening_stock,
         qty_reserved: 0,
         qty_incoming: 0,
         reorder_point: 3,
@@ -652,131 +260,90 @@ export async function POST(req: Request) {
       })
       .run();
 
-    // Instant Revalidation across Storefront
-    revalidatePath("/");
-    revalidatePath("/c/[category]", "page");
-    revalidatePath("/p/[slug]", "page");
+    revalidateStorefront();
 
     return NextResponse.json({
       success: true,
-      message: "Product created successfully with Hero & Secondary images!",
+      message: `Product created in ${getPillarById(p.category_id)?.name ?? "category"} with ${p.opening_stock} unit(s) opening stock.`,
       product: {
         id: productId,
-        sku,
+        sku: p.sku,
         slug: generatedSlug,
-        name,
-        price_npr: pricePaisa,
-        heroImageUrl: heroUrl,
-        secondaryImageUrls: secondaries,
+        name: p.name,
+        category_id: p.category_id,
+        price_npr: p.price_npr,
+        heroImageUrl: finalUrls[0] ?? null,
+        secondaryImageUrls: finalUrls.slice(1),
       },
     });
   } catch (err: unknown) {
-    const error = err as Error;
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error("Error creating product:", err);
+    return NextResponse.json({ success: false, error: GENERIC_ERROR }, { status: 500 });
   }
 }
 
 export async function PUT(req: Request) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     await initTables();
-    const body = await req.json();
 
-    const {
-      id,
-      sku,
-      name,
-      slug,
-      line,
-      price_npr,
-      compare_at_npr,
-      cost_npr,
-      price_range,
-      priceRange,
-      description,
-      heroImageUrl,
-      imageUrl,
-      secondaryImageUrls,
-      imageUrls,
-      status,
-    } = body;
-
-    if (!id || !name) {
-      return NextResponse.json({ success: false, error: "Product ID and Name are required for editing." }, { status: 400 });
-    }
+    const parsed = updatePayload.safeParse(await req.json());
+    if (!parsed.success) return validationError(parsed.error);
+    const p = parsed.data;
 
     const now = new Date().toISOString();
-    const pricePaisa = Math.round(parseFloat(price_npr || "0") * 100);
-    const comparePaisa = compare_at_npr ? Math.round(parseFloat(compare_at_npr) * 100) : null;
-    const costPaisa = cost_npr ? Math.round(parseFloat(cost_npr) * 100) : null;
-    const finalPriceRange = price_range || priceRange || undefined;
 
-    // Update Product Table
-    await db
+    const updated = await db
       .update(products)
       .set({
-        name: name.trim(),
-        sku: sku ? sku.trim() : undefined,
-        slug: slug ? slug.trim() : undefined,
-        line: line || "traffic",
-        price_npr: pricePaisa,
-        compare_at_npr: comparePaisa,
-        cost_npr: costPaisa,
-        price_range: finalPriceRange,
-        description: description || undefined,
-        status: status || (pricePaisa > 0 ? "active" : "out_of_stock"),
+        name: p.name,
+        sku: p.sku,
+        slug: p.slug || undefined,
+        category_id: p.category_id,
+        line: lineForCategory(p.category_id, p.line),
+        price_npr: p.price_npr,
+        compare_at_npr: p.compare_at_npr,
+        cost_npr: p.cost_npr,
+        price_range: p.price_range || p.priceRange || undefined,
+        description: p.description || undefined,
+        status: p.status || (p.price_npr > 0 ? "active" : "out_of_stock"),
         updated_at: now,
       })
-      .where(eq(products.id, id))
+      .where(eq(products.id, p.id))
       .run();
 
-    // Organize Hero Cover Image vs Secondary Images
-    const heroUrl = heroImageUrl || imageUrl || (Array.isArray(imageUrls) && imageUrls[0]);
-    const secondaries = Array.isArray(secondaryImageUrls)
-      ? secondaryImageUrls
-      : Array.isArray(imageUrls)
-      ? imageUrls.filter((u: string) => u !== heroUrl)
-      : [];
-
-    const finalUrls = heroUrl
-      ? [heroUrl, ...secondaries.filter((u: string) => u && u.trim() !== "" && u !== heroUrl)]
-      : secondaries;
-
-    if (finalUrls.length > 0) {
-      // Clean previous product images
-      await db.delete(productImages).where(eq(productImages.product_id, id)).run();
-
-      // Insert new Hero & Secondary images safely
-      for (let i = 0; i < finalUrls.length; i++) {
-        try {
-          await db
-            .insert(productImages)
-            .values({
-              id: `img-${id}-${i}-${Date.now()}`,
-              product_id: id,
-              url: finalUrls[i].trim(),
-              alt: i === 0 ? `${name} - Hero Image` : `${name} - Secondary Photo ${i}`,
-              sort_order: i,
-              is_primary: i === 0,
-            })
-            .run();
-        } catch (imgErr) {
-          console.warn("⚠️ productImages PUT insert fallback:", imgErr);
-        }
-      }
+    if (updated.rowsAffected === 0) {
+      return NextResponse.json(
+        { success: false, error: `No product found with ID "${p.id}". Nothing was updated.` },
+        { status: 404 }
+      );
     }
 
-    revalidatePath("/");
-    revalidatePath("/c/[category]", "page");
-    revalidatePath("/p/[slug]", "page");
+    const finalUrls = orderImageUrls(p, null);
+    if (finalUrls.length > 0) {
+      await db.delete(productImages).where(eq(productImages.product_id, p.id)).run();
+      await writeProductImages(p.id, p.name, finalUrls);
+    }
 
-    return NextResponse.json({ success: true, message: `Product "${name}" updated successfully with Hero and ${finalUrls.length - 1} secondary images!` });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message || "Failed to update product." }, { status: 500 });
+    revalidateStorefront();
+
+    return NextResponse.json({
+      success: true,
+      message: `Product "${p.name}" updated in ${getPillarById(p.category_id)?.name ?? "category"}.`,
+    });
+  } catch (err: unknown) {
+    console.error("Error updating product:", err);
+    return NextResponse.json({ success: false, error: "Failed to update product." }, { status: 500 });
   }
 }
 
 export async function DELETE(req: Request) {
   try {
+    const denied = await requireAdmin();
+    if (denied) return denied;
+
     await initTables();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
@@ -785,25 +352,25 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ success: false, error: "Product ID parameter is required for deletion." }, { status: 400 });
     }
 
-    // 1. Delete all associated product images
     await db.delete(productImages).where(eq(productImages.product_id, id)).run();
-
-    // 2. Delete all associated inventory items
     await db.delete(inventory).where(eq(inventory.product_id, id)).run();
+    const deleted = await db.delete(products).where(eq(products.id, id)).run();
 
-    // 3. Delete product record from database
-    await db.delete(products).where(eq(products.id, id)).run();
+    if (deleted.rowsAffected === 0) {
+      return NextResponse.json(
+        { success: false, error: `No product found with ID "${id}". Nothing was deleted.` },
+        { status: 404 }
+      );
+    }
 
-    // Instant Revalidation across Storefront
-    revalidatePath("/");
-    revalidatePath("/c/[category]", "page");
-    revalidatePath("/p/[slug]", "page");
+    revalidateStorefront();
 
     return NextResponse.json({
       success: true,
       message: `Product ID "${id}" and all associated images and pages were permanently deleted.`,
     });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message || "Failed to delete product." }, { status: 500 });
+  } catch (err: unknown) {
+    console.error("Error deleting product:", err);
+    return NextResponse.json({ success: false, error: "Failed to delete product." }, { status: 500 });
   }
 }

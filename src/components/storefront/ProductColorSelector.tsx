@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Flame, Sparkles, Minus, Plus, Tag, Check, Calendar, Lock } from "lucide-react";
+import { ShieldCheck, Truck, CheckCircle2, Building2, ShoppingBag, MessageSquare, Sparkles, Minus, Plus, Tag, Check, Calendar, Lock } from "lucide-react";
 import { formatNpr } from "@/lib/money";
+import { ProductImage } from "@/components/storefront/ProductImage";
 import { useCartStore } from "@/store/useCartStore";
+import { track } from "@/lib/analytics";
 
 interface ColorVariant {
   name: string;
   hex: string;
   image: string;
   inStock: boolean;
-  stockCount: number;
 }
 
 interface ProductColorSelectorProps {
@@ -36,10 +37,13 @@ interface ProductColorSelectorProps {
     isSpaCategory?: boolean;
   };
   categoryName?: string;
+  /** Decided on the server via isForSale(); price alone is not a sufficient test. */
+  isPlaceholder?: boolean;
 }
 
 export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   product,
+  isPlaceholder: isPlaceholderProp,
 }) => {
   const isSpaCategory =
     product.isSpaCategory ||
@@ -59,6 +63,10 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   const [hasCustomColorMatch, setHasCustomColorMatch] = useState<boolean>(false);
   const CUSTOM_COLOR_ADDON_NPR = 600000; // 6,000 NPR in Paisa
 
+  // Not buyable when we do not stock it. The server decides via isForSale(); the price === 0
+  // fallback only applies if the prop was not supplied.
+  const isPlaceholder = isPlaceholderProp ?? product.price_npr === 0;
+
   const basePriceNpr = product.price_npr;
   const currentUnitPriceNpr = basePriceNpr + (hasCustomColorMatch ? CUSTOM_COLOR_ADDON_NPR : 0);
 
@@ -66,13 +74,21 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   const depositPercentage = 15;
   const depositAmountNpr = Math.round(currentUnitPriceNpr * (depositPercentage / 100));
 
-  const originalComparePrice = product.compare_at_npr || Math.round(product.price_npr * 1.087);
-  const savingsNpr = Math.round((originalComparePrice - product.price_npr) / 100);
+  // Real saving only — never a fabricated compare price. Renders only when compare_at_npr is a
+  // genuine, higher, recorded price.
+  const hasRealSavings = !isPlaceholder && !!product.compare_at_npr && product.compare_at_npr > product.price_npr;
+  const savingsNpr = hasRealSavings ? (product.compare_at_npr as number) - product.price_npr : 0;
+  const savingsPct = hasRealSavings ? Math.round((savingsNpr / (product.compare_at_npr as number)) * 100) : 0;
 
   const primaryImg = product.imageUrl || (isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
 
-  // Multi-Image Gallery List (Strictly contains ONLY photos belonging to THIS product)
-  const secondaryList = Array.isArray(product.secondaryImageUrls) ? product.secondaryImageUrls.filter(u => u && u !== primaryImg) : [];
+  // Multi-Image Gallery List (Strictly contains ONLY photos belonging to THIS product).
+  // The page passes `imageUrls`; `secondaryImageUrls` is kept for backward compatibility — merge
+  // and dedupe both rather than reading only one of the two names.
+  const secondaryList = [
+    ...(Array.isArray(product.imageUrls) ? product.imageUrls : []),
+    ...(Array.isArray(product.secondaryImageUrls) ? product.secondaryImageUrls : []),
+  ].filter((u): u is string => Boolean(u) && u !== primaryImg);
   const galleryPhotos = secondaryList.length > 0 ? Array.from(new Set([primaryImg, ...secondaryList])) : [primaryImg];
 
   // Real Color Swatches (Uses THIS product's primary image only)
@@ -82,7 +98,6 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
       hex: "#1E2224",
       image: primaryImg,
       inStock: true,
-      stockCount: 5,
     },
   ];
 
@@ -91,6 +106,19 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const addToCart = useCartStore((state) => state.addToCart);
+
+  // Ad platforms expect NPR, not paisa.
+  const unitPriceForAnalytics = Math.round(currentUnitPriceNpr / 100);
+
+  useEffect(() => {
+    if (product.price_npr <= 0) return; // placeholders are not merchandise
+    track("view_item", {
+      value: unitPriceForAnalytics,
+      items: [{ id: product.sku, name: product.name, price: unitPriceForAnalytics }],
+    });
+    // Fire once per product, not on every quantity or colour change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.sku]);
 
   const handleAddToCart = () => {
     addToCart({
@@ -101,6 +129,11 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
       price_npr: currentUnitPriceNpr,
       qty: quantity,
       imageUrl: selectedImage,
+    });
+
+    track("add_to_cart", {
+      value: unitPriceForAnalytics * quantity,
+      items: [{ id: product.sku, name: product.name, price: unitPriceForAnalytics, quantity }],
     });
   };
 
@@ -121,16 +154,25 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
   );
   const whatsappUrl = `https://wa.me/9779868089892?text=${whatsappMessage}`;
 
+  // Placeholder products have no real price to quote — ask, don't sell.
+  const enquiryMessage = encodeURIComponent(
+    `Hi Eternity Products Nepal! I'm interested in "${product.name}". Please let me know when it will be available and the price.`
+  );
+  const enquiryUrl = `https://wa.me/9779868089892?text=${enquiryMessage}`;
+
   return (
+    <>
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
       {/* Dynamic Gallery Showcase with Real Photo */}
       <div className="lg:col-span-6 space-y-4">
         <div className="relative aspect-square rounded-3xl overflow-hidden bg-surface-lowest border-2 border-gold/40 shadow-elevated group">
-          <img
+          <ProductImage
             key={selectedImage}
             src={selectedImage}
             alt={`${product.name} - ${selectedColor.name}`}
-            className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
+            priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className={`object-cover transition-all duration-300 group-hover:scale-105 ${
               imageLoading ? "opacity-40 blur-sm" : "opacity-100 blur-0 animate-fadeIn"
             }`}
           />
@@ -251,15 +293,33 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           )}
 
           <div className="flex items-baseline space-x-3">
-            <span className="text-3xl sm:text-4xl font-bold font-sans text-on-surface">
-              {formatNpr(totalOrderNpr)}
-            </span>
-            {product.compare_at_npr && (
-              <span className="text-sm sm:text-base font-mono text-outline line-through">
-                {formatNpr(product.compare_at_npr * quantity)}
-              </span>
+            {isPlaceholder ? (
+              <span className="text-3xl sm:text-4xl font-bold font-sans text-on-surface">Coming Soon</span>
+            ) : (
+              <>
+                <span className="text-3xl sm:text-4xl font-bold font-sans text-on-surface">
+                  {formatNpr(totalOrderNpr)}
+                </span>
+                {product.compare_at_npr && product.compare_at_npr > product.price_npr && (
+                  <span className="text-sm sm:text-base font-mono text-outline line-through">
+                    {formatNpr(product.compare_at_npr * quantity)}
+                  </span>
+                )}
+              </>
             )}
           </div>
+
+          {hasRealSavings && (
+            <div className="text-xs sm:text-sm font-bold text-green-700">
+              You save {formatNpr(savingsNpr)} ({savingsPct}%)
+            </div>
+          )}
+
+          {isPlaceholder && (
+            <div className="text-xs text-on-surface-variant">
+              Price on request — message us on WhatsApp for availability.
+            </div>
+          )}
 
           {(product.price_range || product.priceRange) && (
             <div className="text-xs font-mono font-extrabold text-yellow-800 bg-yellow-100/90 px-3 py-1.5 rounded-xl border border-yellow-400 inline-flex items-center space-x-1">
@@ -340,12 +400,6 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
           </div>
         </div>
 
-        {/* Urgency & Social Proof Trigger */}
-        <div className="flex items-center space-x-2 text-xs font-semibold p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800">
-          <Flame className="w-4 h-4 text-amber-600 flex-shrink-0 animate-bounce" />
-          <span>High Demand: {selectedColor.stockCount} units remaining in Kathmandu warehouse for instant dispatch!</span>
-        </div>
-
         {/* Booking Terms Box */}
         <div className="rounded-2xl bg-gold/10 border-2 border-gold/40 p-5 space-y-2 relative overflow-hidden">
           <div className="flex items-center space-x-2 text-gold font-bold text-xs sm:text-sm uppercase tracking-wider">
@@ -361,29 +415,44 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
         {/* High-Converting CTA Action Buttons */}
         <div className="space-y-3 pt-1">
-          <Link
-            href="/checkout"
-            onClick={handleAddToCart}
-            className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
-          >
-            <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>
-              {isSpaCategory
-                ? `Pay 15% Deposit (${formatNpr(totalDepositNpr)}) & Reserve Chair`
-                : "Buy Now — Open-Box Cash on Delivery"}
-            </span>
-          </Link>
+          {isPlaceholder ? (
+            /* Not really stocked yet — enquire, don't sell. */
+            <a
+              href={enquiryUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-4 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Enquire on WhatsApp (+977 9868089892)</span>
+            </a>
+          ) : (
+            <>
+              <Link
+                href="/checkout"
+                onClick={handleAddToCart}
+                className="w-full py-4 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm transition-all flex justify-center items-center space-x-2 shadow-gold group"
+              >
+                <ShoppingBag className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span>
+                  {isSpaCategory
+                    ? `Pay 15% Deposit (${formatNpr(totalDepositNpr)}) & Reserve Chair`
+                    : "Buy Now — Open-Box Cash on Delivery"}
+                </span>
+              </Link>
 
-          {/* WhatsApp Direct Booking Button */}
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>Reserve via WhatsApp (+977 9868089892)</span>
-          </a>
+              {/* WhatsApp Direct Booking Button */}
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs sm:text-sm transition-colors flex justify-center items-center space-x-2 shadow-sm"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Reserve via WhatsApp (+977 9868089892)</span>
+              </a>
+            </>
+          )}
         </div>
 
         {/* Delivery Estimator */}
@@ -406,5 +475,44 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
         </div>
       </div>
     </div>
+
+    {/* Mobile Sticky Add-to-Cart Bar — sits below the WhatsApp floating button (bottom-20 on mobile) */}
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-lowest border-t border-outline-variant shadow-elevated px-4 py-3 flex items-center gap-3">
+      <div className="flex-1 min-w-0 leading-tight">
+        {isPlaceholder ? (
+          <span className="text-sm font-bold text-on-surface">Coming Soon</span>
+        ) : (
+          <>
+            <span className="text-base font-bold text-on-surface block truncate">{formatNpr(totalOrderNpr)}</span>
+            {hasRealSavings && (
+              <span className="text-[10px] text-green-700 font-semibold block">
+                Save {formatNpr(savingsNpr)} ({savingsPct}%)
+              </span>
+            )}
+          </>
+        )}
+      </div>
+      {isPlaceholder ? (
+        <a
+          href={enquiryUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 py-3 px-5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-xs flex items-center justify-center space-x-2"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Enquire</span>
+        </a>
+      ) : (
+        <Link
+          href="/checkout"
+          onClick={handleAddToCart}
+          className="shrink-0 py-3 px-5 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs flex items-center justify-center space-x-2"
+        >
+          <ShoppingBag className="w-4 h-4" />
+          <span>{isSpaCategory ? "Reserve Now" : "Buy Now"}</span>
+        </Link>
+      )}
+    </div>
+    </>
   );
 };

@@ -12,7 +12,11 @@
     "audit:categories": "tsx scripts/auditCategories.ts",
     "purge:reset": "tsx scripts/purgeAndResetTaxonomy.ts",
     "restore:premium": "tsx scripts/restorePremiumProducts.ts",
-    "migrate:flags": "tsx scripts/migrateFeatureFlags.ts"
+    "migrate:flags": "tsx scripts/migrateFeatureFlags.ts",
+    "typecheck": "tsc --noEmit",
+    "test:auth": "tsx scripts/test-auth.ts",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate"
   },
   "allowScripts": {
     "esbuild": true,

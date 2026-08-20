@@ -51,7 +51,7 @@ export const Header: React.FC = () => {
                   🇳🇵 OFFICIAL ETERNITY PRODUCTS NEPAL
                 </span>
                 <Link
-                  href="/c/spa"
+                  href="/c/manicure-pedicure-spa-furniture"
                   className="hover:text-gold transition-colors font-bold inline-flex items-center space-x-1 text-white"
                 >
                   <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
@@ -71,7 +71,7 @@ export const Header: React.FC = () => {
                   🇳🇵 OFFICIAL ETERNITY PRODUCTS NEPAL
                 </span>
                 <Link
-                  href="/c/spa"
+                  href="/c/manicure-pedicure-spa-furniture"
                   className="hover:text-gold transition-colors font-bold inline-flex items-center space-x-1 text-white"
                 >
                   <Flame className="w-3.5 h-3.5 text-gold flex-shrink-0 animate-pulse" />
@@ -228,7 +228,7 @@ export const Header: React.FC = () => {
               {isNp ? "गृहपृष्ठ" : "Home"}
             </Link>
             <Link
-              href="/c/spa"
+              href="/c/manicure-pedicure-spa-furniture"
               onClick={() => setMobileMenuOpen(false)}
               className="block p-2.5 rounded-xl font-black text-xs text-gold hover:bg-white flex items-center"
             >
@@ -236,7 +236,7 @@ export const Header: React.FC = () => {
               {isNp ? "म्यानिक्योर र पेडिक्योर स्पा फर्निचर" : "Manicure & Pedicure Spa Furniture"}
             </Link>
             <Link
-              href="/c/luxury-salon-chairs"
+              href="/c/luxury-chairs"
               onClick={() => setMobileMenuOpen(false)}
               className="block p-2.5 rounded-xl font-bold text-xs hover:bg-white text-[#2C2A29]"
             >
@@ -250,7 +250,7 @@ export const Header: React.FC = () => {
               {isNp ? "स्ट्रेटरहरू" : "Straighteners"}
             </Link>
             <Link
-              href="/c/hair-dryers"
+              href="/c/hair-dryers-curlers"
               onClick={() => setMobileMenuOpen(false)}
               className="block p-2.5 rounded-xl font-bold text-xs hover:bg-white text-[#2C2A29]"
             >

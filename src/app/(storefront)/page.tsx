@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { formatNpr } from "@/lib/money";
+import { ProductImage } from "@/components/storefront/ProductImage";
 import {
   Sparkles,
   ArrowRight,
@@ -20,6 +22,13 @@ import { products, productImages, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Ikonic Hair Tools & Luxury Salon Furniture in Nepal",
+  description:
+    "Nepal's authorized Ikonic importer. Genuine hair straighteners, dryers, luxury salon chairs, and pedicure spa furniture with open-box cash on delivery and 1-year warranty nationwide.",
+  alternates: { canonical: "/" },
+};
 
 // Fetch Hero Product (where is_hero = true)
 async function getHeroProduct() {
@@ -259,7 +268,7 @@ export default async function HomePage() {
                 <span>Nepal&apos;s Authorized Ikonic & Eternity Importer</span>
               </div>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-on-surface leading-[1.15]">
-                {heroProduct.name}
+                Nepal&apos;s Authorized Ikonic Importer — Open-Box Cash on Delivery & 1-Year Warranty
               </h1>
               <p className="text-sm sm:text-lg text-on-surface-variant font-light leading-relaxed max-w-2xl">
                 {heroProduct.description || "Transform your salon into a sanctuary of relaxation. Direct Nepal import with open-box Cash on Delivery."}
@@ -303,11 +312,15 @@ export default async function HomePage() {
                 href={`/p/${heroProduct.slug}`}
                 className="block relative rounded-3xl overflow-hidden shadow-elevated border-2 border-gold/60 bg-surface-lowest group hover:ring-4 hover:ring-gold/30 transition-all cursor-pointer"
               >
-                <img
-                  src={heroProduct.imageUrl || "/products/spa_chair_classic.jpg"}
-                  alt={heroProduct.name}
-                  className="w-full h-[320px] sm:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                <div className="relative w-full h-[320px] sm:h-[420px]">
+                  <ProductImage
+                    src={heroProduct.imageUrl || "/products/spa_chair_classic.jpg"}
+                    alt={heroProduct.name}
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 42vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
                 <div className="absolute top-4 right-4 bg-gold text-on-surface px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md flex items-center space-x-1 z-20">
                   <Sparkles className="w-3 h-3" />
                   <span>HERO FEATURE</span>
@@ -338,16 +351,24 @@ export default async function HomePage() {
         {/* Section 2: Real Upholstery Color Customizer */}
         <section className="container mx-auto px-4 lg:px-8">
           <InteractiveColorSection />
+          <div className="mt-4 text-center">
+            <Link
+              href="/c/luxury-chairs"
+              className="inline-flex items-center px-5 py-3 rounded-xl bg-gold hover:bg-gold-hover text-on-surface font-bold text-xs sm:text-sm shadow-gold transition-all"
+            >
+              Shop Luxury Salon Chairs in These Colors <ArrowRight className="w-4 h-4 ml-1.5" />
+            </Link>
+          </div>
         </section>
 
         {/* Section 3: 5-Category Grid */}
-        <section className="container mx-auto px-4 lg:px-8">
+        <section id="category-grid" className="container mx-auto px-4 lg:px-8 scroll-mt-24">
           <div className="flex justify-between items-end mb-6 sm:mb-8">
             <div>
               <span className="text-[11px] sm:text-xs uppercase tracking-widest text-gold font-bold">Catalogue</span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight mt-1">Explore By Category</h2>
             </div>
-            <Link href="/c/manicure-pedicure-spa-furniture" className="text-xs font-bold text-gold hover:underline flex items-center">
+            <Link href="#category-grid" className="text-xs font-bold text-gold hover:underline flex items-center">
               View All Categories <ArrowRight className="w-3.5 h-3.5 ml-1" />
             </Link>
           </div>
@@ -407,7 +428,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-6">
             {featuredProducts.map((product) => (
               <Link
                 key={product.id}
@@ -416,10 +437,11 @@ export default async function HomePage() {
               >
                 <div>
                   <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
-                    <img
+                    <ProductImage
                       src={product.imageUrl || "/products/spa_chair_classic.jpg"}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <span className="absolute top-2 right-2 md:top-3 md:right-3 bg-inverse-surface/80 backdrop-blur-md text-white px-2 py-0.5 md:px-2.5 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold font-mono">
                       {product.sku}
@@ -479,10 +501,11 @@ export default async function HomePage() {
               >
                 <div>
                   <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
-                    <img
+                    <ProductImage
                       src={item.imageUrl || "/products/eyewear_placeholder_1.jpg"}
                       alt={item.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <span className="absolute top-2 right-2 md:top-2.5 md:right-2.5 bg-gold text-on-surface px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[8px] md:text-[10px] font-bold font-mono uppercase tracking-wider">
                       {item.sku}
@@ -542,10 +565,11 @@ export default async function HomePage() {
               >
                 <div>
                   <div className="relative aspect-square rounded-xl md:rounded-2xl overflow-hidden bg-surface-lowest mb-2.5 md:mb-3.5">
-                    <img
+                    <ProductImage
                       src={tool.imageUrl || "/products/ikonic_blow_dryer_1786231888743.jpg"}
                       alt={tool.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <span className="absolute top-2 right-2 md:top-2.5 md:right-2.5 bg-gold text-on-surface px-2 py-0.5 md:px-2.5 md:py-0.5 rounded-full text-[8px] md:text-[10px] font-bold font-mono uppercase tracking-wider">
                       {tool.sku}

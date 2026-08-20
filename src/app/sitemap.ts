@@ -1,24 +1,16 @@
 import { MetadataRoute } from "next";
 import { db, initTables } from "@/db";
 import { products } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
+import { PILLARS, STOCKED_CATEGORY_IDS } from "@/lib/taxonomy";
 
 const BASE_URL = "https://www.eternityproducts.online";
 
-// All core static & official category routes
-const STATIC_ROUTES = [
-  "",
-  "/about",
-  "/contact",
-  "/warranty",
-  "/checkout",
-  "/c/hair-straighteners",
-  "/c/hair-dryers-curlers",
-  "/c/luxury-chairs",
-  "/c/manicure-pedicure-spa-furniture",
-];
+// /checkout and /order/* are deliberately absent: both are noindex, and /checkout was previously
+// listed here while robots.ts disallowed it.
+const STATIC_ROUTES = ["", "/about", "/contact", "/warranty"];
 
-// Fallback product slugs for sitemap indexing
+// Only real, stocked products. Placeholders at price 0 are noindex and must not be submitted.
 const FALLBACK_PRODUCT_SLUGS = [
   "classic-eternity-spa-chair",
   "eternity-elegance-pedicure-station",
@@ -29,43 +21,65 @@ const FALLBACK_PRODUCT_SLUGS = [
   "eternity-burgundy-regal-luxury-salon-chair",
 ];
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  await initTables();
-  const currentDate = new Date().toISOString();
+// Built per request rather than baked at build time, so a freshly added product appears
+// without a redeploy and lastModified reflects reality.
+export const revalidate = 3600;
 
-  let activeSlugs: string[] = FALLBACK_PRODUCT_SLUGS;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const buildDate = new Date();
+
+  let productRows: Array<{ slug: string; updatedAt: string | null }> = FALLBACK_PRODUCT_SLUGS.map(
+    (slug) => ({ slug, updatedAt: null })
+  );
 
   try {
+    await initTables();
     const dbProducts = await db
-      .select({ slug: products.slug })
+      .select({
+        slug: products.slug,
+        updatedAt: products.updated_at,
+        categoryId: products.category_id,
+      })
       .from(products)
-      .where(eq(products.status, "active"))
+      .where(and(eq(products.status, "active"), gt(products.price_npr, 0)))
       .all();
 
-    if (dbProducts.length > 0) {
-      const fetchedSlugs = dbProducts.map((p) => p.slug);
-      // Merge unique slugs
-      activeSlugs = Array.from(new Set([...fetchedSlugs, ...FALLBACK_PRODUCT_SLUGS]));
+    // Price alone is not enough: seed rows in unstocked categories carry prices too, including
+    // two eyewear products named "Coming Soon". Only submit categories we actually stock.
+    const sellable = dbProducts.filter(
+      (p) => !p.categoryId || STOCKED_CATEGORY_IDS.has(p.categoryId)
+    );
+
+    if (sellable.length > 0) {
+      productRows = sellable;
     }
   } catch (err) {
-    console.warn("⚠️ Sitemap DB query fallback active:", err);
+    console.error("Sitemap DB query failed, using fallback slugs:", err);
   }
 
-  // Generate static page entries
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
     url: `${BASE_URL}${route}`,
-    lastModified: currentDate,
+    lastModified: buildDate,
     changeFrequency: route === "" ? "daily" : "weekly",
-    priority: route === "" ? 1.0 : route.startsWith("/c/") ? 0.9 : 0.7,
+    priority: route === "" ? 1.0 : 0.7,
   }));
 
-  // Generate product page entries dynamically from database
-  const productEntries: MetadataRoute.Sitemap = activeSlugs.map((slug) => ({
+  // All five pillars, straight from the taxonomy. /c/eyewear was previously missing entirely.
+  const categoryEntries: MetadataRoute.Sitemap = PILLARS.map((pillar) => ({
+    url: `${BASE_URL}/c/${pillar.slug}`,
+    lastModified: buildDate,
+    changeFrequency: "weekly",
+    priority: pillar.stocked ? 0.9 : 0.5,
+  }));
+
+  // Real per-product timestamps. Previously every URL claimed it changed at crawl time, on every
+  // crawl, which Google discounts.
+  const productEntries: MetadataRoute.Sitemap = productRows.map(({ slug, updatedAt }) => ({
     url: `${BASE_URL}/p/${slug}`,
-    lastModified: currentDate,
+    lastModified: updatedAt ? new Date(updatedAt) : buildDate,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
-  return [...staticEntries, ...productEntries];
+  return [...staticEntries, ...categoryEntries, ...productEntries];
 }
