@@ -122,13 +122,18 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
   const handleAddToCart = () => {
     addToCart({
-      id: `cart-${product.id}-${selectedColor.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      // Custom-color-matched and plain units are different SKUs of intent — keep them separate
+      // cart lines, or a merge-by-id add would silently merge a colour-matched line into a plain one.
+      id: `cart-${product.id}-${selectedColor.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}${
+        hasCustomColorMatch ? "-custom-color" : ""
+      }`,
       sku: product.sku,
       name: product.name,
       color: selectedColor.name,
       price_npr: currentUnitPriceNpr,
       qty: quantity,
       imageUrl: selectedImage,
+      customColorMatch: hasCustomColorMatch,
     });
 
     track("add_to_cart", {

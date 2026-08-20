@@ -25,6 +25,7 @@ export const MobileBottomBar: React.FC = () => {
     : 0;
 
   return (
+    <>
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#F8F3EC]/95 backdrop-blur-xl border-t border-[#E8E1D7] py-2 px-6 shadow-elevated">
       <div className="flex justify-around items-center text-center">
         {/* Home */}
@@ -69,8 +70,15 @@ export const MobileBottomBar: React.FC = () => {
           <span className="text-[10px] font-medium">Cart</span>
         </button>
       </div>
-
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
+
+    {/*
+      The drawer MUST sit outside the bar above. `backdrop-blur-xl` sets backdrop-filter, which
+      makes that element a containing block for fixed-position descendants, so the drawer's
+      `fixed inset-0` would resolve to the ~56px bar instead of the viewport and open as an
+      unusable squashed strip.
+    */}
+    <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+    </>
   );
 };

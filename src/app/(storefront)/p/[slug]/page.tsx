@@ -10,6 +10,7 @@ import { ProductColorSelector } from "@/components/storefront/ProductColorSelect
 import { ProductReviewsSection } from "@/components/storefront/ProductReviewsSection";
 import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getPillar, getPillarById, isForSale, type Pillar } from "@/lib/taxonomy";
 
 export const revalidate = 60;
@@ -264,21 +265,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
       // from the catalogue entry rather than a wrong claim.
       category = matched.isSpaCategory ? getPillar("manicure-pedicure-spa-furniture") : undefined;
     } else {
-      const isFurniture =
-        slug.includes("chair") || slug.includes("spa") || slug.includes("pedicure") || slug.includes("recliner");
-      product = {
-        id: `prod-${slug}`,
-        sku: `ETP-${slug.slice(0, 4).toUpperCase()}`,
-        slug: slug,
-        name: slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
-        price_npr: isFurniture ? 12000000 : 1150000,
-        compare_at_npr: isFurniture ? 13000000 : 1350000,
-        line: isFurniture ? "profit" : "traffic",
-        imageUrl: isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg",
-      };
-      // No DB row and no catalogue match — best-effort guess from the slug. Genuinely unknown
-      // categories fall back to no breadcrumb crumb rather than a wrong claim.
-      category = isFurniture ? getPillar("manicure-pedicure-spa-furniture") : undefined;
+      // No DB row and no catalogue entry means this product does not exist. This branch used
+      // to synthesise one: an invented SKU, an invented price (NPR 120,000 or NPR 11,500) and
+      // a stock photo, served with HTTP 200 and Product JSON-LD asserting a price and InStock.
+      // That breaks the "never invent a price or SKU" rule and creates unlimited fabricated
+      // product pages for any slug a crawler guesses.
+      notFound();
     }
   }
 

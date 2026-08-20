@@ -128,7 +128,11 @@ export default function CheckoutPage() {
           city,
           landmark,
           paymentMethod,
-          items: cartItems.map((item) => ({ sku: item.sku, qty: item.qty })),
+          items: cartItems.map((item) => ({
+            sku: item.sku,
+            qty: item.qty,
+            customColorMatch: item.customColorMatch,
+          })),
         }),
       });
 

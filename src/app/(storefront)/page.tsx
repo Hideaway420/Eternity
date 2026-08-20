@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { formatNpr } from "@/lib/money";
 import { ProductImage } from "@/components/storefront/ProductImage";
+import { getPillar } from "@/lib/taxonomy";
 import {
   Sparkles,
   ArrowRight,
@@ -245,6 +246,14 @@ async function getEyewearProducts() {
 
 export default async function HomePage() {
   // Concurrent database queries via Promise.all for peak performance
+  // Price display follows the pillar's stocked flag, not price_npr. The seed carries prices for
+  // products in categories we do not stock, so a price > 0 test advertises NPR figures for
+  // merchandise that is noindex and cannot be ordered.
+  const eyewearStocked = getPillar("eyewear")?.stocked ?? false;
+  const stylingStocked =
+    (getPillar("hair-straighteners")?.stocked ?? false) ||
+    (getPillar("hair-dryers-curlers")?.stocked ?? false);
+
   const [heroProduct, featuredProducts, stylingTools, eyewearProducts] = await Promise.all([
     getHeroProduct(),
     getFeaturedProducts(),
@@ -524,7 +533,7 @@ export default async function HomePage() {
                   <div>
                     <span className="text-[9px] md:text-[10px] text-outline block font-medium">Status</span>
                     <span className="font-bold text-xs text-gold font-mono">
-                      {item.price_npr > 0 ? formatNpr(item.price_npr) : "Coming Soon"}
+                      {eyewearStocked && item.price_npr > 0 ? formatNpr(item.price_npr) : "Coming Soon"}
                     </span>
                   </div>
                   <span className="w-full sm:w-auto text-center px-2 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[10px] md:text-[11px] group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">
@@ -588,7 +597,7 @@ export default async function HomePage() {
                   <div>
                     <span className="text-[9px] md:text-[10px] text-outline block font-medium">Status</span>
                     <span className="font-bold text-xs text-gold font-mono">
-                      {tool.price_npr > 0 ? formatNpr(tool.price_npr) : "Coming Soon"}
+                      {stylingStocked && tool.price_npr > 0 ? formatNpr(tool.price_npr) : "Coming Soon"}
                     </span>
                   </div>
                   <span className="w-full sm:w-auto text-center px-2 py-1 rounded-lg bg-gold/15 text-on-surface font-bold text-[10px] md:text-[11px] group-hover:bg-gold transition-colors flex items-center justify-center space-x-1">

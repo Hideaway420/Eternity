@@ -9,10 +9,11 @@
 /*.xlsx
 /*.pptx
 
-# ignore root markdown files except CLAUDE.md and GEMINI.md
+# ignore root markdown files except the agent instruction files
 /*.md
 !/CLAUDE.md
 !/GEMINI.md
+!/AGENTS.md
 
 # internal tooling
 /.gstack/

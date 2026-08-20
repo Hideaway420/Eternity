@@ -1,8 +1,16 @@
-# CLAUDE.md - working rules for the Eternity Products project
+# AGENTS.md - working rules for the Eternity Products project
 
 > `CLAUDE.md`, `GEMINI.md` and `AGENTS.md` are kept in sync and carry the same rules. Editing one means editing all three.
 
-Guidance for any AI agent working in this folder: Claude Code, Google Antigravity, Gemini CLI, or otherwise. This file is the canonical copy.
+Vendor-neutral instructions for any AI coding agent in this repo: Claude Code, Google Antigravity, Gemini CLI, Codex, Cursor, or anything else that reads `AGENTS.md`. Self-contained on purpose, because most agents load exactly one of these three files.
+
+House rules that apply to every agent:
+
+- Work inside this repo only. Prefer editing an existing file over creating a new one.
+- Do not write `*.md` summary, report, or plan files unless asked. Return findings in the response.
+- Do not add a dependency without saying why. Check `package.json` first.
+- Run `npx tsc --noEmit` and `npm run build` before reporting a task complete, and quote the result.
+- Commit or push only when asked.
 
 ---
 

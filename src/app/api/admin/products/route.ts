@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db, initTables } from "@/db";
-import { products, productImages, inventory } from "@/db/schema";
+import {
+  products,
+  productImages,
+  inventory,
+  orderItems,
+  poLines,
+  stockMovements,
+  productVariants,
+} from "@/db/schema";
 import { eq, or, desc, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth";
@@ -352,16 +360,44 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ success: false, error: "Product ID parameter is required for deletion." }, { status: 400 });
     }
 
-    await db.delete(productImages).where(eq(productImages.product_id, id)).run();
-    await db.delete(inventory).where(eq(inventory.product_id, id)).run();
-    const deleted = await db.delete(products).where(eq(products.id, id)).run();
-
-    if (deleted.rowsAffected === 0) {
+    // Nothing is destroyed until we know the product delete can actually succeed.
+    // Previously images and inventory were deleted first, so a product referenced by order_items
+    // (or po_lines / stock_movements / product_variants) failed the foreign key on the final
+    // delete and returned 500 - after its images and stock row were already gone for good.
+    const existing = await db.select({ id: products.id }).from(products).where(eq(products.id, id)).get();
+    if (!existing) {
       return NextResponse.json(
         { success: false, error: `No product found with ID "${id}". Nothing was deleted.` },
         { status: 404 }
       );
     }
+
+    const blockers: string[] = [];
+    for (const [label, table, column] of [
+      ["order history", orderItems, orderItems.product_id],
+      ["purchase order lines", poLines, poLines.product_id],
+      ["stock movements", stockMovements, stockMovements.product_id],
+      ["product variants", productVariants, productVariants.product_id],
+    ] as const) {
+      const row = await db.select({ id: table.id }).from(table).where(eq(column, id)).get();
+      if (row) blockers.push(label);
+    }
+
+    if (blockers.length > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            `"${id}" cannot be deleted because it is referenced by ${blockers.join(", ")}. ` +
+            `Set its status to "out_of_stock" instead so existing records stay intact.`,
+        },
+        { status: 409 }
+      );
+    }
+
+    await db.delete(productImages).where(eq(productImages.product_id, id)).run();
+    await db.delete(inventory).where(eq(inventory.product_id, id)).run();
+    await db.delete(products).where(eq(products.id, id)).run();
 
     revalidateStorefront();
 

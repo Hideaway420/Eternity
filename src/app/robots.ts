@@ -1,19 +1,23 @@
 import { MetadataRoute } from "next";
-import { PILLARS } from "@/lib/taxonomy";
 
 const BASE_URL = "https://www.eternityproducts.online";
 
-// Legacy category slugs now 301 to their canonical pillar (see next.config.ts). Keeping crawlers
-// off them avoids burning crawl budget on redirect chains.
-const LEGACY_CATEGORY_PATHS = PILLARS.flatMap((p) => p.aliases.map((alias) => `/c/${alias}`));
-
+// Legacy category aliases are deliberately NOT disallowed, for two reasons:
+//
+// 1. robots.txt Disallow is PREFIX matching, not exact matching. "Disallow: /c/hair-dryers" also
+//    blocks /c/hair-dryers-curlers, and "Disallow: /c/manicure-pedicure" also blocks
+//    /c/manicure-pedicure-spa-furniture. An earlier version of this file did exactly that and
+//    blocked the two highest-value category pages on the site while the sitemap still submitted
+//    them. Never add a Disallow entry that is a prefix of a canonical URL.
+// 2. The aliases 301 to their canonical pillar (see CATEGORY_REDIRECTS in next.config.ts).
+//    Blocking a redirect stops crawlers following it, which prevents link equity consolidating
+//    on the canonical URL. Letting them crawl the redirect is the point.
 const DISALLOW = [
   "/admin/",
   "/api/",
   "/salon/",
   "/order/", // personalised order tracking
   "/checkout", // was "/checkout?*", which only matched URLs that had a query string
-  ...LEGACY_CATEGORY_PATHS,
 ];
 
 export default function robots(): MetadataRoute.Robots {

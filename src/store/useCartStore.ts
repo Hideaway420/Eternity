@@ -9,6 +9,9 @@ export interface CartItem {
   price_npr: number;
   qty: number;
   imageUrl: string;
+  /** Custom Salon Color Match add-on (+NPR 6,000, cat-spa only). Kept as its own flag rather than
+   * folded into price_npr so /api/orders can independently verify and price it server-side. */
+  customColorMatch: boolean;
 }
 
 interface CartStore {
