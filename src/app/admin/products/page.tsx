@@ -43,7 +43,7 @@ export default function AdminProductsPage() {
   const [productList, setProductList] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [lineFilter, setLineFilter] = useState<"all" | "traffic" | "profit">("all");
+  const [lineFilter, setLineFilter] = useState<"all" | "traffic" | "eyewear" | "profit">("all");
   
   // Create Modal State
   const [showAddModal, setShowAddModal] = useState(false);
@@ -330,7 +330,14 @@ export default function AdminProductsPage() {
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.sku.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesLine = lineFilter === "all" || p.line === lineFilter;
+    const matchesLine =
+      lineFilter === "all"
+        ? true
+        : lineFilter === "traffic"
+        ? p.line === "traffic" || p.line === "eyewear"
+        : lineFilter === "eyewear"
+        ? p.line === "eyewear"
+        : p.line === lineFilter;
     return matchesSearch && matchesLine;
   });
 
@@ -447,7 +454,7 @@ export default function AdminProductsPage() {
             <Search className="w-4 h-4 text-gray-700 absolute left-3 top-3" />
           </div>
 
-          <div className="flex gap-2 text-xs">
+          <div className="flex flex-wrap gap-2 text-xs">
             <button
               onClick={() => setLineFilter("all")}
               className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
@@ -463,6 +470,14 @@ export default function AdminProductsPage() {
               }`}
             >
               Styling Tools & Eyewear
+            </button>
+            <button
+              onClick={() => setLineFilter("eyewear")}
+              className={`px-3 py-2 rounded-lg border-2 font-extrabold transition-none ${
+                lineFilter === "eyewear" ? "border-black bg-yellow-400 text-black" : "border-gray-300 bg-white text-gray-800"
+              }`}
+            >
+              Eyewear Only ({productList.filter((p) => p.line === "eyewear").length})
             </button>
             <button
               onClick={() => setLineFilter("profit")}

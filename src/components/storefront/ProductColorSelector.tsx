@@ -25,6 +25,7 @@ interface ProductColorSelectorProps {
     line: string;
     specs?: string | null;
     imageUrl?: string | null;
+    secondaryImageUrls?: string[] | null;
     imageUrls?: string[] | null;
     description?: string | null;
     priceRange?: string | null;
@@ -70,68 +71,20 @@ export const ProductColorSelector: React.FC<ProductColorSelectorProps> = ({
 
   const primaryImg = product.imageUrl || (isFurniture ? "/products/spa_chair_classic.jpg" : "/products/ikonic_straightener_1786231866243.jpg");
 
-  // Multi-Image Gallery List
-  const extraImages = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls : [primaryImg];
-  const galleryPhotos = Array.from(new Set([primaryImg, ...extraImages]));
+  // Multi-Image Gallery List (Strictly contains ONLY photos belonging to THIS product)
+  const secondaryList = Array.isArray(product.secondaryImageUrls) ? product.secondaryImageUrls.filter(u => u && u !== primaryImg) : [];
+  const galleryPhotos = secondaryList.length > 0 ? Array.from(new Set([primaryImg, ...secondaryList])) : [primaryImg];
 
-  // Real Color Swatches
-  const colorVariants: ColorVariant[] = isSpaCategory
-    ? [
-        {
-          name: "Signature Obsidian Black",
-          hex: "#1A1A1A",
-          image: primaryImg,
-          inStock: true,
-          stockCount: 3,
-        },
-        {
-          name: "Blush Pink Velvet",
-          hex: "#E8C5C8",
-          image: "/products/spa_chair_pink_recliner.jpg",
-          inStock: true,
-          stockCount: 2,
-        },
-        {
-          name: "Imperial White & Gold",
-          hex: "#F5F5F0",
-          image: "/products/spa_chair_signature.jpg",
-          inStock: true,
-          stockCount: 2,
-        },
-      ]
-    : isFurniture
-    ? [
-        {
-          name: "Emerald Green & Gold",
-          hex: "#1B4D3E",
-          image: "/products/chair_emerald_green_1786235658712.jpg",
-          inStock: true,
-          stockCount: 5,
-        },
-        {
-          name: "Espresso Vintage Brown",
-          hex: "#4A2E1B",
-          image: "/products/chair_espresso_brown_1786235685819.jpg",
-          inStock: true,
-          stockCount: 4,
-        },
-        {
-          name: "Burgundy Velvet Red",
-          hex: "#6B1D2F",
-          image: "/products/chair_burgundy_red_1786235698852.jpg",
-          inStock: true,
-          stockCount: 2,
-        },
-      ]
-    : [
-        {
-          name: "Ikonic Professional Titanium",
-          hex: "#2B2C2C",
-          image: primaryImg.includes("http") ? primaryImg : "/products/ikonic_straightener_1786231866243.jpg",
-          inStock: true,
-          stockCount: 10,
-        },
-      ];
+  // Real Color Swatches (Uses THIS product's primary image only)
+  const colorVariants: ColorVariant[] = [
+    {
+      name: "Original Factory Finish",
+      hex: "#1E2224",
+      image: primaryImg,
+      inStock: true,
+      stockCount: 5,
+    },
+  ];
 
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(colorVariants[0]);
   const [selectedImage, setSelectedImage] = useState<string>(primaryImg);
